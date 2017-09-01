@@ -32,6 +32,10 @@ export class Server {
   }
 
   private configureRoutes(): void {
+    this.app.use(express.static(path.join(process.env.PWD + "/dist/client/")));
+    this.app.get("/", (req, res) => {
+      res.sendFile(process.env.PWD + "/dist/client/index.html");
+    });
     this.app.get("/api", (req, res) => {
       res.json({ welcome: "home" });
     });
