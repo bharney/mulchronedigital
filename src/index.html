@@ -8,7 +8,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
   <script>
     if (!window.jQuery) {
       console.log('welcome');
@@ -32,6 +33,23 @@
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
     crossorigin="anonymous"></script>
+  <script>
+    function css(element, property) {
+      return window.getComputedStyle(element, null).getPropertyValue(property);
+    }
+    var span = document.createElement('span');
+    span.className = 'fa';
+    span.style.display = 'none';
+    document.body.appendChild(span);
+    if ((css(span, 'font-family')) !== 'FontAwesome') {
+      console.log('welcome');
+      var fa = document.createElement('link');
+      fa.rel = 'stylesheet';
+      fa.href = 'assets/lib/font-awesome-4.7.0/css/font-awesome.min.css';
+      document.getElementsByTagName('head')[0].appendChild(fa);
+      document.body.removeChild(span);
+    };
+  </script>
 </body>
 
 </html>
