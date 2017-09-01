@@ -1,2 +1,7 @@
 # Node.js-Angular4-Starter
-Node.js, Angular 4, Angular CLI, Typescript, Clustering
+
+
+Font-Awesome
+Bootstrap 4
+Angular 4
+Node.js (TypeScript)
