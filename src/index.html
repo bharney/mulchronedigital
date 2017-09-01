@@ -20,8 +20,6 @@
     }
   </script>
   <link rel="stylesheet" href="assets/reset.css">
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-    crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
     crossorigin="anonymous">
 </head>
@@ -33,23 +31,6 @@
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
     crossorigin="anonymous"></script>
-  <script>
-    function css(element, property) {
-      return window.getComputedStyle(element, null).getPropertyValue(property);
-    }
-    var span = document.createElement('span');
-    span.className = 'fa';
-    span.style.display = 'none';
-    document.body.appendChild(span);
-    if ((css(span, 'font-family')) !== 'FontAwesome') {
-      console.log('welcome');
-      var fa = document.createElement('link');
-      fa.rel = 'stylesheet';
-      fa.href = 'assets/lib/font-awesome-4.7.0/css/font-awesome.min.css';
-      document.getElementsByTagName('head')[0].appendChild(fa);
-      document.body.removeChild(span);
-    };
-  </script>
 </body>
 
 </html>
