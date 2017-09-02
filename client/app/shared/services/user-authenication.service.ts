@@ -3,29 +3,28 @@ import { Http } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
 
-import LoginUserModel = UserAuthenication.LoginUserModel;
-import RegisterUserModel = UserAuthenication.RegisterUserModel;
+import { ILoginUser, IRegisterUser } from "../models/user-authenication.model";
+import { AuthenicationControl } from "../globals/AuthenicationControl";
 
-namespace UserAuthenication {
+@Injectable()
+export class LoginService {
 
-  @Injectable()
-  export class LoginService {
+  constructor(private http: Http) { }
 
-    constructor(private http: Http) { }
-
-    getList(): Observable<LoginUserModel[]> {
-      return this.http.get("/api/list").map(res => res.json() as LoginUserModel[]);
-    }
+  getList(): Observable<ILoginUser[]> {
+    return this.http.get("/api/userauth/login").map(res => res.json() as ILoginUser[]);
   }
+}
 
-  @Injectable()
-  export class RegisterService {
+@Injectable()
+export class RegisterService {
 
-    constructor(private http: Http) { }
+  constructor(
+    private http: Http,
+    private auth: AuthenicationControl
+  ) { }
 
-    getList(): Observable<RegisterUserModel[]> {
-      return this.http.get("/api/list").map(res => res.json() as RegisterUserModel[]);
-    }
+  getList(): Observable<IRegisterUser[]> {
+    return this.http.get("/api/userauth/register").map(res => res.json() as IRegisterUser[]);
   }
-
 }

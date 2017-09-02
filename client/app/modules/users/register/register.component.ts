@@ -1,22 +1,21 @@
 import { Component, OnInit } from "@angular/core";
+import { RegisterService } from "../../../shared/services/user-authenication.service";
+import { IRegisterUser } from "../../../shared/models/user-authenication.model";
 
-import { Register } from "./shared/register.model";
-import { RegisterService } from "./shared/register.service";
 
 @Component({
-	selector: "app-register",
-	templateUrl: "register.component.html",
-	providers: [RegisterService]
+  selector: "app-register",
+  templateUrl: "register.component.html",
 })
 
 export class RegisterComponent implements OnInit {
-	register: Register[] = [];
+  register: IRegisterUser[] = [];
 
-	constructor(private registerService: RegisterService) { }
+  constructor(private registerService: RegisterService) { }
 
-	ngOnInit() {
-		this.registerService.getList().subscribe((res) => {
-			this.register = res;
-		});
-	}
+  ngOnInit() {
+    this.registerService.getList().subscribe((res) => {
+      this.register = res;
+    });
+  }
 }

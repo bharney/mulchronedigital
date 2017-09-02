@@ -5,9 +5,9 @@ import { RouterModule, Routes } from "@angular/router";
 
 const appRoutes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
-  { path: "home", loadChildren: "./" },
-  { path: "users", loadChildren: "./modules/user-authenication/user-authenication.module#UserAuthenicationLazyModule" },
-  { path: "userdashboard", loadChildren: "./modules/user-dashboard/user-dathboard.module#UserDashboardLazyModule" }
+  // { path: "home", loadChildren: "./modules/home/home.module#HomeLazyModule" },
+  { path: "users", loadChildren: "./modules/users/users.module#UsersLazyModule" }
+  // { path: "userdashboard", loadChildren: "./modules/user-dashboard/user-dathboard.module#UserDashboardLazyModule" }
 ];
 
 @NgModule({

@@ -1,16 +1,9 @@
-namespace Models {
+export interface IRegisterUser {
+  id: number;
+  name: string;
+}
 
-  export namespace UserAuthenication {
-
-    export class RegisterUserModel {
-      id: number;
-      name: string;
-    }
-
-    export class LoginUserModel {
-      id: number;
-      name: string;
-    }
-
-  }
+export interface ILoginUser {
+  id: number;
+  name: string;
 }

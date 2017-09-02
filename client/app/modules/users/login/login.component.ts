@@ -1,22 +1,21 @@
 import { Component, OnInit } from "@angular/core";
-
-import { Login } from "./shared/login.model";
-import { LoginService } from "./shared/login.service";
+import { LoginService } from "../../../shared/services/user-authenication.service";
+import { ILoginUser } from "../../../shared/models/user-authenication.model";
 
 @Component({
-	selector: "app-login",
-	templateUrl: "login.component.html",
-	providers: [LoginService]
+  selector: "app-login",
+  templateUrl: "login.component.html",
+  providers: [LoginService]
 })
 
 export class LoginComponent implements OnInit {
-	login: Login[] = [];
+  login: ILoginUser[] = [];
 
-	constructor(private loginService: LoginService) { }
+  constructor(private loginService: LoginService) { }
 
-	ngOnInit() {
-		this.loginService.getList().subscribe((res) => {
-			this.login = res;
-		});
-	}
+  ngOnInit() {
+    this.loginService.getList().subscribe((res) => {
+      this.login = res;
+    });
+  }
 }
