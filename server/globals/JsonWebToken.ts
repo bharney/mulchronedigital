@@ -9,7 +9,7 @@ namespace Globals {
     export class JsonWebToken {
     
         public static getPrivateKey(req: Request, res: Response, next: NextFunction): any {
-            fs.readFileAsync(path.join(__dirname, "../ssl/private.pem"), "utf8")
+            fs.readFileAsync(path.join(__dirname, "../security/ssl/private.pem"), "utf8")
                 .then((privateKey) => {
                     res.locals.privateKey = privateKey;
                     next();
@@ -32,7 +32,7 @@ namespace Globals {
         }
     
         public static getPublicKey(req: Request, res: Response, next: NextFunction): any {
-            fs.readFileAsync(path.join(__dirname, "../ssl/public.pem"), "utf-8")
+            fs.readFileAsync(path.join(__dirname, "../security/ssl/public.pem"), "utf-8")
                 .then((publicKey) => {
                     res.locals.publicKey = publicKey;
                      return next();
