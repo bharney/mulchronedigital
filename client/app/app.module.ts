@@ -5,6 +5,7 @@ import { NgModule } from "@angular/core";
 
 import { AppComponent } from "./app.component";
 import { NavbarTopComponent } from "./components/navbar-top/navbar-top.component";
+import { AuthenicationControl } from "./shared/globals/AuthenicationControl";
 
 @NgModule({
   declarations: [
@@ -17,7 +18,7 @@ import { NavbarTopComponent } from "./components/navbar-top/navbar-top.component
     AppRoutingModule
   ],
   providers: [
-
+    AuthenicationControl
   ],
   bootstrap: [AppComponent]
 })

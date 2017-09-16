@@ -4,8 +4,8 @@ import { ILoginUser } from "../../../shared/models/user-authenication.model";
 
 @Component({
   selector: "app-login",
+  styleUrls: ["./login.component.css"],
   templateUrl: "login.component.html",
-  providers: [LoginService]
 })
 
 export class LoginComponent implements OnInit {

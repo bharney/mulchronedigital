@@ -6,6 +6,7 @@ import { RegisterComponent } from "./register/register.component";
 import { LoginComponent } from "./login/login.component";
 import { RegisterService, LoginService } from "../../shared/services/user-authenication.service";
 import { UsersRouting } from "./users.routing";
+import { DashboardComponent } from "./dashboard/dashboard.component";
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { UsersRouting } from "./users.routing";
   ],
   declarations: [
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    DashboardComponent
   ],
   providers: [
     RegisterService,

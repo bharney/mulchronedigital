@@ -5,6 +5,7 @@ import { IRegisterUser } from "../../../shared/models/user-authenication.model";
 
 @Component({
   selector: "app-register",
+  styleUrls: ["./register.component.css"],
   templateUrl: "register.component.html",
 })
 
