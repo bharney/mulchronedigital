@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { Dashboard } from "./shared/dashboard.model";
-import { DashboardService } from "./shared/dashboard.service";
+import { DashboardService } from "../../../shared/services/dashboard.service";
+import { Dashboard } from "../../../shared/models/dashboard.model";
 
 @Component({
   selector: "app-users-dashboard",
