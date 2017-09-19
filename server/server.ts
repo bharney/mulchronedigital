@@ -33,6 +33,10 @@ class Server {
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
+  console.log(`Master ${process.pid} running database seed`);
+  if (Database.SeedDatabase()) {
+    console.log(`Master ${process.pid} database seed complete`);
+  }
 
   const numCPUs = require("os").cpus().length;
   for (let i = 0; i < numCPUs; i++) {
@@ -47,15 +51,5 @@ if (cluster.isMaster) {
   const newServer = new Server();
   const serverWorker = newServer.app.listen(newServer.port, () => {
     console.log(`Server is listening on ${newServer.port}`);
-    TestingDatabase();
   });
-}
-
-async function TestingDatabase() {
-  try {
-    const db = await Database.CreateDatabaseConnection();
-      console.log(db);
-  } catch (error) {
-    console.log(error);
-  }
 }

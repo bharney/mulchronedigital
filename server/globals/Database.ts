@@ -11,7 +11,7 @@ export class Database {
           resolve(db);
         })
         .catch((error: Error) => {
-          reject(false);
+          reject(error);
         });
     });
   }
@@ -24,5 +24,19 @@ export class Database {
 
   public static GetDocument(): void {}
 
-  public static SeedDatabase(): void {}
+  public static async SeedDatabase(): Promise<boolean> {
+    try {
+      const db = await this.CreateDatabaseConnection();
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+  public static async GetUserValues() {
+
+  }
+
+
 }
