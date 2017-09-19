@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
-import { Dashboard } from "../../modules/users/dashboard/shared/dashboard.model";
+import { Dashboard } from "../models/dashboard.model"; 
 
 @Injectable()
 export class DashboardService {
