@@ -52,9 +52,10 @@ if (cluster.isMaster) {
 }
 
 async function TestingDatabase() {
-  const db = await Database.CreateDatabaseConnection();
-  if (db) {
-    console.log(db);
-    db.close();
+  try {
+    const db = await Database.CreateDatabaseConnection();
+      console.log(db);
+  } catch (error) {
+    console.log(error);
   }
 }
