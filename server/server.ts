@@ -8,7 +8,7 @@ import bodyParser = require("body-parser");
 import { IndexRouter } from "./routes/index-router";
 
 class Server {
-  public port: number = process.env.PORT || 8080;
+  public port = process.env.PORT || 8080;
   public app: express.Application;
   public indexRouter: express.Router;
 
