@@ -30,10 +30,10 @@ class Server {
   }
 }
 
-const numCPUs = require("os").cpus().length;
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
-
+  
+  const numCPUs = require("os").cpus().length;
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
   }
