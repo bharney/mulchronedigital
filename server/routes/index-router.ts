@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 
 export class IndexRouter {
   public router: Router;
@@ -9,10 +9,10 @@ export class IndexRouter {
   }
 
   private configureRoutes() {
-    this.router.get("/api", (req, res) => {
+    this.router.get("/api", (req: Request , res: Response) => {
       res.json({ welcome: "home" });
     });
-    this.router.get("/", (req, res) => {
+    this.router.get("/", (req: Request, res: Response) => {
       res.sendFile(process.env.PWD + "/dist/client/index.html");
     });
   }

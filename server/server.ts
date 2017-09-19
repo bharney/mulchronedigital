@@ -6,6 +6,7 @@ import logger = require("morgan");
 import bodyParser = require("body-parser");
 
 import { IndexRouter } from "./routes/index-router";
+import { Database } from './globals/Database';
 
 class Server {
   public port = process.env.PORT || 8080;
@@ -46,5 +47,12 @@ if (cluster.isMaster) {
   const newServer = new Server();
   const serverWorker = newServer.app.listen(newServer.port, () => {
     console.log(`Server is listening on ${newServer.port}`);
+    TestingDatabase();
   });
+}
+
+async function TestingDatabase() {
+  const db = await Database.CreateDatabaseConnection();
+  console.log(db);
+  db.close();
 }

@@ -1,25 +1,25 @@
-namespace Globals {
-  
-  export class Database {
+import { Resolve } from "@angular/router";
+import { MongoClient, Db } from "mongodb";
 
-    public static CreateDatabaseConnection(): void {
-
-    }
-
-    public static InsertDocument(): void {
-
-    }
-
-    public static UpdateDocument(): void {
-
-    }
-
-    public static DeleteDocument(): void {
-
-    }
-
-    public static GetDocument(): void {
-
-    }
+export class Database {
+  public static CreateDatabaseConnection(): Promise<Db> {
+    return new Promise((resolve, reject) => {
+      let url;
+      // TODO: put heroku DB string here.
+      (!process.env.PORT) ? url = "mongodb://localhost:27017/Node-Angular-Starter" : url = "";
+      MongoClient.connect(url).then((db: Db) => {
+        resolve(db);
+      });
+    });
   }
+
+  public static InsertDocument(): void {}
+
+  public static UpdateDocument(): void {}
+
+  public static DeleteDocument(): void {}
+
+  public static GetDocument(): void {}
+
+  public static SeedDatabase(): void {}
 }
