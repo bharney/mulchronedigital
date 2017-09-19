@@ -5,8 +5,7 @@
   "author": "Mike Mulchrone",
   "engines": {
     "node": "8.4.0",
-    "npm": "5.4.2",
-    "yarn": "0.20.3"
+    "npm": "5.4.2"
   },
   "scripts": {
     "start": "node dist/server.js",
