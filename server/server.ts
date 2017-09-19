@@ -6,7 +6,7 @@ import logger = require("morgan");
 import bodyParser = require("body-parser");
 
 import { IndexRouter } from "./routes/index-router";
-import { Database } from './globals/Database';
+import { Database } from "./globals/Database";
 
 class Server {
   public port = process.env.PORT || 8080;
@@ -33,7 +33,7 @@ class Server {
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
-  
+
   const numCPUs = require("os").cpus().length;
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
@@ -53,6 +53,8 @@ if (cluster.isMaster) {
 
 async function TestingDatabase() {
   const db = await Database.CreateDatabaseConnection();
-  console.log(db);
-  db.close();
+  if (db) {
+    console.log(db);
+    db.close();
+  }
 }

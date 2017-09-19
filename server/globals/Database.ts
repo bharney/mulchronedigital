@@ -7,9 +7,13 @@ export class Database {
       let url;
       // TODO: put heroku DB string here.
       (!process.env.MONGO_URL) ? url = "mongodb://localhost:27017/Node-Angular-Starter" : url = process.env.MONGO_URL;
-      MongoClient.connect(url).then((db: Db) => {
-        resolve(db);
-      });
+      MongoClient.connect(url)
+        .then((db: Db) => {
+          resolve(db);
+        })
+        .catch((error: Error) => {
+          reject(false);
+        });
     });
   }
 
