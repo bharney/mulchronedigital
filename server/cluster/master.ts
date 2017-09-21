@@ -19,7 +19,7 @@ if (cluster.isMaster) {
     console.log(`worker ${worker.process.pid} died`);
     cluster.fork();
   });
-} else {
+} else if (cluster.isWorker) {
   const newServer = new Server();
   const serverWorker = newServer.app.listen(newServer.port, () => {
     console.log(`Server is listening on ${newServer.port}`);

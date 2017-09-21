@@ -1,20 +1,33 @@
+import { Request } from "request";
 import debug = require("debug");
 import express = require("express");
 import path = require("path");
 import logger = require("morgan");
 import bodyParser = require("body-parser");
+import cluster = require("cluster");
 
+import {ClusterMiddleware} from "../middleware/cluster";
 import { IndexRouter } from "../routes/index-router";
 
 export default class Server {
   public port = process.env.PORT || 8080;
   public app: express.Application;
-  public indexRouter: express.Router;
+  private indexRouter: express.Router;
+  private clusterMiddleware: ClusterMiddleware;
+  // TODO: play with this number in production.
 
   constructor() {
     this.app = express();
     this.indexRouter = new IndexRouter().router;
+    this.clusterMiddleware = new ClusterMiddleware();
     this.configureMiddleware();
+  }
+
+  public RequestCounterMiddleware(req: express.Request, res: express.Response, next: express.NextFunction, numberOfStuff: number): any {
+    if (cluster.isWorker) {
+     console.log(numberOfStuff);
+    }
+    next();
   }
 
   private configureMiddleware(): void {
@@ -25,6 +38,7 @@ export default class Server {
     this.app.use(bodyParser.text());
     this.app.use(bodyParser.json({ type: "application/vnd.api+json" }));
     this.app.disable("x-powered-by");
+    this.app.use("/", this.clusterMiddleware.DoesWorkerNeedRestart);
     this.app.use("/", this.indexRouter);
   }
 }
