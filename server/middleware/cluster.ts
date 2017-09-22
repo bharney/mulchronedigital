@@ -10,7 +10,8 @@ export class ClusterMiddleware {
       this.numberOfRequestsTillRestart--;
       if (this.numberOfRequestsTillRestart === 0) {
         // TODO: Log that a worker process was shutdown due to requests.
-         res.redirect("/");
+          const originalRedirectUrl = req.originalUrl;
+         res.redirect(originalRedirectUrl);
         process.exit(0);
       }
     }
