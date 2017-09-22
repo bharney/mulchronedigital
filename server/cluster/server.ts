@@ -6,7 +6,7 @@ import logger = require("morgan");
 import bodyParser = require("body-parser");
 import cluster = require("cluster");
 
-import {ClusterMiddleware} from "../middleware/cluster";
+import { ClusterMiddleware } from "../middleware/cluster";
 import { IndexRouter } from "../routes/index-router";
 
 export default class Server {
@@ -38,7 +38,7 @@ export default class Server {
     this.app.use(bodyParser.text());
     this.app.use(bodyParser.json({ type: "application/vnd.api+json" }));
     this.app.disable("x-powered-by");
-    this.app.use("/", this.clusterMiddleware.DoesWorkerNeedRestart);
+    this.app.use("/", this.clusterMiddleware.DoesWorkerNeedToRestart);
     this.app.use("/", this.indexRouter);
   }
 }
