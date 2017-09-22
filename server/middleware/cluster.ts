@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { User } from "../models/user";
 import cluster = require("cluster");
 
 
@@ -11,10 +12,20 @@ export class ClusterMiddleware {
       if (this.numberOfRequestsTillRestart === 0) {
         // TODO: Log that a worker process was shutdown due to requests.
         const originalRedirectUrl = req.originalUrl;
-        res.redirect(originalRedirectUrl);
-        process.exit(0);
+        const user: User = new User("Mike", "Esforces0191!@", true);
+        user.HashPassword()
+          .then(hashedPassword => {
+            user.password = hashedPassword;
+            res.redirect(originalRedirectUrl);
+            process.exit(0);
+            console.log(user.password);
+            next();
+          });
       }
+    } else {
+      next();
     }
-    next();
   }
+
+  
 }
