@@ -22,14 +22,7 @@ export default class Server {
     this.clusterMiddleware = new ClusterMiddleware();
     this.configureMiddleware();
   }
-
-  public RequestCounterMiddleware(req: express.Request, res: express.Response, next: express.NextFunction, numberOfStuff: number): any {
-    if (cluster.isWorker) {
-     console.log(numberOfStuff);
-    }
-    next();
-  }
-
+  
   private configureMiddleware(): void {
     this.app.use(logger("dev"));
     this.app.use(express.static(path.join(process.env.PWD + "/dist/client/")));
