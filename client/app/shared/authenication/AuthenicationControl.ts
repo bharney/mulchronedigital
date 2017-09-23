@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Headers, RequestOptions } from '@angular/http';
+import { Injectable } from "@angular/core";
+import { Headers, RequestOptions } from "@angular/http";
 
 @Injectable()
 export class AuthenicationControl {
@@ -30,8 +30,8 @@ export class AuthenicationControl {
         if (!this.isTheUserAuthenicated) {
             return;
         } else {
-            let options = new RequestOptions({ headers: new Headers() });
-            let token = this.getJsonWebTokenFromSessionStorage();
+            const options = new RequestOptions({ headers: new Headers() });
+            const token = this.getJsonWebTokenFromSessionStorage();
             options.headers.set("x-access-token", token);
             return options;
         }

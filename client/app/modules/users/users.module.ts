@@ -4,7 +4,6 @@ import { CommonModule } from "@angular/common";
 
 import { RegisterComponent } from "./register/register.component";
 import { LoginComponent } from "./login/login.component";
-import { RegisterService, LoginService } from "../../shared/services/user-authenication.service";
 import { UsersRouting } from "./users.routing";
 import { DashboardComponent } from "./dashboard/dashboard.component";
 
@@ -19,10 +18,7 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
     LoginComponent,
     DashboardComponent
   ],
-  providers: [
-    RegisterService,
-    LoginService
-  ]
+  providers: []
 })
 export class UsersLazyModule { }
 
