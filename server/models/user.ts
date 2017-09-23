@@ -1,15 +1,32 @@
 import bcrypt = require("bcryptjs");
 
 export class User {
-  public name;
-  public password;
+  public username: string;
+  public email: string;
+  public password: string;
+  public createdAt: string;
+  public modifiedAt: string;
 
-  constructor(name: string, password: string, isNewUser: boolean) {
-    this.name = name;
+  constructor(username: string, email: string, password: string) {
+    this.username = username;
+    this.email = email;
     this.password = password;
+    this.modifiedAt = new Date().toLocaleString();
   }
 
-  public HashPassword(): Promise<string> {
+  public async SetupNewUser(): Promise<boolean> {
+    try {
+      this.createdAt = new Date().toLocaleString();
+      this.password = await this.HashPassword();
+      const result = true;
+      return result;
+    } catch (error) {
+      const result = false;
+      return result;
+    }
+  }
+
+  private HashPassword(): Promise<string> {
     return new Promise((resolve, reject) => {
       bcrypt.genSalt(10)
         .then(salt => {

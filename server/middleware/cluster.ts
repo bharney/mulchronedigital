@@ -12,20 +12,17 @@ export class ClusterMiddleware {
       if (this.numberOfRequestsTillRestart === 0) {
         // TODO: Log that a worker process was shutdown due to requests.
         const originalRedirectUrl = req.originalUrl;
-        const user: User = new User("Mike", "Esforces0191!@", true);
-        user.HashPassword()
-          .then(hashedPassword => {
-            user.password = hashedPassword;
-            res.redirect(originalRedirectUrl);
-            process.exit(0);
-            console.log(user.password);
-            next();
-          });
+        const user: User = new User("mtmulch", "mtmulch@gmail.com", "Esforces123!@");
+        user.SetupNewUser().then(success => {
+          if (success) {
+            console.log(user);
+          }
+        });
       }
     } else {
       next();
     }
   }
 
-  
+
 }
