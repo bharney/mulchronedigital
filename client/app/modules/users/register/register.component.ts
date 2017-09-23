@@ -12,8 +12,8 @@ import { UserAuthenicationValidator } from "../../../shared/authenication/UserAu
 })
 
 export class RegisterComponent implements OnInit {
-  private userRegistrationForm: FormGroup;
-  private hasTheFormBeenSubmitted = false;
+  public userRegistrationForm: FormGroup;
+  public hasTheFormBeenSubmitted = false;
   
   constructor(
     private formBuilder: FormBuilder,
@@ -54,12 +54,12 @@ export class RegisterComponent implements OnInit {
     });
 }
 
-  private toggleRegisterUser() {
+  public toggleRegisterUser() {
     this.hasTheFormBeenSubmitted = true;
     if (!this.userRegistrationForm.valid) {
       return;
     } else {
-      
+
     }
   }
 }
