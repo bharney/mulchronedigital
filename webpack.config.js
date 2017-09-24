@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    server: './server/cluster/master.ts'
+    server: './server/server.ts'
   },
   resolve: {
     extensions: ['.ts', '.js'],

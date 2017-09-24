@@ -6,20 +6,17 @@ import logger = require("morgan");
 import bodyParser = require("body-parser");
 import cluster = require("cluster");
 
-import { ClusterMiddleware } from "../middleware/cluster";
-import { IndexRouter } from "../routes/index-router";
+import { IndexRouter } from "./routes/index-router";
+import { Database } from "./globals/Database";
 
 export default class Server {
   public port = process.env.PORT || 8080;
   public app: express.Application;
   private indexRouter: express.Router;
-  private clusterMiddleware: ClusterMiddleware;
-  // TODO: play with this number in production.
 
   constructor() {
     this.app = express();
     this.indexRouter = new IndexRouter().router;
-    this.clusterMiddleware = new ClusterMiddleware();
     this.configureMiddleware();
   }
   
@@ -31,7 +28,14 @@ export default class Server {
     this.app.use(bodyParser.text());
     this.app.use(bodyParser.json({ type: "application/vnd.api+json" }));
     this.app.disable("x-powered-by");
-    this.app.use("/", this.clusterMiddleware.DoesWorkerNeedToRestart);
     this.app.use("/", this.indexRouter);
   }
 }
+
+const newServer = new Server();
+const serverWorker = newServer.app.listen(newServer.port, () => {
+  console.log(`Server is listening on ${newServer.port}`);
+  console.log(`running database seed`);
+  Database.SeedDatabase();
+  console.log(`database seed complete`);
+});
