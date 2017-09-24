@@ -1,5 +1,11 @@
+<!-- Start Main Row -->
 <div class="row main-row">
-    <div class="col-12">
+  <!-- Start Column 1 -->
+  <div class="col-3 offset-col-3">
+  <!-- End Column 1 -->
+  </div>
+  <!-- Start Column 2 -->
+    <div class="col-6">
         <div class="card">
             <div class="card-block">
                 <h1 class="text-center">Register</h1>
@@ -65,8 +71,15 @@
                         </div>
                     </div>
                     <button type="button" class="btn btn-primary" (click)="toggleRegisterUser()">Register</button>
+                    <p id="already-have-account-text">Already have an account? Login <a href="" [routerLink]="['../../users/login']">Here</a></p>
                 </div>
             </div>
         </div>
+        <!-- End Column 2 -->
     </div>
+    <!-- Start Column 3 -->
+    <div class="col-3">
+      <!-- End Column 3 -->
+    </div>
+<!-- End Main Row -->
 </div>
