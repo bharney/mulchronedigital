@@ -1,8 +1,6 @@
+import { Router, Request, NextFunction, Response } from "express";
 import { BaseRouter } from "../classes/BaseRouter";
 import { UserAuthenicationValidation } from "../classes/UserAuthenicationValidation";
-import { Router, Request, NextFunction, Response } from "express";
-import { Database } from "../../globals/Database";
-import { ResponseMessages } from "../../globals/ResponseMessages";
 
 
 export class UserAuthenicationRouter extends BaseRouter {
