@@ -4,8 +4,6 @@ const jwt = Promise.promisifyAll(require("jsonwebtoken"));
 const fs = Promise.promisifyAll(require("fs"));
 import { Request, Response, NextFunction } from "express";
 
-namespace Globals {
-
     export class JsonWebToken {
     
         public static getPrivateKey(req: Request, res: Response, next: NextFunction): any {
@@ -53,4 +51,3 @@ namespace Globals {
                 });
         }
     }
-}

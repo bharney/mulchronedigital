@@ -37,7 +37,7 @@ export class AuthenicationControl {
     }
   }
 
-  public CreateRequestOptionsWithApplicationJsonHeaders(): RequestOptions {
+  public createRequestOptionsWithApplicationJsonHeaders(): RequestOptions {
     const headers = new Headers({ "Content-Type": "application/json" });
     const requestOptions = new RequestOptions({ headers: headers });
     return requestOptions;

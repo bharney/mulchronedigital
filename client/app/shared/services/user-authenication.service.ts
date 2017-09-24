@@ -1,10 +1,10 @@
+import { AuthenicationControl } from "../globals/AuthenicationControl";
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Headers, Http, RequestOptions, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
 
-import { ILoginUser, IRegisterUser } from "../models/user-authenication.model";
-import { AuthenicationControl } from "../globals/AuthenicationControl";
+import { ILoginUser, IRegisterUser, RegisterUser } from "../models/user-authenication.model";
 
 @Injectable()
 export class LoginService {
@@ -21,10 +21,16 @@ export class RegisterService {
 
   constructor(
     private http: Http,
-    private auth: AuthenicationControl
+    private authControl: AuthenicationControl
   ) { }
 
-  getList(): Observable<IRegisterUser[]> {
-    return this.http.get("/api/userauth/register").map(res => res.json() as IRegisterUser[]);
+  public registerNewUser(user: RegisterUser)  {
+    const options = this.authControl.createRequestOptionsWithApplicationJsonHeaders();
+    return this.http.post("/api/userauth/registeruser", user, options)
+        .map((res: Response) => {
+          return res.json();
+        });
+        // .map(this.extractRegisterUserData)
+        // .catch(this.handleError);
   }
 }

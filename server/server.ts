@@ -6,7 +6,7 @@ import logger = require("morgan");
 import bodyParser = require("body-parser");
 import cluster = require("cluster");
 
-import { IndexRouter } from "./routes/index-router";
+import { IndexRouter } from "./routes/IndexRouter";
 import { Database } from "./globals/Database";
 
 export default class Server {

@@ -1,6 +1,19 @@
 export interface IRegisterUser {
-  id: number;
-  name: string;
+  username: string;
+  password: string;
+  email: string;
+}
+
+export class RegisterUser implements IRegisterUser {
+  public username;
+  public password;
+  public email;
+
+  constructor(username, password, email) {
+    this.username = username;
+    this.password = password;
+    this.email = email;
+  }
 }
 
 export interface ILoginUser {
