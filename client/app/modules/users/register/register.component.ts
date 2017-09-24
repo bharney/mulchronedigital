@@ -56,13 +56,13 @@ export class RegisterComponent implements OnInit {
 
   public toggleRegisterUser(): void {
     this.hasTheFormBeenSubmitted = true;
-    // if (!this.userRegistrationForm.valid) {
-    //   return;
-    // } else {
+    if (!this.userRegistrationForm.valid) {
+      return;
+    } else {
       const newUser = this.createRegisterUserObject();
       this.registerService.registerNewUser(newUser).subscribe(res => {
         console.log(res);
       });
     }
   }
-
+}
