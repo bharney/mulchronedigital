@@ -9,7 +9,12 @@
                             <strong>Username</strong>
                             <i class="fa fa-user" aria-hidden="true"></i>
                         </label>
-                        <input type="text" class="form-control" id="username-input" placeholder="Enter your username" formControlName="username">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="username-input" placeholder="Enter your username" formControlName="username">
+                            <span class="input-group-addon custom-input-addons" *ngIf="!userRegistrationForm.controls.username.errors">
+                                <i class="fa fa-check-circle-o input-checkbox" aria-hidden="true"></i>
+                            </span>
+                        </div>
                         <div class="alert alert-danger" role="alert" *ngIf="userRegistrationForm.controls.username.errors && hasTheFormBeenSubmitted">
                             <strong>You must enter a usename between 4 and 12 characters long</strong>
                         </div>
@@ -19,7 +24,12 @@
                             <strong>Email Address</strong>
                             <i class="fa fa-envelope" aria-hidden="true"></i>
                         </label>
-                        <input type="email" class="form-control" id="login-email-input" placeholder="Enter email address" formControlName="email">
+                        <div class="input-group">
+                            <input type="email" class="form-control" id="login-email-input" placeholder="Enter email address" formControlName="email">
+                            <span class="input-group-addon custom-input-addons" *ngIf="!userRegistrationForm.controls.email.errors">
+                                    <i class="fa fa-check-circle-o input-checkbox" aria-hidden="true"></i>
+                            </span>
+                        </div>
                         <div class="alert alert-danger" role="alert" *ngIf="userRegistrationForm.controls.email.errors && hasTheFormBeenSubmitted">
                             <strong>You must enter a valid email address</strong>
                         </div>
@@ -29,7 +39,12 @@
                             <strong>Password</strong>
                             <i class="fa fa-lock" aria-hidden="true"></i>
                         </label>
-                        <input type="password" class="form-control" id="login-password-input" placeholder="Enter password" formControlName="password">
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="login-password-input" placeholder="Enter password" formControlName="password">
+                            <span class="input-group-addon custom-input-addons" *ngIf="!userRegistrationForm.controls.password.errors">
+                                <i class="fa fa-check-circle-o input-checkbox" aria-hidden="true"></i>
+                            </span>
+                        </div>
                         <div class="alert alert-danger" role="alert" *ngIf="userRegistrationForm.controls.password.errors && hasTheFormBeenSubmitted">
                             <strong>Your password must be atleast 8 characters with one upper case letter, one lower case letter, one number, and one special character</strong>
                         </div>
@@ -39,7 +54,12 @@
                             <strong>Confirm Password</strong>
                             <i class="fa fa-key" aria-hidden="true"></i>
                         </label>
-                        <input type="password" class="form-control" id="control-password-input" placeholder="Confirm password" formControlName="confirmPassword">
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="control-password-input" placeholder="Confirm password" formControlName="confirmPassword">
+                            <span class="input-group-addon custom-input-addons" *ngIf="!userRegistrationForm.controls.confirmPassword.errors">
+                                    <i class="fa fa-check-circle-o input-checkbox" aria-hidden="true"></i>
+                            </span>
+                        </div>
                         <div class="alert alert-danger" role="alert" *ngIf="userRegistrationForm.controls.confirmPassword.errors && hasTheFormBeenSubmitted">
                             <strong>The passwords do not match</strong>
                         </div>
