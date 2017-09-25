@@ -4,11 +4,12 @@ import express = require("express");
 import path = require("path");
 import logger = require("morgan");
 import bodyParser = require("body-parser");
+import cluster = require("cluster");
 
 import { IndexRouter } from "./routes/IndexRouter";
 import { Database } from "./globals/Database";
 
-export default class Server {
+class Server {
   public port = process.env.PORT || 8080;
   public app: express.Application;
   private indexRouter: express.Router;
@@ -31,10 +32,25 @@ export default class Server {
   }
 }
 
-const newServer = new Server();
-const serverWorker = newServer.app.listen(newServer.port, () => {
-  console.log(`Server is listening on ${newServer.port}`);
-  console.log(`running database seed`);
-  Database.SeedDatabase();
-  console.log(`database seed complete`);
-});
+if (cluster.isMaster) {
+  console.log(`Master ${process.pid} is running`);
+  console.log(`Master ${process.pid} running database seed`);
+  if (Database.SeedDatabase()) {
+    console.log(`Master ${process.pid} database seed complete`);
+  }
+
+  const numCPUs = require("os").cpus().length;
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died`);
+    cluster.fork();
+  });
+} else if (cluster.isWorker) {
+  const newServer = new Server();
+  const serverWorker = newServer.app.listen(newServer.port, () => {
+    console.log(`Server is listening on ${newServer.port}`);
+  });
+}

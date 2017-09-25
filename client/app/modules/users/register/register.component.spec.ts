@@ -5,7 +5,7 @@ import "rxjs/Rx";
 
 import { RegisterComponent } from "./register.component";
 import { RegisterService } from "../../../shared/services/user-authenication.service";
-import { IRegisterUser } from "../../../shared/models/user-authenication.model";
+import { RegisterUser } from "../../../shared/models/user-authenication.model";
 
 describe("a register component", () => {
   let component: RegisterComponent;

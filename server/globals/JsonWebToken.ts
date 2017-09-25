@@ -17,7 +17,6 @@ export class JsonWebToken {
   }
 
   public static createSignWebTokenUserObject(id: string, isAdmin: boolean): object {
-    console.log(id);
     return {
       "id": id,
       "isAdmin": isAdmin
