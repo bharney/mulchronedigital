@@ -68,7 +68,7 @@ export class ResponseMessages {
 
   public async successfulUserLogin(databaseUser: User): Promise<object> {
     try {
-      const token = await JsonWebToken.signSignWebToken(databaseUser.username, databaseUser.isAdmin);
+      const token = await JsonWebToken.signSignWebToken(databaseUser._id, databaseUser.isAdmin);
       const message = {
         "status": true,
         "message": `Welcome back ${databaseUser.username}`,

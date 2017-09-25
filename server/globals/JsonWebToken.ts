@@ -5,9 +5,9 @@ import jwt = require("jsonwebtoken");
 
 export class JsonWebToken {
 
-  public static async signSignWebToken(username: string, isAdmin: boolean): Promise<string> {
+  public static async signSignWebToken(id: string, isAdmin: boolean): Promise<string> {
     try {
-      const userObject = this.createSignWebTokenUserObject(username, isAdmin);
+      const userObject = this.createSignWebTokenUserObject(id, isAdmin);
       const privateKey = await this.getPrivateKey();
       const token = await jwt.sign(userObject, privateKey, { algorithm: "RS256", expiresIn: 86400 });
       return token;
@@ -16,9 +16,10 @@ export class JsonWebToken {
     }
   }
 
-  public static createSignWebTokenUserObject(username: string, isAdmin: boolean): object {
+  public static createSignWebTokenUserObject(id: string, isAdmin: boolean): object {
+    console.log(id);
     return {
-      "username": username,
+      "id": id,
       "isAdmin": isAdmin
     };
   }

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LoginService } from "../../../shared/services/user-authenication.service";
 import { LoginUser } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../shared/authenication/UserAuthenicationValidators";
+import * as jwtDecode from "jwt-decode";
 
 @Component({
   selector: "app-login",
@@ -50,7 +51,9 @@ export class LoginComponent implements OnInit {
     } else {
       const loginUser = this.createLoginUser();
       this.loginService.loginUser(loginUser).subscribe(res => {
-        console.log(res);
+        console.log(res.token);
+        const hello = jwtDecode(res.token);
+        console.log(hello);
       });
     }
   }
