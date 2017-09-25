@@ -12,7 +12,7 @@ export class IndexRouter {
     this.createSubRouters();
     this.configureRoutes();
   }
-  
+
   private createSubRouters() {
     this.htmlRouter = new HtmlRouter().router;
     this.userAuthenicationRouter = new UserAuthenicationRouter().router;

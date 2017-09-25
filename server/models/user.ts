@@ -4,6 +4,7 @@ export class User {
   public username: string;
   public email: string;
   public password: string;
+  public isAdmin: boolean;
   public createdAt: string;
   public modifiedAt: string;
 
@@ -11,6 +12,7 @@ export class User {
     this.username = username;
     this.email = email;
     this.password = password;
+    this.isAdmin = false;
     this.modifiedAt = new Date().toLocaleString();
   }
 

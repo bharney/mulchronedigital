@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LoginService } from "../../../shared/services/user-authenication.service";
-import { ILoginUser } from "../../../shared/models/user-authenication.model";
+import { LoginUser } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../shared/authenication/UserAuthenicationValidators";
 
 @Component({
@@ -37,12 +37,21 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  private createLoginUser(): LoginUser {
+    const email = this.userLoginForm.value.email;
+    const password = this.userLoginForm.value.password;
+    return new LoginUser(password, email);
+  }
+
   public toggleLoginUser() {
     this.hasTheFormBeenSubmitted = true;
     if (!this.userLoginForm.valid) {
       return;
     } else {
-
+      const loginUser = this.createLoginUser();
+      this.loginService.loginUser(loginUser).subscribe(res => {
+        console.log(res);
+      });
     }
   }
 }

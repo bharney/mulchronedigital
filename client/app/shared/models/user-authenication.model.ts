@@ -1,10 +1,9 @@
-export interface IRegisterUser {
-  username: string;
-  password: string;
+export interface IUser {
   email: string;
+  password: string;
 }
 
-export class RegisterUser implements IRegisterUser {
+export class RegisterUser implements IUser {
   public username;
   public password;
   public email;
@@ -16,7 +15,25 @@ export class RegisterUser implements IRegisterUser {
   }
 }
 
-export interface ILoginUser {
-  id: number;
-  name: string;
+
+export class LoginUser implements IUser {
+  public email;
+  public password;
+
+  constructor(password, email) {
+    this.password = password;
+    this.email = email;
+  }
+}
+
+
+export interface IUserRegisterResponse {
+  status: boolean;
+  message: string;
+}
+
+export interface ILoginUserResponse {
+  status: boolean;
+  message: string;
+  token: string;
 }
