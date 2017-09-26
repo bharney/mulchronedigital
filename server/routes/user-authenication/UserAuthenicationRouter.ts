@@ -3,7 +3,7 @@ import { BaseRouter } from "../classes/BaseRouter";
 import { UserAuthenicationValidation } from "../classes/UserAuthenicationValidation";
 import { Database } from "../../globals/Database";
 import { User } from "../../models/user";
-import { ResponseMessages } from '../../globals/ResponseMessages';
+import { ResponseMessages } from "../../globals/ResponseMessages";
 
 
 export class UserAuthenicationRouter extends BaseRouter {
@@ -30,19 +30,19 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
     try {
       if (!await UserAuthenicationValidation.isUserNameValid(req.body.username)) {
-        res.json(res.locals.responseMessages.usernameIsNotValid());
+        res.status(422).json(res.locals.responseMessages.usernameIsNotValid());
         res.end();
         return;
       }
 
       if (!await UserAuthenicationValidation.isEmailValid(req.body.email)) {
-        res.json(res.locals.responseMessages.emailIsNotValid());
+        res.status(422).json(res.locals.responseMessages.emailIsNotValid());
         res.end();
         return;
       }
 
       if (!await UserAuthenicationValidation.isPasswordValid(req.body.password)) {
-        res.json(res.locals.responseMessages.passwordIsNotValid());
+        res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
         res.end();
         return;
       }
@@ -60,7 +60,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       const databaseUser = await usersCollection.findOne({ "username": req.body.username });
       if (databaseUser) {
         db.close();
-        res.json(res.locals.responseMessages.usernameIsTaken(req.body.username));
+        res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.username));
         res.end();
         return;
       }
@@ -68,7 +68,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       const databaseEmail = await usersCollection.findOne({ "email": req.body.email });
       if (databaseEmail) {
         db.close();
-        res.json(res.locals.responseMessages.emailIsTaken(req.body.email));
+        res.status(409).json(res.locals.responseMessages.emailIsTaken(req.body.email));
         res.end();
         return;
       }
@@ -83,23 +83,22 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async insertNewUser(req: Request, res: Response) {
     try {
       const newUser = new User(req.body.username, req.body.email, req.body.password);
-      const wasUserSetupSuccessful = await newUser.SetupNewUser();
       // TODO: split this up into seperate functions. little messy;
-      if (wasUserSetupSuccessful) {
+      if (await newUser.SetupNewUser()) {
         const usersCollection = res.locals.db.collection("Users");
         const insertResult = await usersCollection.insertOne(newUser);
         if (insertResult.result.n === 1) {
           res.locals.db.close();
-          res.json(res.locals.responseMessage.userRegistrationSuccessful(req.body.username));
+          res.status(200).json(res.locals.responseMessages.userRegistrationSuccessful(req.body.username));
           res.end();
         } else {
           res.locals.db.close();
-          res.json(res.locals.responseMessage.dbError());
+          res.status(503).json(res.locals.responseMessages.dbError());
           res.end();
         }
       } else {
         res.locals.db.close();
-        res.json(res.locals.responseMessage.dbError());
+        res.status(503).json(res.locals.responseMessages.dbError());
         res.end();
       }
     } catch (error) {
@@ -113,37 +112,33 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidation.isEmailValid(req.params.email)) {
         res.json(res.locals.responseMessages.emailIsNotValid());
         res.end();
-        return;
       }
 
       if (!await UserAuthenicationValidation.isPasswordValid(req.params.password)) {
         res.json(res.locals.responseMessages.passwordIsNotValid());
         res.end();
-        return;
       }
 
       const db = await Database.CreateDatabaseConnection();
       const usersCollection = db.collection("Users");
-      const databaseUser: User = await usersCollection.findOne({"email": req.params.email});
+      const databaseUser: User = await usersCollection.findOne({ "email": req.params.email });
       if (databaseUser) {
-          if (!await UserAuthenicationValidation.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUser.password)) {
-              db.close();
-              res.json(res.locals.responseMessages.passwordsDoNotMatch());
-              res.end();
-              return;
-          }
-
-            db.close();
-            res.json(await res.locals.responseMessages.successfulUserLogin(databaseUser));
-            res.end();
-            return;
-          }
-
+        if (!await UserAuthenicationValidation.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUser.password)) {
           db.close();
-          res.json(res.locals.responseMessages.noUserFound());
+          res.json(res.locals.responseMessages.passwordsDoNotMatch());
           res.end();
-      } catch (error) {
-        throw error;
+        } else {
+          db.close();
+          res.json(await res.locals.responseMessages.successfulUserLogin(databaseUser));
+          res.end();
+        }
+      } else {
+        db.close();
+        res.json(res.locals.responseMessages.noUserFound());
+        res.end();
+      }
+    } catch (error) {
+      throw error;
     }
   }
 }

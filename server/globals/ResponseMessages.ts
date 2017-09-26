@@ -27,14 +27,14 @@ export class ResponseMessages {
   public usernameIsTaken(username: string): object {
     return {
       "status": false,
-      "message": `Sorry but, the username ${username} is already in use by one of our users`
+      "message": `Sorry, but the username ${username} is already in use by one of our users`
     };
   }
 
   public emailIsTaken(email: string): object {
     return {
       "status": false,
-      "message": `Sorry but, the email ${email} is already in use by by one of our users`
+      "message": `Sorry, but the email ${email} is already in use by by one of our users`
     };
   }
 

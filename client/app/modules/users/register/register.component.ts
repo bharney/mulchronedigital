@@ -1,8 +1,10 @@
+import { Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { RegisterService } from "../../../shared/services/user-authenication.service";
 import { RegisterUser } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../shared/authenication/UserAuthenicationValidators";
+declare const $: any;
 
 @Component({
   selector: "app-register",
@@ -12,12 +14,17 @@ import { UserAuthenicationValidator } from "../../../shared/authenication/UserAu
 })
 export class RegisterComponent implements OnInit {
   public userRegistrationForm: FormGroup;
-  public hasTheFormBeenSubmitted = false;
+  public hasTheFormBeenSubmitted: boolean = false;
+  public modalTitle: string = "";
+  public modalBody: string = "";
+  public registrationSuccessful: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
-    private registerService: RegisterService
-  ) {}
+    private registerService: RegisterService,
+    private router: Router
+  ) {
+  }
 
   ngOnInit(): void {
     this.createFormGroup();
@@ -61,8 +68,27 @@ export class RegisterComponent implements OnInit {
     } else {
       const newUser = this.createRegisterUserObject();
       this.registerService.registerNewUser(newUser).subscribe(res => {
-        console.log(res);
+        (res.status) ? this.registrationSuccessfulTextConfig() : this.registrationUnSuccessfulTextConfig();
+        this.modalBody = res.message;
+        $("#register-modal").modal();
       });
     }
+  }
+
+  private registrationSuccessfulTextConfig(): void {
+    this.modalTitle = "Registration successful";
+    this.registrationSuccessful = true;
+  }
+
+  private registrationUnSuccessfulTextConfig(): void {
+    this.modalTitle = "Registration unsuccessful";
+    this.registrationSuccessful = false;
+  }
+
+  public closeModalAndNavigateToLogin(): void {
+    $("#register-modal").modal("hide");
+    setTimeout(() => {
+      this.router.navigate(["../../users/login"]);
+    }, 1000);
   }
 }
