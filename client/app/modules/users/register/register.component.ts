@@ -65,14 +65,20 @@ export class RegisterComponent implements OnInit {
     this.hasTheFormBeenSubmitted = true;
     if (!this.userRegistrationForm.valid) {
       return;
-    } else {
-      const newUser = this.createRegisterUserObject();
-      this.registerService.registerNewUser(newUser).subscribe(res => {
-        (res.status) ? this.registrationSuccessfulTextConfig() : this.registrationUnSuccessfulTextConfig();
-        this.modalBody = res.message;
+    }
+    const newUser = this.createRegisterUserObject();
+    this.registerService.registerNewUser(newUser)
+      .subscribe(res => {
+        if (res.status) {
+          this.registrationSuccessfulTextConfig();
+          this.modalBody = res.message;
+          $("#register-modal").modal();
+        }
+      }, error => {
+        this.registrationUnSuccessfulTextConfig();
+        this.modalBody = error.message;
         $("#register-modal").modal();
       });
-    }
   }
 
   private registrationSuccessfulTextConfig(): void {
