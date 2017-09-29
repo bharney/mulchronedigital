@@ -2,7 +2,7 @@ import { Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { RegisterService } from "../../../shared/services/user-authenication.service";
-import { RegisterUser } from "../../../shared/models/user-authenication.model";
+import { RegisterUser, IUserRegisterResponse } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../shared/authenication/UserAuthenicationValidators";
 declare const $: any;
 
@@ -68,16 +68,14 @@ export class RegisterComponent implements OnInit {
     }
     const newUser = this.createRegisterUserObject();
     this.registerService.registerNewUser(newUser)
-      .subscribe(res => {
+      .subscribe((res: IUserRegisterResponse) => {
         if (res.status) {
           this.registrationSuccessfulTextConfig();
-          this.modalBody = res.message;
-          $("#register-modal").modal();
+          this.toggleModal(res.message);
         }
-      }, error => {
+      }, (error: IUserRegisterResponse) => {
         this.registrationUnSuccessfulTextConfig();
-        this.modalBody = error.message;
-        $("#register-modal").modal();
+        this.toggleModal(error.message);
       });
   }
 
@@ -89,6 +87,11 @@ export class RegisterComponent implements OnInit {
   private registrationUnSuccessfulTextConfig(): void {
     this.modalTitle = "Registration unsuccessful";
     this.registrationSuccessful = false;
+  }
+
+  private toggleModal(message: string): void {
+    this.modalBody = message;
+    $("#register-modal").modal();
   }
 
   public closeModalAndNavigateToLogin(): void {

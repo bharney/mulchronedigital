@@ -1,3 +1,4 @@
+import { ActivatedRoute } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
 import { DashboardService } from "../../../shared/services/dashboard.service";
 import { Dashboard } from "../../../shared/models/dashboard.model";
@@ -10,13 +11,13 @@ import { Dashboard } from "../../../shared/models/dashboard.model";
 })
 
 export class DashboardComponent implements OnInit {
-  dashboard: Dashboard[] = [];
 
-  constructor(private dashboardService: DashboardService) { }
+  constructor(
+    private dashboardService: DashboardService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
-    this.dashboardService.getList().subscribe((res) => {
-      this.dashboard = res;
-    });
+
   }
 }

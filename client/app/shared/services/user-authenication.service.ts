@@ -16,8 +16,13 @@ export class LoginService {
   ) { }
 
   public loginUser(user: LoginUser): Observable<ILoginUserResponse> {
-    return this.http.get(`/api/userauth/loginuser/${user.email}/${user.password}`).map((res: Response) => {
+    return this.http.get(`/api/userauth/loginuser/${user.email}/${user.password}`)
+    .map((res: Response) => {
       return res.json();
+    })
+    .catch((error) => {
+      const errorResponse = error.json();
+      return Observable.throw(errorResponse);
     });
   }
 }
@@ -30,11 +35,11 @@ export class RegisterService {
     private authControl: AuthenicationControl
   ) { }
 
-  public registerNewUser(user: RegisterUser): Observable<any> {
+  public registerNewUser(user: RegisterUser): Observable<IUserRegisterResponse> {
     const options = this.authControl.createRequestOptionsWithApplicationJsonHeaders();
     return this.http.post("/api/userauth/registeruser", user, options)
-      .map((response) => {
-        return response.json();
+      .map((res: Response) => {
+        return res.json();
       })
       .catch((error) => {
         const errorResponse = error.json();

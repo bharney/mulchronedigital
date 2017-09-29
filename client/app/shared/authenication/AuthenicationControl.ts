@@ -1,19 +1,20 @@
 import { Injectable } from "@angular/core";
 import { Headers, RequestOptions } from "@angular/http";
+import * as jwtDecode from "jwt-decode";
 
 @Injectable()
 export class AuthenicationControl {
 
     public storeJsonWebToken(jsonWebToken: string): void {
-        localStorage.setItem("token", jsonWebToken);
+        localStorage.setItem("authenication-token", jsonWebToken);
     }
 
     public getJsonWebTokenFromSessionStorage(): string {
-        return localStorage.getItem("token");
+        return localStorage.getItem("authenication-token");
     }
 
     public removeJsonWebToken(): void {
-        localStorage.removeItem("token");
+        localStorage.removeItem("authenication-token");
     }
 
     public isTheUserAuthenicated(): boolean {
@@ -23,7 +24,7 @@ export class AuthenicationControl {
         } else {
             return true;
         }
-    }
+      }
 
     public createAuthorizationHeader(): RequestOptions {
         // if the user doesnt not have a token stored stop

@@ -1,9 +1,10 @@
+import { Router } from "@angular/router";
+import { AuthenicationControl } from "../../../shared/globals/AuthenicationControl";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LoginService } from "../../../shared/services/user-authenication.service";
-import { LoginUser } from "../../../shared/models/user-authenication.model";
+import { ILoginUserResponse, IUserRegisterResponse, LoginUser} from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../shared/authenication/UserAuthenicationValidators";
-import * as jwtDecode from "jwt-decode";
 
 @Component({
   selector: "app-login",
@@ -18,7 +19,9 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private loginService: LoginService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private authControl: AuthenicationControl,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -48,13 +51,28 @@ export class LoginComponent implements OnInit {
     this.hasTheFormBeenSubmitted = true;
     if (!this.userLoginForm.valid) {
       return;
-    } else {
-      const loginUser = this.createLoginUser();
-      this.loginService.loginUser(loginUser).subscribe(res => {
-        console.log(res.token);
-        const hello = jwtDecode(res.token);
-        console.log(hello);
+    }
+
+    const loginUser = this.createLoginUser();
+    this.loginService.loginUser(loginUser)
+      .subscribe((res: ILoginUserResponse) => {
+        if (res.status) {
+          this.authControl.storeJsonWebToken(res.token);
+          this.routerToUserDashboardOrAdminDashboard(res.token);
+        }
+      }, (error: IUserRegisterResponse) => {
+          // TODO: display modal error
+          console.log(error);
       });
+  }
+
+  private routerToUserDashboardOrAdminDashboard(token: string): void {
+    const decodedToken: any = this.authControl.getDecodedToken(token);
+    const userId = decodedToken.id;
+    if (decodedToken.isAdmin) {
+      // TODO: route to admin dashboard
+    } else {
+      this.router.navigate([`../../users/dashboard`, { id: userId }]);
     }
   }
 }
