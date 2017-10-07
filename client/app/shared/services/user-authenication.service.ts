@@ -5,14 +5,13 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 
 import { LoginUser, RegisterUser, IUserRegisterResponse, ILoginUserResponse } from "../models/user-authenication.model";
-import { AuthenicationControl } from "../authenication/AuthenicationControl";
+import { RequestHeaders } from "../http/RequestHeaders";
 
 @Injectable()
 export class LoginService {
 
   constructor(
     private http: Http,
-    private authControl: AuthenicationControl
   ) { }
 
   public loginUser(user: LoginUser): Observable<ILoginUserResponse> {
@@ -32,11 +31,11 @@ export class RegisterService {
 
   constructor(
     private http: Http,
-    private authControl: AuthenicationControl
+    private requestHeaders: RequestHeaders
   ) { }
 
   public registerNewUser(user: RegisterUser): Observable<IUserRegisterResponse> {
-    const options = this.authControl.createRequestOptionsWithApplicationJsonHeaders();
+    const options = this.requestHeaders.createRequestOptionsWithApplicationJsonHeaders();
     return this.http.post("/api/userauth/registeruser", user, options)
       .map((res: Response) => {
         return res.json();
