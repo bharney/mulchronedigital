@@ -10,7 +10,7 @@ export class AuthenicationControl {
     localStorage.setItem("authenication-token", jsonWebToken);
   }
 
-  private getJsonWebTokenFromLocalStorage(): string {
+  public getJsonWebTokenFromLocalStorage(): string {
     return localStorage.getItem("authenication-token");
   }
 
@@ -34,23 +34,5 @@ export class AuthenicationControl {
     const decodedToken = jwtDecode(storageToken);
     const token = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"]);
     return token;
-  }
-
-  public createAuthorizationHeader(): RequestOptions {
-    // if the user doesnt not have a token stored stop
-    if (!this.isTheUserAuthenicated) {
-      return;
-    } else {
-      const options = new RequestOptions({ headers: new Headers() });
-      const token = this.getJsonWebTokenFromLocalStorage();
-      options.headers.set("x-access-token", token);
-      return options;
-    }
-  }
-
-  public createRequestOptionsWithApplicationJsonHeaders(): RequestOptions {
-    const headers = new Headers({ "Content-Type": "application/json" });
-    const requestOptions = new RequestOptions({ headers: headers });
-    return requestOptions;
   }
 }
