@@ -1,5 +1,5 @@
 import { Router } from "@angular/router";
-import { AuthenicationControl } from "../../../shared/globals/AuthenicationControl";
+import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LoginService } from "../../../shared/services/user-authenication.service";
@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
     if (decodedToken.isAdmin) {
       // TODO: route to admin dashboard
     } else {
-      this.router.navigate([`../../users/dashboard`, { id: userId }]);
+      this.router.navigate([`../../users/dashboard/:`, { id: userId }]);
     }
   }
 }

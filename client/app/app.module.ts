@@ -4,8 +4,8 @@ import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 
 import { AppComponent } from "./app.component";
+import { AuthenicationControl } from "./shared/authenication/AuthenicationControl";
 import { NavbarTopComponent } from "./components/navbar-top/navbar-top.component";
-import { AuthenicationControl } from "./shared/globals/AuthenicationControl";
 
 @NgModule({
   declarations: [

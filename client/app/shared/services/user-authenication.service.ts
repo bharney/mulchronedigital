@@ -5,7 +5,7 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 
 import { LoginUser, RegisterUser, IUserRegisterResponse, ILoginUserResponse } from "../models/user-authenication.model";
-import { AuthenicationControl } from "../globals/AuthenicationControl";
+import { AuthenicationControl } from "../authenication/AuthenicationControl";
 
 @Injectable()
 export class LoginService {

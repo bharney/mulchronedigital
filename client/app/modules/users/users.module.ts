@@ -6,6 +6,8 @@ import { RegisterComponent } from "./register/register.component";
 import { LoginComponent } from "./login/login.component";
 import { UsersRouting } from "./users.routing";
 import { DashboardComponent } from "./dashboard/dashboard.component";
+import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
+import { ClientAuthGuard } from "../../shared/authenication/ClientAuthGuard";
 
 @NgModule({
   imports: [
@@ -18,7 +20,10 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
     LoginComponent,
     DashboardComponent
   ],
-  providers: []
+  providers: [
+    ClientAuthGuard,
+    AuthenicationControl
+  ]
 })
 export class UsersLazyModule { }
 
