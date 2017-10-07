@@ -1,15 +1,20 @@
+import { RequestHeaders } from "../http/RequestHeaders";
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, RequestOptions } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
-import { Dashboard } from "../models/dashboard.model"; 
+import { Dashboard } from "../models/dashboard.model";
 
 @Injectable()
 export class DashboardService {
 
-  constructor(private http: Http) { }
+  constructor(
+    private http: Http,
+    private requestHeaders: RequestHeaders
+  ) { }
 
-  getList(): Observable<Dashboard[]> {
-    return this.http.get("/api/list").map(res => res.json() as Dashboard[]);
+  getUserInformation(): Observable<Dashboard[]> {
+    const options: RequestOptions = this.requestHeaders.createAuthorizationHeader();
+    return this.http.get("/api/list", options).map(res => res.json() as Dashboard[]);
   }
 }

@@ -31,6 +31,9 @@ export class AuthenicationControl {
 
   public getDecodedToken() {
     const storageToken = this.getJsonWebTokenFromLocalStorage();
+    if (storageToken === null) {
+      return null;
+    }
     const decodedToken = jwtDecode(storageToken);
     const token = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"]);
     return token;
