@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Headers, RequestOptions } from "@angular/http";
 import * as jwtDecode from "jwt-decode";
+import { JsonWebToken } from "../models/user-authenication.model";
 
 @Injectable()
 export class AuthenicationControl {
@@ -9,7 +10,7 @@ export class AuthenicationControl {
     localStorage.setItem("authenication-token", jsonWebToken);
   }
 
-  public getJsonWebTokenFromLocalStorage(): string {
+  private getJsonWebTokenFromLocalStorage(): string {
     return localStorage.getItem("authenication-token");
   }
 
@@ -18,12 +19,21 @@ export class AuthenicationControl {
   }
 
   public isTheUserAuthenicated(): boolean {
-    const token = this.getJsonWebTokenFromLocalStorage();
+    const token = this.getDecodedToken();
     if (token === null) {
+      return false;
+    } else if (new Date(token.exp) > new Date()) {
       return false;
     } else {
       return true;
     }
+  }
+
+  public getDecodedToken() {
+    const storageToken = this.getJsonWebTokenFromLocalStorage();
+    const decodedToken = jwtDecode(storageToken);
+    const token = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"]);
+    return token;
   }
 
   public createAuthorizationHeader(): RequestOptions {
@@ -36,11 +46,6 @@ export class AuthenicationControl {
       options.headers.set("x-access-token", token);
       return options;
     }
-  }
-
-  public getDecodedToken(token: string) {
-    const decodedToken = jwtDecode(token);
-    return decodedToken;
   }
 
   public createRequestOptionsWithApplicationJsonHeaders(): RequestOptions {

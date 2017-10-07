@@ -3,7 +3,7 @@ import { AuthenicationControl } from "../../../shared/authenication/Authenicatio
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LoginService } from "../../../shared/services/user-authenication.service";
-import { ILoginUserResponse, IUserRegisterResponse, LoginUser} from "../../../shared/models/user-authenication.model";
+import { ILoginUserResponse, IUserRegisterResponse, LoginUser, JsonWebToken } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../shared/authenication/UserAuthenicationValidators";
 
 @Component({
@@ -58,7 +58,7 @@ export class LoginComponent implements OnInit {
       .subscribe((res: ILoginUserResponse) => {
         if (res.status) {
           this.authControl.storeJsonWebToken(res.token);
-          this.routerToUserDashboardOrAdminDashboard(res.token);
+          this.routerToUserDashboardOrAdminDashboard();
         }
       }, (error: IUserRegisterResponse) => {
           // TODO: display modal error
@@ -66,13 +66,12 @@ export class LoginComponent implements OnInit {
       });
   }
 
-  private routerToUserDashboardOrAdminDashboard(token: string): void {
-    const decodedToken: any = this.authControl.getDecodedToken(token);
-    const userId = decodedToken.id;
-    if (decodedToken.isAdmin) {
+  private routerToUserDashboardOrAdminDashboard(): void {
+    const token: JsonWebToken = this.authControl.getDecodedToken();
+    if (token.isAdmin) {
       // TODO: route to admin dashboard
     } else {
-      this.router.navigate([`../../users/dashboard/:`, { id: userId }]);
+      this.router.navigate([`../../users/dashboard/:`, { id: token.id }]);
     }
   }
 }
