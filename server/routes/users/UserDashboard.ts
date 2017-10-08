@@ -1,5 +1,6 @@
 import { BaseRouter } from "../classes/BaseRouter";
-import {Router, Request, Response, NextFunction} from "express";
+import { Router, Request, Response, NextFunction } from "express";
+import { JsonWebToken } from "../../security/JsonWebToken";
 
 
 export class UserDashboardRouter extends BaseRouter {
@@ -18,12 +19,14 @@ export class UserDashboardRouter extends BaseRouter {
   }
 
   private async validateUserCredentials(req: Request, res: Response, next: NextFunction) {
-    if (req.headers["User-Authenication-Token"] === null) {
+    console.log("hello");
+    if (req.headers["user-authenication-token"] === null) {
       res.json(res.locals.responseMessage.noJsonWebTokenInHeader());
       res.end();
     }
+    console.log("hello");
     const token = req.headers["user-authenication-token"];
-    if (!await j)
+    await JsonWebToken.verifiyJsonWebToken(token);
 
   }
 }

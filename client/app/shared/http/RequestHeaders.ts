@@ -12,7 +12,7 @@ export class RequestHeaders {
       } else {
         const options = this.createRequestOptionsWithApplicationJsonHeaders();
         const token = authControl.getJsonWebTokenFromLocalStorage();
-        options.headers.set("User-Authenication-Token", token);
+        options.headers.set("user-authenication-token", token);
         return options;
       }
     }

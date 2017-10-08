@@ -1,9 +1,9 @@
-import { JsonWebToken } from "../../../shared/models/user-authenication.model";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
 import { DashboardService } from "../../../shared/services/dashboard.service";
 import { Dashboard } from "../../../shared/models/dashboard.model";
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
+import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 
 @Component({
   selector: "app-users-dashboard",
@@ -27,18 +27,20 @@ export class DashboardComponent implements OnInit {
 
   private isUserAuthorizedToBeHere() {
     this.route.params.subscribe(params => {
-      const userIdParam: string = params["id"];
-      const token: JsonWebToken = this.authControl.getDecodedToken();
-      if (token.id !== userIdParam) {
-        this.router.navigate(["../../users/login"]);
+      if (params["id"] !== null) {
+        const userIdParam: string = params["id"];
+        const token: JsonWebToken = this.authControl.getDecodedToken();
+        if (token.id !== userIdParam) {
+          this.router.navigate(["../../users/login"]);
+        }
+        this.configureUserDashboard();
       }
-      this.configureUserDashboard();
     });
   }
 
   private configureUserDashboard(): void {
     this.dashboardService.getUserInformation().subscribe(response => {
-
+      console.log(response);
     });
   }
 }

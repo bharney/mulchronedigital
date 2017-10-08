@@ -1,7 +1,8 @@
+
 import { Component, OnInit } from "@angular/core";
 import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
 import { Router } from "@angular/router";
-import { JsonWebToken } from "../../shared/models/user-authenication.model";
+import { JsonWebToken } from "../../../../shared/interfaces/IJsonWebToken";
 
 @Component({
   selector: "app-navbar-top",

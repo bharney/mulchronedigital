@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Headers, RequestOptions } from "@angular/http";
 import * as jwtDecode from "jwt-decode";
-import { JsonWebToken } from "../models/user-authenication.model";
+import { JsonWebToken } from "../../../../shared/interfaces/IJsonWebToken";
 
 @Injectable()
 export class AuthenicationControl {
