@@ -1,4 +1,4 @@
-import { JsonWebToken } from "./JsonWebToken";
+import { JsonWebToken } from "../security/JsonWebToken";
 import { User } from "../models/user";
 
 export class ResponseMessages {
@@ -63,6 +63,13 @@ export class ResponseMessages {
     return {
       "status": false,
       "message": "Sorry the password you entered does not match the one stored"
+    };
+  }
+
+  public noJsonWebTokenInHeader(): object {
+    return {
+      "status": false,
+      "message": "Please login in before trying to access your dashboard"
     };
   }
 
