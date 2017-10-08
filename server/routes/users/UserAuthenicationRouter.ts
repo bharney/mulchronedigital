@@ -24,7 +24,7 @@ export class UserAuthenicationRouter extends BaseRouter {
 
     // Login User
     this.router.use("/loginuser/:email/:password", this.createStandardLocalResponseObjects);
-    this.router.use("/loginuser/:email/:password", this.validateLoginUserRequest);
+    this.router.get("/loginuser/:email/:password", this.validateLoginUserRequest);
   }
 
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
