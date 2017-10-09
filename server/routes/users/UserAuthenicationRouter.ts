@@ -93,12 +93,12 @@ export class UserAuthenicationRouter extends BaseRouter {
           res.end();
         } else {
           res.locals.db.close();
-          res.status(503).json(res.locals.responseMessages.dbError());
+          res.status(503).json(res.locals.responseMessages.generalError());
           res.end();
         }
       } else {
         res.locals.db.close();
-        res.status(503).json(res.locals.responseMessages.dbError());
+        res.status(503).json(res.locals.responseMessages.generalError());
         res.end();
       }
     } catch (error) {

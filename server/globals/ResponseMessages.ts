@@ -1,4 +1,4 @@
-import { JsonWebToken } from "../security/JsonWebToken";
+import { JsonWebTokenWorkers } from "../security/JsonWebTokenWorkers";
 import { User } from "../models/user";
 
 export class ResponseMessages {
@@ -45,7 +45,7 @@ export class ResponseMessages {
     };
   }
 
-  public dbError(): object {
+  public generalError(): object {
     return {
       "status": false,
       "message": "Something went wrong on our end, please give a moment and try again"
@@ -73,9 +73,17 @@ export class ResponseMessages {
     };
   }
 
+  public jsonWebTokenExpired(): object {
+    return {
+      "status": false,
+      "message": "Please verify your login information again please",
+      "token": null
+    };
+  }
+
   public async successfulUserLogin(databaseUser: User): Promise<object> {
     try {
-      const token = await JsonWebToken.signSignWebToken(databaseUser._id, databaseUser.isAdmin);
+      const token = await JsonWebTokenWorkers.signSignWebToken(databaseUser._id, databaseUser.isAdmin);
       const message = {
         "status": true,
         "message": `Welcome back ${databaseUser.username}`,
@@ -83,6 +91,7 @@ export class ResponseMessages {
       };
       return message;
     } catch (error) {
+      // TODO: retry or send user error message?
       throw error;
     }
   }

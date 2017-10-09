@@ -2,8 +2,9 @@ const promise = require("bluebird");
 const fs = promise.promisifyAll(require("fs"));
 import path = require("path");
 import jwt = require("jsonwebtoken");
+import { JsonWebToken } from "../../shared/interfaces/IJsonWebToken";
 
-export class JsonWebToken {
+export class JsonWebTokenWorkers {
 
   public static async signSignWebToken(id: string, isAdmin: boolean): Promise<string> {
     try {
@@ -35,14 +36,25 @@ export class JsonWebToken {
     });
   }
 
-  public static async verifiyJsonWebToken(token) {
-      try {
-        const publicKey = await this.getPublicKey();
-        const decodedToken: IJsonWebToken = await jwt.verify(token, publicKey);
-        if ()
-      } catch (error) {
-        console.log(error);
-      }
+  public static async verifiyJsonWebToken(token): Promise<boolean> {
+    try {
+      const publicKey = await this.getPublicKey();
+      await jwt.verify(token, publicKey);
+      return true;
+    } catch (error) {
+      // TODO: log error?
+      return false;
+    }
+  }
+
+  public static async getDecodedJsonWebToken(token): Promise<any> {
+    try {
+      const decodedToken = jwt.decode(token);
+      const tokenObject: JsonWebToken = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"]);
+      return tokenObject;
+    } catch (error) {
+      return null;
+    }
   }
 
   public static createDecodedTokenUserObject(id: string, isAdmin: boolean, exp): object {
@@ -60,5 +72,4 @@ export class JsonWebToken {
         });
     });
   }
-
 }
