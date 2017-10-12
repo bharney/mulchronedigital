@@ -1,5 +1,6 @@
 import { Resolve } from "@angular/router";
-import { MongoClient, Db } from "mongodb";
+import { MongoClient, Db, Collection } from "mongodb";
+import { User } from "../models/user";
 
 export class Database {
   public static CreateDatabaseConnection(): Promise<Db> {
@@ -35,10 +36,65 @@ export class Database {
 
   private static async CreateUsersCollection(db: Db): Promise<boolean> {
     try {
-      const result = await db.createCollection("Users");
-      // TODO: configure a bunch of insert statements to insert standard test users.
+      const collection: Collection<User> = await db.createCollection<User>("Users");
+      if (!await this.CreateUserCollectionIndexes(collection)) {
+        throw new Error("user collection index creation failed");
+      }
+
+      if (!await this.CreateUserObjects(collection)) {
+        throw new Error("user objects failed");
+      }
+
       return true;
     } catch (error) {
+      console.log(error);
+      // TODO: log error??
+      return false;
+    }
+  }
+
+  private static async CreateUserCollectionIndexes(collection: Collection<User>): Promise<boolean> {
+    try {
+      const indexes: object[] = [
+        {
+          "key": {
+            username: 1
+          },
+          "name": "username",
+          unique: true,
+          background: true
+        },
+        {
+          "key": {
+            email: 1
+          },
+          "name": "email",
+          unique: true,
+          background: true
+        }
+      ];
+      await collection.createIndexes(indexes);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  private static async CreateUserObjects(collection: Collection<User>): Promise<boolean> {
+    try {
+      const usernames: string[] = ["admin", "basicuser"];
+      const emails: string[] = ["admin@gmail.com", "basicuser@gmail.com"];
+      const newUsers: User[] = [];
+      for (let i = 0; i < usernames.length; i++) {
+        const newUser: User = new User(usernames[i], emails[i], "Password1234!@#$");
+        if (await newUser.SetupNewUser()) {
+          newUsers.push(newUser);
+        }
+      }
+      await collection.insertMany(newUsers);
+      return true;
+    } catch (error) {
+      // TODO: log error??
       return false;
     }
   }
