@@ -19,7 +19,7 @@ export class DashboardComponent implements OnInit {
     private authControl: AuthenicationControl,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.isUserAuthorizedToBeHere();
@@ -33,14 +33,18 @@ export class DashboardComponent implements OnInit {
         if (token.id !== userIdParam) {
           this.router.navigate(["../../users/login"]);
         }
-        this.configureUserDashboard();
+        this.getUserDashboardInformation();
       }
     });
   }
 
-  private configureUserDashboard(): void {
+  private getUserDashboardInformation(): void {
     this.dashboardService.getUserInformation().subscribe(response => {
-      console.log(response);
+      if (response.status) {
+        console.log(response);
+      }
+    }, (error) => {
+
     });
   }
 }

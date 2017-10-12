@@ -95,4 +95,11 @@ export class ResponseMessages {
       throw error;
     }
   }
+
+  public dashboardUserFound(databaseUser: User): object {
+    return {
+      "status": true,
+      "username": databaseUser.username
+    };
+  }
 }
