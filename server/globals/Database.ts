@@ -16,27 +16,30 @@ export class Database {
     });
   }
 
-  public static InsertDocument(): void {}
-
-  public static UpdateDocument(): void {}
-
-  public static DeleteDocument(): void {}
-
-  public static GetDocument(): void {}
-
   public static async SeedDatabase(): Promise<boolean> {
+    const db = await this.CreateDatabaseConnection();
     try {
-      const db = await this.CreateDatabaseConnection();
+      const userCollection = await db.listCollections({ "name": "Users" }).toArray();
+      if (userCollection.length <= 0) {
+        if (!await this.CreateUsersCollection(db)) {
+          throw new Error("seed failed");
+        }
+      }
+      db.close();
       return true;
     } catch (error) {
-      console.log(error);
+      db.close();
       return false;
     }
   }
 
-  public static async GetUserValues() {
-
+  private static async CreateUsersCollection(db: Db): Promise<boolean> {
+    try {
+      const result = await db.createCollection("Users");
+      // TODO: configure a bunch of insert statements to insert standard test users.
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
-
-
 }
