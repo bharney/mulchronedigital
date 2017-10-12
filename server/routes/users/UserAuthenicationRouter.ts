@@ -57,16 +57,21 @@ export class UserAuthenicationRouter extends BaseRouter {
     try {
       const db = await Database.CreateDatabaseConnection();
       const usersCollection = db.collection("Users");
-      const databaseUser = await usersCollection.findOne({ "username": req.body.username });
-      if (databaseUser) {
+      const databaseUser: User[] = await usersCollection.find<User>(
+        { "username": req.body.username }, { "_id": 1 }
+      ).toArray();
+      if (databaseUser.length > 0) {
         db.close();
         res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.username));
         res.end();
         return;
       }
 
-      const databaseEmail = await usersCollection.findOne({ "email": req.body.email });
-      if (databaseEmail) {
+      const databaseEmail = await usersCollection.find(
+        { "email": req.body.email },
+        { "_id": 1 }
+      ).toArray();
+      if (databaseEmail.length > 0) {
         db.close();
         res.status(409).json(res.locals.responseMessages.emailIsTaken(req.body.email));
         res.end();
@@ -121,15 +126,19 @@ export class UserAuthenicationRouter extends BaseRouter {
 
       const db = await Database.CreateDatabaseConnection();
       const usersCollection = db.collection("Users");
-      const databaseUser: User = await usersCollection.findOne({ "email": req.params.email });
-      if (databaseUser) {
-        if (!await UserAuthenicationValidation.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUser.password)) {
+      const databaseUsers: User[] = await usersCollection.find<User>(
+        { "email": req.params.email },
+        {"_id": 1, "password": 1, "username": 1, "isAdmin": 1}
+      ).toArray();
+      // should only be one user with this email
+      if (databaseUsers.length === 1) {
+        if (!await UserAuthenicationValidation.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
           db.close();
           res.json(res.locals.responseMessages.passwordsDoNotMatch());
           res.end();
         } else {
           db.close();
-          res.json(await res.locals.responseMessages.successfulUserLogin(databaseUser));
+          res.json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
           res.end();
         }
       } else {
