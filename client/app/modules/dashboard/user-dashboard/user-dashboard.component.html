@@ -1,30 +1,30 @@
 <!-- Start main row -->
 <div class="main-row row">
-    <div class="col-3">
-      <div class="card text-center">
-        <img *ngIf="userImage" class="card-img-top" src="" alt="User picture placeholder">
-        <i *ngIf="!userImage" id="user-image-placeholder" class="fa fa-user" aria-hidden="true"></i>
-        <h4 class="card-title">Welcome back,
-          <br>{{username}}!
-        </h4>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <div class="card-block">
-          <ul>
-            <li>
-              <a href="" class="card-link">Change Username</a>
-            </li>
-            <li>
-              <a href="" class="card-link">Change Password</a>
-            </li>
-            <li>
-              <a href="" class="card-link">Change Profile Picture</a>
-            </li>
-          </ul>
-        </div>
+  <div class="col-3">
+    <div class="card text-center">
+      <img *ngIf="userImage" class="card-img-top" src="" alt="User picture placeholder">
+      <i *ngIf="!userImage" id="user-image-placeholder" class="fa fa-user" aria-hidden="true"></i>
+      <h4 class="card-title">Welcome back,
+        <br>{{username}}!
+      </h4>
+      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      <div class="card-block">
+        <ul>
+          <li>
+            <a id="change-username-navlink" class="card-link" (click)="navigateDashboad($event)">Change Username</a>
+          </li>
+          <li>
+            <a id="change-password-navlink" class="card-link" (click)="navigateDashboad($event)">Change Password</a>
+          </li>
+          <li>
+            <a class="card-link">Change Profile Picture</a>
+          </li>
+        </ul>
       </div>
     </div>
-    <div class="col-9">
-
-    </div>
   </div>
-  <!-- End main row -->
+  <div class="col-9">
+    <router-outlet name="dashboard"></router-outlet>
+  </div>
+</div>
+<!-- End main row -->

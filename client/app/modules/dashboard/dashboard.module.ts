@@ -7,6 +7,10 @@ import { AuthenicationControl } from "../../shared/authenication/AuthenicationCo
 import { ClientAuthGuard } from "../../shared/authenication/ClientAuthGuard";
 import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.component";
 import { UserDashboardComponent } from "./user-dashboard/user-dashboard.component";
+import { UserDashboardHomeComponent } from "./user-dashboard/components/user-dashboard-home/user-dashboard-home.component";
+import { UserDashboardService } from "../../shared/services/user-dashboard.service";
+import { UserDashboardChangePasswordComponent } from "./user-dashboard/components/user-dashboard-change-password/user-dashboard-change-password.component";
+import { UserDashboardChangeUsernameComponent } from "./user-dashboard/components/user-dashboard-change-username/user-dashboard-change-username.component";
 
 @NgModule({
   imports: [
@@ -16,11 +20,15 @@ import { UserDashboardComponent } from "./user-dashboard/user-dashboard.componen
   ],
   declarations: [
     AdminDashboardComponent,
-    UserDashboardComponent
+    UserDashboardComponent,
+    UserDashboardHomeComponent,
+    UserDashboardChangePasswordComponent,
+    UserDashboardChangeUsernameComponent
   ],
   providers: [
     ClientAuthGuard,
-    AuthenicationControl
+    AuthenicationControl,
+    UserDashboardService
   ]
 })
 export class DashboardLazyModule { }

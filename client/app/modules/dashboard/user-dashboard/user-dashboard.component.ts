@@ -9,10 +9,11 @@ import { UserDashboardService } from "../../../shared/services/user-dashboard.se
   selector: "app-users-dashboard",
   styleUrls: ["./user-dashboard.component.css"],
   templateUrl: "user-dashboard.component.html",
-  providers: [UserDashboardService]
+  providers: []
 })
 
 export class UserDashboardComponent implements OnInit {
+  public id: string;
   public username: string;
   public userImage;
 
@@ -35,6 +36,7 @@ export class UserDashboardComponent implements OnInit {
         if (token.id !== userIdParam) {
           this.router.navigate(["../../users/login"]);
         }
+        this.id = userIdParam;
         this.getUserDashboardInformation();
       }
     });
@@ -48,5 +50,18 @@ export class UserDashboardComponent implements OnInit {
     }, (error) => {
       // TODO: some kind of error modal if some information wasn't able to be loaded.
     });
+  }
+
+  public navigateDashboad(event) {
+    switch (event.target.id) {
+      case "change-password-navlink":
+        this.router.navigate([`../../dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changepassword"] } }]);
+        break;
+      case "change-username-navlink":
+        this.router.navigate([`../../dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changeusername"] } }]);
+        break;
+      default:
+        break;
+    }
   }
 }

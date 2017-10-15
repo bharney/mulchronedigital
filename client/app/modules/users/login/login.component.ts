@@ -3,9 +3,9 @@ import { AuthenicationControl } from "../../../shared/authenication/Authenicatio
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LoginService } from "../../../shared/services/user-authenication.service";
-import { ILoginUserResponse, IUserRegisterResponse, LoginUser} from "../../../shared/models/user-authenication.model";
+import { ILoginUserResponse, IUserRegisterResponse, LoginUser } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../shared/authenication/UserAuthenicationValidators";
-import {JsonWebToken} from "../../../../../shared/interfaces/IJsonWebToken";
+import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 
 @Component({
   selector: "app-login",
@@ -62,8 +62,8 @@ export class LoginComponent implements OnInit {
           this.routerToUserDashboardOrAdminDashboard();
         }
       }, (error: IUserRegisterResponse) => {
-          // TODO: display modal error
-          console.log(error);
+        // TODO: display modal error
+        console.log(error);
       });
   }
 
@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
     if (token.isAdmin) {
       // TODO: route to admin dashboard
     } else {
-      this.router.navigate([`../../dashboard/user/:`, { id: token.id }]);
+      this.router.navigate([`../../dashboard/user`, { id: token.id }, { outlets: {"dashboard": ["home"]}  }]);
     }
   }
 }
