@@ -13,6 +13,9 @@ import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 })
 
 export class DashboardComponent implements OnInit {
+  public username: string;
+  public userImage;
+
 
   constructor(
     private dashboardService: DashboardService,
@@ -41,7 +44,7 @@ export class DashboardComponent implements OnInit {
   private getUserDashboardInformation(): void {
     this.dashboardService.getUserInformation().subscribe(response => {
       if (response.status) {
-        console.log(response);
+        this.username = response.username;
       }
     }, (error) => {
 
