@@ -4,6 +4,7 @@ import { Http, RequestOptions, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { Dashboard } from "../models/dashboard.model";
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/catch";
 
 @Injectable()
 export class UserDashboardService {
