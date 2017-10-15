@@ -6,14 +6,14 @@ import { Dashboard } from "../models/dashboard.model";
 import "rxjs/add/operator/map";
 
 @Injectable()
-export class DashboardService {
+export class UserDashboardService {
 
   constructor(
     private http: Http,
     private requestHeaders: RequestHeaders
   ) { }
 
-  getUserInformation(): Observable<any> {
+  getUserInformation() {
     const options: RequestOptions = this.requestHeaders.createAuthorizationHeader();
     return this.http.get("/api/userdashboard/getuserinformation", options)
       .map((res: Response) => {

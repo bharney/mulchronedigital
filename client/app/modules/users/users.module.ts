@@ -5,9 +5,7 @@ import { CommonModule } from "@angular/common";
 import { RegisterComponent } from "./register/register.component";
 import { LoginComponent } from "./login/login.component";
 import { UsersRouting } from "./users.routing";
-import { DashboardComponent } from "./dashboard/dashboard.component";
 import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
-import { ClientAuthGuard } from "../../shared/authenication/ClientAuthGuard";
 
 @NgModule({
   imports: [
@@ -17,11 +15,9 @@ import { ClientAuthGuard } from "../../shared/authenication/ClientAuthGuard";
   ],
   declarations: [
     RegisterComponent,
-    LoginComponent,
-    DashboardComponent
+    LoginComponent
   ],
   providers: [
-    ClientAuthGuard,
     AuthenicationControl
   ]
 })

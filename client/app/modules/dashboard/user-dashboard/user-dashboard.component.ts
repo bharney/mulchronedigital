@@ -1,24 +1,23 @@
 import { ActivatedRoute, Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
-import { DashboardService } from "../../../shared/services/dashboard.service";
 import { Dashboard } from "../../../shared/models/dashboard.model";
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
 import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
+import { UserDashboardService } from "../../../shared/services/user-dashboard.service";
 
 @Component({
   selector: "app-users-dashboard",
-  styleUrls: ["./dashboard.component.css"],
-  templateUrl: "dashboard.component.html",
-  providers: [DashboardService]
+  styleUrls: ["./user-dashboard.component.css"],
+  templateUrl: "user-dashboard.component.html",
+  providers: [UserDashboardService]
 })
 
-export class DashboardComponent implements OnInit {
+export class UserDashboardComponent implements OnInit {
   public username: string;
   public userImage;
 
-
   constructor(
-    private dashboardService: DashboardService,
+    private userDashboardService: UserDashboardService,
     private authControl: AuthenicationControl,
     private route: ActivatedRoute,
     private router: Router
@@ -42,12 +41,12 @@ export class DashboardComponent implements OnInit {
   }
 
   private getUserDashboardInformation(): void {
-    this.dashboardService.getUserInformation().subscribe(response => {
+    this.userDashboardService.getUserInformation().subscribe(response => {
       if (response.status) {
         this.username = response.username;
       }
     }, (error) => {
-
+      // TODO: some kind of error modal if some information wasn't able to be loaded.
     });
   }
 }

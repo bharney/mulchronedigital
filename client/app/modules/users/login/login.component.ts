@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
     if (token.isAdmin) {
       // TODO: route to admin dashboard
     } else {
-      this.router.navigate([`../../users/dashboard/:`, { id: token.id }]);
+      this.router.navigate([`../../dashboard/user/:`, { id: token.id }]);
     }
   }
 }
