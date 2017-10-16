@@ -9,13 +9,12 @@ import { UserDashboardService } from "../../../shared/services/user-dashboard.se
   selector: "app-users-dashboard",
   styleUrls: ["./user-dashboard.component.css"],
   templateUrl: "user-dashboard.component.html",
-  providers: []
 })
 
 export class UserDashboardComponent implements OnInit {
   public id: string;
   public username: string;
-  public userImage;
+  public userImage: string;
   private parentRouter: Router;
 
   constructor(
@@ -33,13 +32,13 @@ export class UserDashboardComponent implements OnInit {
     this.parentRouter = this.router;
     this.route.params.subscribe(params => {
       if (params["id"] === null) {
-        this.router.navigate(["../../user/uhoh"]);
+        this.router.navigate(["../../users/login"]);
         return;
       }
       const userIdParam: string = params["id"];
       const token: JsonWebToken = this.authControl.getDecodedToken();
       if (token === null) {
-        this.router.navigate(["/../../user/uhoh"]);
+        this.router.navigate(["/../../users/login"]);
         return;
       }
       this.id = token.id;
