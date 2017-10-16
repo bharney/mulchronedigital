@@ -68,6 +68,9 @@ export class UserDashboardComponent implements OnInit {
       case "change-profile-picture-navlink":
         this.router.navigate(["../../dashboard/user", { id: this.id }, { outlets: { "dashboard": ["profilepicture"] } }]);
         break;
+      case "dashboard-home-navlink":
+        this.router.navigate(["../../dashboard/user", { id: this.id }, { outlets: { "dashboard": ["home"] } }]);
+        break;
       default:
         break;
     }

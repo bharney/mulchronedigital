@@ -9,15 +9,18 @@
       </h4>
       <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
       <div class="card-block">
-        <ul>
+        <ul id="dashboard-navigation">
           <li>
-            <a id="change-username-navlink" class="card-link" (click)="navigateDashboad($event)">Change Username</a>
+            <button class="btn btn-primary" id="dashboard-home-navlink" (click)="navigateDashboad($event)">Dashboard Home</button>
           </li>
           <li>
-            <a id="change-password-navlink" class="card-link" (click)="navigateDashboad($event)">Change Password</a>
+            <button class="btn btn-primary" id="change-username-navlink" (click)="navigateDashboad($event)">Change Username</button>
           </li>
           <li>
-            <a id="change-profile-picture-navlink" class="card-link" (click)="navigateDashboad($event)">Change Profile Picture</a>
+            <button class="btn btn-primary" id="change-password-navlink" (click)="navigateDashboad($event)">Change Password</button>
+          </li>
+          <li>
+            <button class="btn btn-primary" id="change-profile-picture-navlink" (click)="navigateDashboad($event)">Change Profile Picture</button>
           </li>
         </ul>
       </div>

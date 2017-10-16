@@ -6,3 +6,11 @@
   border-radius: 50%;
   background-color: rgb(156, 154, 154);
 }
+
+.btn {
+  cursor: pointer;
+}
+
+#dashboard-navigation li {
+  margin-bottom: 10px;
+}
