@@ -16,6 +16,7 @@ export class UserDashboardComponent implements OnInit {
   public id: string;
   public username: string;
   public userImage;
+  private parentRouter: Router;
 
   constructor(
     private userDashboardService: UserDashboardService,
@@ -29,16 +30,20 @@ export class UserDashboardComponent implements OnInit {
   }
 
   private isUserAuthorizedToBeHere() {
+    this.parentRouter = this.router;
     this.route.params.subscribe(params => {
-      if (params["id"] !== null) {
-        const userIdParam: string = params["id"];
-        const token: JsonWebToken = this.authControl.getDecodedToken();
-        if (token.id !== userIdParam) {
-          this.router.navigate(["../../users/login"]);
-        }
-        this.id = userIdParam;
-        this.getUserDashboardInformation();
+      if (params["id"] === null) {
+        this.router.navigate(["../../user/uhoh"]);
+        return;
       }
+      const userIdParam: string = params["id"];
+      const token: JsonWebToken = this.authControl.getDecodedToken();
+      if (token === null) {
+        this.router.navigate(["/../../user/uhoh"]);
+        return;
+      }
+      this.id = token.id;
+      this.getUserDashboardInformation();
     });
   }
 
@@ -59,6 +64,9 @@ export class UserDashboardComponent implements OnInit {
         break;
       case "change-username-navlink":
         this.router.navigate([`../../dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changeusername"] } }]);
+        break;
+      case "change-profile-picture-navlink":
+        this.router.navigate(["../../dashboard/user", { id: this.id }, { outlets: { "dashboard": ["profilepicture"] } }]);
         break;
       default:
         break;
