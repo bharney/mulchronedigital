@@ -3,7 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { RegisterService } from "../../../shared/services/user-authenication.service";
 import { RegisterUser, IUserRegisterResponse } from "../../../shared/models/user-authenication.model";
-import { UserAuthenicationValidator } from "../../../shared/authenication/UserAuthenicationValidators";
+import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
 declare const $: any;
 
 @Component({
