@@ -20,9 +20,13 @@ export class UserDashboardRouter extends BaseRouter {
     // Register user
     this.router.use("/getuserinformation", this.createStandardLocalResponseObjects);
     this.router.get("/getuserinformation", this.validateUserCredentials);
+
+    // change user password
+    this.router.use("/changepassword", this.createStandardLocalResponseObjects);
+    this.router.put("/changepassword", this.validateUserChangePassword);
   }
 
-  private async validateUserCredentials(req: Request, res: Response, next: NextFunction) {
+  private async validateUserCredentials(req: Request, res: Response) {
     try {
       if (req.headers["user-authenication-token"] === null) {
         res.json(res.locals.responseMessages.noJsonWebTokenInHeader());
@@ -54,6 +58,16 @@ export class UserDashboardRouter extends BaseRouter {
       // we are looking by object id there should only user in this array.
       res.status(200).json(res.locals.responseMessages.dashboardUserFound(databaseUsers[0]));
       res.end();
+    } catch (error) {
+      // TOOD: log error?
+      res.status(503).json(res.locals.responseMessages.generalError());
+      res.end();
+    }
+  }
+
+  private async validateUserChangePassword(req: Request, res: Response) {
+    try {
+      console.log(req.body);
     } catch (error) {
       // TOOD: log error?
       res.status(503).json(res.locals.responseMessages.generalError());
