@@ -76,26 +76,21 @@ export class UserDashboardRouter extends BaseRouter {
 
       if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
         db.close();
-        res.json(res.locals.responseMessages.passwordsDoNotMatch());
+        res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
         res.end();
       }
       const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
       if (!await user.updateUserPassword()) {
         db.close();
-        res.json(res.locals.responseMessages.generalError());
+        res.status(503).json(res.locals.responseMessages.generalError());
         res.end();
       }
 
-      const whatever = await usersCollection.updateOne(
+      await usersCollection.updateOne(
         { "_id": new ObjectId(databaseUsers[0]._id) },
         { $set: { "password": user.password, "modifiedAt": user.modifiedAt } }
       );
-
-      // CONSOLE.LOG(WHATEVER);
-      // console.log(databaseUsers[0].password);
-
-
-      console.log(req.body);
+      res.status(200).json(res.locals.responseMessages.userChangedPasswordSuccessfully());
     } catch (error) {
       console.log(error);
       // TOOD: log error?

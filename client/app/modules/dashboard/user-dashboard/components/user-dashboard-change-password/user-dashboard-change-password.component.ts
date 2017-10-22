@@ -59,7 +59,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
     this.userDashboardService.changeUserPassword(changePasswordObj)
       .subscribe((res: IUserChangePasswordResponse) => {
         if (res.status) {
-          console.log("component");
+          // TODO: put some message into a modal that lets them know the password was changed.
         }
       }, (error: IUserChangePasswordResponse) => {
         // TODO: throw some error messages into a modal.
