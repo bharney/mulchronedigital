@@ -1,5 +1,5 @@
 import { User } from "../../models/user";
-import { Database } from "../../globals/Database";
+import { Database } from '../../globals/Database';
 import { BaseRouter } from "../classes/BaseRouter";
 import { Router, Request, Response, NextFunction } from "express";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
@@ -61,9 +61,43 @@ export class UserDashboardRouter extends BaseRouter {
         res.end();
         return;
       }
+      const db = await Database.CreateDatabaseConnection();
+      const usersCollection = db.collection("Users");
+      const databaseUsers: User[] = await usersCollection.find<User>(
+        { "_id": new ObjectId(res.locals.token.id) },
+        { "password": 1, "_id": 1 }
+      ).toArray();
+      if (databaseUsers.length <= 0) {
+        db.close();
+        res.json(res.locals.responseMessages.noUserFound());
+        res.end();
+      }
+
+
+      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
+        db.close();
+        res.json(res.locals.responseMessages.passwordsDoNotMatch());
+        res.end();
+      }
+      const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
+      if (!await user.updateUserPassword()) {
+        db.close();
+        res.json(res.locals.responseMessages.generalError());
+        res.end();
+      }
+
+      const whatever = await usersCollection.updateOne(
+        { "_id": new ObjectId(databaseUsers[0]._id) },
+        { $set: { "password": user.password, "modifiedAt": user.modifiedAt } }
+      );
+
+      // CONSOLE.LOG(WHATEVER);
+      // console.log(databaseUsers[0].password);
+
 
       console.log(req.body);
     } catch (error) {
+      console.log(error);
       // TOOD: log error?
       res.status(503).json(res.locals.responseMessages.generalError());
       res.end();
