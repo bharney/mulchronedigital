@@ -115,12 +115,12 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async validateLoginUserRequest(req: Request, res: Response, next: NextFunction) {
     try {
       if (!await UserAuthenicationValidator.isEmailValid(req.params.email)) {
-        res.json(res.locals.responseMessages.emailIsNotValid());
+        res.status(401).json(res.locals.responseMessages.emailIsNotValid());
         res.end();
       }
 
       if (!await UserAuthenicationValidator.isPasswordValid(req.params.password)) {
-        res.json(res.locals.responseMessages.passwordIsNotValid());
+        res.status(401).json(res.locals.responseMessages.passwordIsNotValid());
         res.end();
       }
 
@@ -134,11 +134,11 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (databaseUsers.length === 1) {
         if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
           db.close();
-          res.json(res.locals.responseMessages.passwordsDoNotMatch());
+          res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
           res.end();
         } else {
           db.close();
-          res.json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
+          res.status(200).json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
           res.end();
         }
       } else {

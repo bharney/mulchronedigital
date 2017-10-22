@@ -102,4 +102,11 @@ export class ResponseMessages {
       "username": databaseUser.username
     };
   }
+
+  public userChangedPasswordSuccessfully(): object {
+    return {
+      "status": true,
+      "message": "User changed password successfully"
+    };
+  }
 }

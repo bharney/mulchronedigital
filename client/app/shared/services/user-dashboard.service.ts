@@ -32,7 +32,7 @@ export class UserDashboardService {
     const options: RequestOptions = this.requestHeaders.createAuthorizationHeader();
     return this.http.put("/api/userdashboard/changepassword", changePasswordObj, options)
       .map((res: Response) => {
-        console.log(res);
+        return res.json();
       })
       .catch((error) => {
         const errorResponse = error.json();
