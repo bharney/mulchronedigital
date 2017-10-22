@@ -29,6 +29,17 @@ export class User {
     }
   }
 
+  public async updateUserPassword(): Promise<boolean> {
+    try {
+      this.password = await this.HashPassword();
+      this.modifiedAt = new Date().toLocaleString();
+      return true;
+    } catch (error) {
+      // TODO: error handling? Logging?
+      return false;
+    }
+  }
+
   private HashPassword(): Promise<string> {
     return new Promise((resolve, reject) => {
       bcrypt.genSalt(10)
@@ -43,4 +54,5 @@ export class User {
         });
     });
   }
+
 }

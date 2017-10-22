@@ -4,8 +4,8 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LoginService } from "../../../shared/services/user-authenication.service";
 import { ILoginUserResponse, IUserRegisterResponse, LoginUser } from "../../../shared/models/user-authenication.model";
-import { UserAuthenicationValidator } from "../../../shared/authenication/UserAuthenicationValidators";
 import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
+import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
 
 @Component({
   selector: "app-login",

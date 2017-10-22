@@ -1,4 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+
 .main-row {
-    margin-top: 25px;
+  margin-top: 25px;
+}
+
+.custom-input-addons {
+  background-color: rgb(0, 128, 0);
+}
+
+.input-checkbox {
+  font-size: 20px;
+  color: black;
 }

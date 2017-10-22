@@ -1,10 +1,11 @@
 import { User } from "../../models/user";
-import { Database } from "../../globals/Database";
+import { Database } from '../../globals/Database';
 import { BaseRouter } from "../classes/BaseRouter";
 import { Router, Request, Response, NextFunction } from "express";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { ObjectId } from "mongodb";
+import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 
 
 export class UserDashboardRouter extends BaseRouter {
@@ -19,31 +20,23 @@ export class UserDashboardRouter extends BaseRouter {
   private configureRouter(): void {
     // Register user
     this.router.use("/getuserinformation", this.createStandardLocalResponseObjects);
+    this.router.use("/getuserinformation", this.checkForUserJsonWebToken);
     this.router.get("/getuserinformation", this.validateUserCredentials);
+
+    // change user password
+    this.router.use("/changepassword", this.createStandardLocalResponseObjects);
+    this.router.use("/changepassword", this.checkForUserJsonWebToken);
+    this.router.put("/changepassword", this.validateUserChangePassword);
   }
 
-  private async validateUserCredentials(req: Request, res: Response, next: NextFunction) {
+  private async validateUserCredentials(req: Request, res: Response) {
     try {
-      if (req.headers["user-authenication-token"] === null) {
-        res.json(res.locals.responseMessages.noJsonWebTokenInHeader());
-        res.end();
-      }
-      const token = req.headers["user-authenication-token"];
-      if (!await JsonWebTokenWorkers.verifiyJsonWebToken(token)) {
-        res.status(409).json(res.locals.responseMessages.jsonWebTokenExpired());
-        res.end();
-      }
-      const decodedToken: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(token);
-      if (!decodedToken) {
-        res.status(503).json(res.locals.responseMessages.generalError());
-        res.end();
-      }
       const db = await Database.CreateDatabaseConnection();
       const usersCollection = db.collection("Users");
       // TODO: why does this have to be to return as an array?
       // return only the username for the time being, omit the userid
       const databaseUsers: User[] = await usersCollection.find<User>(
-        { "_id": new ObjectId(decodedToken.id) },
+        { "_id": new ObjectId(res.locals.token.id) },
         { "username": 1, "_id": 0 }
       ).toArray();
       if (databaseUsers.length <= 0) {
@@ -55,6 +48,51 @@ export class UserDashboardRouter extends BaseRouter {
       res.status(200).json(res.locals.responseMessages.dashboardUserFound(databaseUsers[0]));
       res.end();
     } catch (error) {
+      // TOOD: log error?
+      res.status(503).json(res.locals.responseMessages.generalError());
+      res.end();
+    }
+  }
+
+  private async validateUserChangePassword(req: Request, res: Response) {
+    try {
+      if (!await UserAuthenicationValidator.isPasswordValid(req.body.currentPassword) || !await UserAuthenicationValidator.isPasswordValid(req.body.newPassword)) {
+        res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
+        res.end();
+        return;
+      }
+      const db = await Database.CreateDatabaseConnection();
+      const usersCollection = db.collection("Users");
+      const databaseUsers: User[] = await usersCollection.find<User>(
+        { "_id": new ObjectId(res.locals.token.id) },
+        { "password": 1, "_id": 1 }
+      ).toArray();
+      if (databaseUsers.length <= 0) {
+        db.close();
+        res.json(res.locals.responseMessages.noUserFound());
+        res.end();
+      }
+
+
+      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
+        db.close();
+        res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
+        res.end();
+      }
+      const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
+      if (!await user.updateUserPassword()) {
+        db.close();
+        res.status(503).json(res.locals.responseMessages.generalError());
+        res.end();
+      }
+
+      await usersCollection.updateOne(
+        { "_id": new ObjectId(databaseUsers[0]._id) },
+        { $set: { "password": user.password, "modifiedAt": user.modifiedAt } }
+      );
+      res.status(200).json(res.locals.responseMessages.userChangedPasswordSuccessfully());
+    } catch (error) {
+      console.log(error);
       // TOOD: log error?
       res.status(503).json(res.locals.responseMessages.generalError());
       res.end();

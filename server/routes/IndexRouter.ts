@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { HtmlRouter } from "./html/html-router";
+import { HtmlRouter } from "./html/HtmlRouter";
 import { UserAuthenicationRouter } from "./users/UserAuthenicationRouter";
 import { UserDashboardRouter } from "./users/UserDashboard";
 
