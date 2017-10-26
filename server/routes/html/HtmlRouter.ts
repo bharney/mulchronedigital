@@ -10,9 +10,7 @@ export class HtmlRouter {
     }
 
     private configureRouter() {
-        this.router.get("/users/register", this.sendClientTheApplication);
-        this.router.get("/users/login", this.sendClientTheApplication);
-        this.router.get("/dashboard/user/:id", this.sendClientTheApplication);
+        this.router.get("*", this.sendClientTheApplication);
     }
 
     private sendClientTheApplication(req: Request, res: Response) {
