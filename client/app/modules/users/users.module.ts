@@ -6,6 +6,7 @@ import { RegisterComponent } from "./register/register.component";
 import { LoginComponent } from "./login/login.component";
 import { UsersRouting } from "./users.routing";
 import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
+import { ErrorModalComponent } from "../../components/error-modal/error-modal.component";
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { AuthenicationControl } from "../../shared/authenication/AuthenicationCo
   ],
   declarations: [
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    ErrorModalComponent
   ],
   providers: [
     AuthenicationControl
