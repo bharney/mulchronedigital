@@ -6,18 +6,18 @@ import { RegisterComponent } from "./register/register.component";
 import { LoginComponent } from "./login/login.component";
 import { UsersRouting } from "./users.routing";
 import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
-import { ErrorModalComponent } from "../../components/error-modal/error-modal.component";
+import { SharedModule } from "../../shared/modules/shared.module";
 
 @NgModule({
   imports: [
     UsersRouting,
     ReactiveFormsModule,
     CommonModule,
+    SharedModule
   ],
   declarations: [
     RegisterComponent,
-    LoginComponent,
-    ErrorModalComponent
+    LoginComponent
   ],
   providers: [
     AuthenicationControl

@@ -12,13 +12,14 @@ import { UserDashboardService } from "../../shared/services/user-dashboard.servi
 import { UserDashboardChangePasswordComponent } from "./user-dashboard/components/user-dashboard-change-password/user-dashboard-change-password.component";
 import { UserDashboardChangeUsernameComponent } from "./user-dashboard/components/user-dashboard-change-username/user-dashboard-change-username.component";
 import { UserDashboardProfilePictureComponent } from "./user-dashboard/components/user-dashboard-profile-picture/user-dashboard-profile-picture/user-dashboard-profile-picture.component";
-import { ErrorModalComponent } from "../../components/error-modal/error-modal.component";
+import { SharedModule } from "../../shared/modules/shared.module";
 
 @NgModule({
   imports: [
     DashboardRouting,
     ReactiveFormsModule,
     CommonModule,
+    SharedModule
   ],
   declarations: [
     AdminDashboardComponent,
@@ -26,8 +27,7 @@ import { ErrorModalComponent } from "../../components/error-modal/error-modal.co
     UserDashboardHomeComponent,
     UserDashboardChangePasswordComponent,
     UserDashboardChangeUsernameComponent,
-    UserDashboardProfilePictureComponent,
-    ErrorModalComponent
+    UserDashboardProfilePictureComponent
   ],
   providers: [
     ClientAuthGuard,
