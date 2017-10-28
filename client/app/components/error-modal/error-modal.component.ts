@@ -12,6 +12,7 @@ export class ErrorModalComponent implements OnInit {
    @Input() title: string;
    @Input() body: string;
    @Input() registrationSuccessful: boolean;
+   @Input() passwordChangeSuccessful: boolean;
 
   constructor(
     private router: Router

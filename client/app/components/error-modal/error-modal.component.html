@@ -9,9 +9,7 @@
       </div>
       <div class="modal-body">
         <p class="text-center">{{body}}</p>
-        <p *ngIf="registrationSuccessful" class="text-center">Click
-          <a (click)="closeModalAndNavigateToLogin()"> Here</a> to login
-        </p>
+        <p *ngIf="registrationSuccessful" class="text-center">Click<a (click)="closeModalAndNavigateToLogin()"> Here</a> to login</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
