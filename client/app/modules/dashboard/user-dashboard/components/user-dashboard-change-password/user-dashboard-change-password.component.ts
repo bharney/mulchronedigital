@@ -3,6 +3,7 @@ import { FormGroup, Validators, FormBuilder } from "@angular/forms";
 import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
 import { UserDashboardService } from "../../../../../shared/services/user-dashboard.service";
 import { UserChangePassword, IUserChangePasswordResponse } from "../../../../../shared/models/dashboard.model";
+declare const $: any;
 
 @Component({
   selector: "app-user-dashboard-change-password",
@@ -13,7 +14,8 @@ import { UserChangePassword, IUserChangePasswordResponse } from "../../../../../
 export class UserDashboardChangePasswordComponent implements OnInit {
   public userChangePasswordForm: FormGroup;
   public hasTheFormBeenSubmitted: boolean = false;
-
+  public modalBody: string;
+  public modalTitle: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -51,6 +53,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
     const changePasswordObj: UserChangePassword = this.createUserChangePasswordWord();
     this.subcribeToChangePasswordService(changePasswordObj);
   }
+
   private createUserChangePasswordWord(): UserChangePassword {
     return new UserChangePassword(this.userChangePasswordForm.value.currentPassword, this.userChangePasswordForm.value.password);
   }
@@ -59,10 +62,16 @@ export class UserDashboardChangePasswordComponent implements OnInit {
     this.userDashboardService.changeUserPassword(changePasswordObj)
       .subscribe((res: IUserChangePasswordResponse) => {
         if (res.status) {
-          // TODO: put some message into a modal that lets them know the password was changed.
+          this.modalBody = res.message;
+          this.hasTheFormBeenSubmitted = false;
+          this.userChangePasswordForm.reset();
+          $("#error-modal").modal();
+          // TODO: clear the inputs.
         }
       }, (error: IUserChangePasswordResponse) => {
-        // TODO: throw some error messages into a modal.
+        this.modalTitle = "There was a problem changing your password";
+        this.modalBody = error.message;
+        $("#error-modal").modal();
       });
   }
 }
