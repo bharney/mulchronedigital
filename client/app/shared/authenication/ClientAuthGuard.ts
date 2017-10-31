@@ -16,6 +16,7 @@ export class ClientAuthGuard implements CanActivate {
             // if they do return true to app routing module so they can access that route.
             return true;
         } else {
+            this.authenicationControl.removeJsonWebToken();
             // if they do not have a json webtoken in session storage redirect them to the signin in page.
             this.router.navigate(["/users/login"]);
             return false;
