@@ -63,21 +63,15 @@ export class UserDashboardChangePasswordComponent implements OnInit {
       .subscribe((res: IUserChangePasswordResponse) => {
         if (res.status) {
           this.modalBody = res.message;
-          this.clearChangePasswordFormInputs();
+          this.hasTheFormBeenSubmitted = false;
+          this.userChangePasswordForm.reset();
           $("#error-modal").modal();
           // TODO: clear the inputs.
         }
       }, (error: IUserChangePasswordResponse) => {
-        this.modalBody = error.message;
         this.modalTitle = "There was a problem changing your password";
+        this.modalBody = error.message;
         $("#error-modal").modal();
-        // TODO: throw some error messages into a modal.
       });
-  }
-
-  private clearChangePasswordFormInputs(): void {
-    this.userChangePasswordForm.value.currentPassword = "";
-    this.userChangePasswordForm.value.password = "";
-    this.userChangePasswordForm.value.confirmPassword = "";
   }
 }
