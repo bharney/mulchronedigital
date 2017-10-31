@@ -143,7 +143,7 @@ export class UserAuthenicationRouter extends BaseRouter {
         }
       } else {
         db.close();
-        res.json(res.locals.responseMessages.noUserFound());
+        res.status(401).json(res.locals.responseMessages.noUserFound());
         res.end();
       }
     } catch (error) {

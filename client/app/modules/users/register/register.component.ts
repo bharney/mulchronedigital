@@ -91,13 +91,6 @@ export class RegisterComponent implements OnInit {
 
   private toggleModal(message: string): void {
     this.modalBody = message;
-    $("#register-modal").modal();
-  }
-
-  public closeModalAndNavigateToLogin(): void {
-    $("#register-modal").modal("hide");
-    setTimeout(() => {
-      this.router.navigate(["../../users/login"]);
-    }, 1000);
+    $("#error-modal").modal();
   }
 }

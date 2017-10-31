@@ -6,6 +6,7 @@ import { LoginService } from "../../../shared/services/user-authenication.servic
 import { ILoginUserResponse, IUserRegisterResponse, LoginUser } from "../../../shared/models/user-authenication.model";
 import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
+declare const $: any;
 
 @Component({
   selector: "app-login",
@@ -17,6 +18,8 @@ import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicat
 export class LoginComponent implements OnInit {
   public userLoginForm: FormGroup;
   public hasTheFormBeenSubmitted = false;
+  public modalTitle: string = "";
+  public modalBody: string = "";
 
   constructor(
     private loginService: LoginService,
@@ -62,9 +65,14 @@ export class LoginComponent implements OnInit {
           this.routerToUserDashboardOrAdminDashboard();
         }
       }, (error: IUserRegisterResponse) => {
-        // TODO: display modal error
-        console.log(error);
+        this.loginFailure(error.message);
       });
+  }
+
+  private loginFailure(errorMessage: string): void {
+    this.modalBody = errorMessage;
+    this.modalTitle = "Login Failure";
+    $("#error-modal").modal();
   }
 
   private routerToUserDashboardOrAdminDashboard(): void {
@@ -72,7 +80,7 @@ export class LoginComponent implements OnInit {
     if (token.isAdmin) {
       // TODO: route to admin dashboard
     } else {
-      this.router.navigate([`../../dashboard/user`, { id: token.id }, { outlets: {"dashboard": ["home"]}  }]);
+      this.router.navigate([`../../dashboard/user`, { id: token.id }, { outlets: { "dashboard": ["home"] } }]);
     }
   }
 }
