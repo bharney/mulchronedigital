@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Headers, RequestOptions } from "@angular/http";
 import * as jwtDecode from "jwt-decode";
 import { JsonWebToken } from "../../../../shared/interfaces/IJsonWebToken";
+import * as jwt from "jsonwebtoken";
 
 @Injectable()
 export class AuthenicationControl {
@@ -34,7 +35,7 @@ export class AuthenicationControl {
     if (storageToken === null) {
       return null;
     }
-    const decodedToken = jwtDecode(storageToken);
+    const decodedToken = jwt.decode(storageToken);
     const token = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"]);
     return token;
   }
