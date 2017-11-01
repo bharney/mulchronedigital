@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Http, RequestOptions, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { Dashboard, UserChangePassword, UserChangeUsername } from "../models/dashboard.model";
+import { AuthenicationControl } from "../authenication/AuthenicationControl";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
@@ -12,7 +13,8 @@ export class UserDashboardService {
 
   constructor(
     private http: Http,
-    private requestHeaders: RequestHeaders
+    private requestHeaders: RequestHeaders,
+    private authenicationControl: AuthenicationControl
   ) { }
 
   // TODO: create Observable type
@@ -24,6 +26,9 @@ export class UserDashboardService {
       })
       .catch((error) => {
         const errorResponse = error.json();
+        if (errorResponse.relogin) {
+          this.authenicationControl.removeJsonWebToken();
+        }
         return Observable.throw(errorResponse);
       });
   }
@@ -37,6 +42,9 @@ export class UserDashboardService {
       })
       .catch((error) => {
         const errorResponse = error.json();
+        if (errorResponse.relogin) {
+          this.authenicationControl.removeJsonWebToken();
+        }
         return Observable.throw(errorResponse);
       });
   }
@@ -49,6 +57,9 @@ export class UserDashboardService {
       })
       .catch((error) => {
         const errorResponse = error.json();
+        if (errorResponse.relogin) {
+          this.authenicationControl.removeJsonWebToken();
+        }
         return Observable.throw(errorResponse);
       });
   }

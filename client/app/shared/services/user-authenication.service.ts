@@ -7,12 +7,14 @@ import "rxjs/add/observable/throw";
 
 import { LoginUser, RegisterUser, IUserRegisterResponse, ILoginUserResponse } from "../models/user-authenication.model";
 import { RequestHeaders } from "../http/RequestHeaders";
+import { AuthenicationControl } from "../authenication/AuthenicationControl";
 
 @Injectable()
 export class LoginService {
 
   constructor(
     private http: Http,
+    private authenicationControl: AuthenicationControl
   ) { }
 
   public loginUser(user: LoginUser): Observable<ILoginUserResponse> {
@@ -22,6 +24,9 @@ export class LoginService {
     })
     .catch((error) => {
       const errorResponse = error.json();
+      if (errorResponse.relogin) {
+        this.authenicationControl.removeJsonWebToken();
+      }
       return Observable.throw(errorResponse);
     });
   }
@@ -32,7 +37,8 @@ export class RegisterService {
 
   constructor(
     private http: Http,
-    private requestHeaders: RequestHeaders
+    private requestHeaders: RequestHeaders,
+    private authenicationControl: AuthenicationControl
   ) { }
 
   public registerNewUser(user: RegisterUser): Observable<IUserRegisterResponse> {
@@ -43,6 +49,9 @@ export class RegisterService {
       })
       .catch((error) => {
         const errorResponse = error.json();
+        if (errorResponse.relogin) {
+          this.authenicationControl.removeJsonWebToken();
+        }
         return Observable.throw(errorResponse);
       });
   }

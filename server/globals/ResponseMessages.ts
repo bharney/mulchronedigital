@@ -77,7 +77,7 @@ export class ResponseMessages {
     return {
       "status": false,
       "message": "Please verify your login information again please",
-      "token": null
+      "relogin": true
     };
   }
 

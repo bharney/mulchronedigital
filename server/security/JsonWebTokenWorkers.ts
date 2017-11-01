@@ -10,7 +10,7 @@ export class JsonWebTokenWorkers {
     try {
       const userObject = this.createSignWebTokenUserObject(id, isAdmin);
       const privateKey = await this.getPrivateKey();
-      const token = await jwt.sign(userObject, privateKey, { algorithm: "RS256", expiresIn: 1 });
+      const token = await jwt.sign(userObject, privateKey, { algorithm: "RS256", expiresIn: 86400 });
       return token;
     } catch (error) {
       throw error;
