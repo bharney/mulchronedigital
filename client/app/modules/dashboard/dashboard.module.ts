@@ -13,6 +13,7 @@ import { UserDashboardChangePasswordComponent } from "./user-dashboard/component
 import { UserDashboardChangeUsernameComponent } from "./user-dashboard/components/user-dashboard-change-username/user-dashboard-change-username.component";
 import { UserDashboardProfilePictureComponent } from "./user-dashboard/components/user-dashboard-profile-picture/user-dashboard-profile-picture/user-dashboard-profile-picture.component";
 import { SharedModule } from "../../shared/modules/shared.module";
+import { UpdateUserInformationEmitter } from "../../shared/services/update-user-information-emitter.service";
 
 @NgModule({
   imports: [
@@ -32,7 +33,8 @@ import { SharedModule } from "../../shared/modules/shared.module";
   providers: [
     ClientAuthGuard,
     AuthenicationControl,
-    UserDashboardService
+    UserDashboardService,
+    UpdateUserInformationEmitter
   ]
 })
 export class DashboardLazyModule { }

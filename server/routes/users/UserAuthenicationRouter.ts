@@ -66,7 +66,6 @@ export class UserAuthenicationRouter extends BaseRouter {
         res.end();
         return;
       }
-
       const databaseEmail = await usersCollection.find(
         { "email": req.body.email },
         { "_id": 1 }

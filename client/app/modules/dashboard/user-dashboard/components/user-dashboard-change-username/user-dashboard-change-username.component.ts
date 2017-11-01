@@ -1,4 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { FormGroup, Validators, FormBuilder } from "@angular/forms";
+import { UserDashboardService } from "../../../../../shared/services/user-dashboard.service";
+import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
+import { UserChangeUsername } from "../../../../../shared/models/dashboard.model";
+import { UpdateUserInformationEmitter } from "../../../../../shared/services/update-user-information-emitter.service";
+declare const $: any;
 
 @Component({
   selector: "app-user-dashboard-change-username",
@@ -7,8 +13,59 @@ import { Component, OnInit } from "@angular/core";
 })
 
 export class UserDashboardChangeUsernameComponent implements OnInit {
+  public userChangeUsernameForm: FormGroup;
+  public hasTheFormBeenSubmitted: boolean = false;
+  public modalBody: string;
 
-  constructor() { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private userDashboardService: UserDashboardService,
+    private updateUserInformationEmitter: UpdateUserInformationEmitter
+  ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.configureUserChangeUsernameForm();
+  }
+
+  private configureUserChangeUsernameForm(): void {
+    this.userChangeUsernameForm = this.formBuilder.group({
+      newUsername: [
+        "testuser23",
+        [Validators.required, Validators.minLength(4), Validators.maxLength(12)]
+      ],
+      password: [
+        "TestPassword1!",
+        [Validators.required, UserAuthenicationValidator.passwordValidation]
+      ],
+    });
+  }
+
+  public toggleSubmitUsernameChange(): void {
+    this.hasTheFormBeenSubmitted = true;
+    if (!this.userChangeUsernameForm.valid) {
+      return;
+    }
+    const changeUsernameObj: UserChangeUsername = this.createChangeUsernameObject();
+    this.toggleChangeUsernameService(changeUsernameObj);
+  }
+
+  private createChangeUsernameObject(): UserChangeUsername {
+    return new UserChangeUsername(this.userChangeUsernameForm.value.newUsername, this.userChangeUsernameForm.value.password);
+  }
+
+  private toggleChangeUsernameService(changeUsernameObj: UserChangeUsername): void {
+    this.userDashboardService.changeUsername(changeUsernameObj)
+      .subscribe((res) => {
+        if (res.status) {
+          this.updateUserInformationEmitter.emitChange("Update user information on dashboard");
+          this.modalBody = res.message;
+          this.hasTheFormBeenSubmitted = false;
+          this.userChangeUsernameForm.reset();
+          $("#error-modal").modal();
+        }
+      }, (error) => {
+        this.modalBody = error.message;
+        $("#error-modal").modal();
+      });
+  }
 }

@@ -4,6 +4,7 @@ import { Dashboard } from "../../../shared/models/dashboard.model";
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
 import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 import { UserDashboardService } from "../../../shared/services/user-dashboard.service";
+import { UpdateUserInformationEmitter } from "../../../shared/services/update-user-information-emitter.service";
 
 @Component({
   selector: "app-users-dashboard",
@@ -21,14 +22,16 @@ export class UserDashboardComponent implements OnInit {
     private userDashboardService: UserDashboardService,
     private authControl: AuthenicationControl,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private updateUserInformationEmitter: UpdateUserInformationEmitter
   ) { }
 
   ngOnInit() {
     this.isUserAuthorizedToBeHere();
+    this.subscribeToUpdateUserInformationEmitter();
   }
 
-  private isUserAuthorizedToBeHere() {
+  private isUserAuthorizedToBeHere(): void {
     this.parentRouter = this.router;
     this.route.params.subscribe(params => {
       if (params["id"] === null) {
@@ -43,6 +46,14 @@ export class UserDashboardComponent implements OnInit {
       }
       this.id = token.id;
       this.getUserDashboardInformation();
+    });
+  }
+
+  private subscribeToUpdateUserInformationEmitter(): void {
+    this.updateUserInformationEmitter.changeEmitted$.subscribe(response => {
+      if (response === "Update user information on dashboard") {
+        this.getUserDashboardInformation();
+      }
     });
   }
 

@@ -109,4 +109,11 @@ export class ResponseMessages {
       "message": "User changed password successfully"
     };
   }
+
+  public usernameChangeSuccessful(newUsername): object {
+    return {
+      "status": true,
+      "message": `You have successfully changed your username to ${newUsername}`
+    };
+  }
 }

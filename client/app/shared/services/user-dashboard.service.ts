@@ -2,9 +2,10 @@ import { RequestHeaders } from "../http/RequestHeaders";
 import { Injectable } from "@angular/core";
 import { Http, RequestOptions, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
-import { Dashboard, UserChangePassword } from "../models/dashboard.model";
+import { Dashboard, UserChangePassword, UserChangeUsername } from "../models/dashboard.model";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
+import "rxjs/add/observable/throw";
 
 @Injectable()
 export class UserDashboardService {
@@ -31,6 +32,18 @@ export class UserDashboardService {
   public changeUserPassword(changePasswordObj: UserChangePassword): Observable<any> {
     const options: RequestOptions = this.requestHeaders.createAuthorizationHeader();
     return this.http.put("/api/userdashboard/changepassword", changePasswordObj, options)
+      .map((res: Response) => {
+        return res.json();
+      })
+      .catch((error) => {
+        const errorResponse = error.json();
+        return Observable.throw(errorResponse);
+      });
+  }
+
+  public changeUsername(changeUsernameObj: UserChangeUsername): Observable<any> {
+    const options: RequestOptions = this.requestHeaders.createAuthorizationHeader();
+    return this.http.put("/api/userdashboard/changeusername", changeUsernameObj, options)
       .map((res: Response) => {
         return res.json();
       })
