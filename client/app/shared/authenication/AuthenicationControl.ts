@@ -23,8 +23,6 @@ export class AuthenicationControl {
     const token = this.getDecodedToken();
     if (token === null) {
       return false;
-    } else if (new Date(token.exp) > new Date()) {
-      return false;
     } else {
       return true;
     }
