@@ -99,11 +99,13 @@ export class UserAuthenicationRouter extends BaseRouter {
           res.locals.db.close();
           res.status(503).json(res.locals.responseMessages.generalError());
           res.end();
+          return;
         }
       } else {
         res.locals.db.close();
         res.status(503).json(res.locals.responseMessages.generalError());
         res.end();
+        return;
       }
     } catch (error) {
       // TODO: router error handler
@@ -116,11 +118,13 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isEmailValid(req.params.email)) {
         res.status(401).json(res.locals.responseMessages.emailIsNotValid());
         res.end();
+        return;
       }
 
       if (!await UserAuthenicationValidator.isPasswordValid(req.params.password)) {
         res.status(401).json(res.locals.responseMessages.passwordIsNotValid());
         res.end();
+        return;
       }
 
       const db = await Database.CreateDatabaseConnection();
@@ -135,15 +139,18 @@ export class UserAuthenicationRouter extends BaseRouter {
           db.close();
           res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
           res.end();
+          return;
         } else {
           db.close();
           res.status(200).json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
           res.end();
+          return;
         }
       } else {
         db.close();
         res.status(401).json(res.locals.responseMessages.noUserFound());
         res.end();
+        return;
       }
     } catch (error) {
       throw error;

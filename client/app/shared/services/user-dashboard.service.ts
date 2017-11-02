@@ -36,7 +36,7 @@ export class UserDashboardService {
   // TODO: create observable type
   public changeUserPassword(changePasswordObj: UserChangePassword): Observable<any> {
     const options: RequestOptions = this.requestHeaders.createAuthorizationHeader();
-    return this.http.put("/api/userdashboard/changepassword", changePasswordObj, options)
+    return this.http.patch("/api/userdashboard/changepassword", changePasswordObj, options)
       .map((res: Response) => {
         return res.json();
       })
@@ -51,7 +51,7 @@ export class UserDashboardService {
 
   public changeUsername(changeUsernameObj: UserChangeUsername): Observable<any> {
     const options: RequestOptions = this.requestHeaders.createAuthorizationHeader();
-    return this.http.put("/api/userdashboard/changeusername", changeUsernameObj, options)
+    return this.http.patch("/api/userdashboard/changeusername", changeUsernameObj, options)
       .map((res: Response) => {
         return res.json();
       })

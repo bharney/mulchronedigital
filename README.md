@@ -3,7 +3,7 @@
 
 Font-Awesome
 Bootstrap 4
-Angular 4
+Angular 5 
 Node.js (TypeScript)
 
 

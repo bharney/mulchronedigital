@@ -26,12 +26,12 @@ export class UserDashboardRouter extends BaseRouter {
     // change user password
     this.router.use("/changepassword", this.createStandardLocalResponseObjects);
     this.router.use("/changepassword", this.checkForUserJsonWebToken);
-    this.router.put("/changepassword", this.validateUserChangePassword);
+    this.router.patch("/changepassword", this.validateUserChangePassword);
 
     // change username
     this.router.use("/changeusername", this.createStandardLocalResponseObjects);
     this.router.use("/changeusername", this.checkForUserJsonWebToken);
-    this.router.put("/changeusername", this.validateUserChangeUsername);
+    this.router.patch("/changeusername", this.validateUserChangeUsername);
   }
 
   private async validateUserCredentials(req: Request, res: Response) {
@@ -47,16 +47,19 @@ export class UserDashboardRouter extends BaseRouter {
       if (databaseUsers.length <= 0) {
         res.status(503).json(res.locals.responseMessages.generalError());
         res.end();
+        return;
       }
 
       db.close();
       // we are looking by object id there should only user in this array.
       res.status(200).json(res.locals.responseMessages.dashboardUserFound(databaseUsers[0]));
       res.end();
+      return;
     } catch (error) {
       // TOOD: log error?
       res.status(503).json(res.locals.responseMessages.generalError());
       res.end();
+      return;
     }
   }
 
@@ -79,18 +82,21 @@ export class UserDashboardRouter extends BaseRouter {
         db.close();
         res.status(422).json(res.locals.responseMessages.noUserFound());
         res.end();
+        return;
       }
 
       if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
         db.close();
         res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
         res.end();
+        return;
       }
       const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
       if (!await user.updateUserPassword()) {
         db.close();
         res.status(503).json(res.locals.responseMessages.generalError());
         res.end();
+        return;
       }
 
       const updateResult = await usersCollection.updateOne(
@@ -102,6 +108,7 @@ export class UserDashboardRouter extends BaseRouter {
       if (updateResult.modifiedCount === 1) {
         res.status(200).json(res.locals.responseMessages.userChangedPasswordSuccessfully());
         res.send();
+        return;
       } else {
         throw new Error("There was nothing updated");
       }
@@ -111,6 +118,7 @@ export class UserDashboardRouter extends BaseRouter {
       // TOOD: log error?
       res.status(503).json(res.locals.responseMessages.generalError());
       res.end();
+      return;
     }
   }
 
