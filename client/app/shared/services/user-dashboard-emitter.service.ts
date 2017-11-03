@@ -5,7 +5,7 @@ import { Subject } from "rxjs/Subject";
 // https://stackoverflow.com/questions/37662456/angular-2-output-from-router-outlet
 // thanks!
 @Injectable()
-export class UpdateUserInformationEmitter {
+export class UserDashboardEmitter {
     // Observable string sources
     private emitChangeSource = new Subject<any>();
     // Observable string streams

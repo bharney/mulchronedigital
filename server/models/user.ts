@@ -8,6 +8,7 @@ export class User {
   public isAdmin: boolean;
   public createdAt: string;
   public modifiedAt: string;
+  public profileImage: string;
 
   constructor(username: string, email?: string, password?: string) {
     this.username = username;

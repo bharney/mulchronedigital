@@ -4,7 +4,7 @@ import { Dashboard } from "../../../shared/models/dashboard.model";
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
 import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 import { UserDashboardService } from "../../../shared/services/user-dashboard.service";
-import { UpdateUserInformationEmitter } from "../../../shared/services/update-user-information-emitter.service";
+import { UserDashboardEmitter } from "../../../shared/services/user-dashboard-emitter.service";
 
 @Component({
   selector: "app-users-dashboard",
@@ -15,7 +15,7 @@ import { UpdateUserInformationEmitter } from "../../../shared/services/update-us
 export class UserDashboardComponent implements OnInit {
   public id: string;
   public username: string;
-  public userImage: string;
+  public profileImage: string;
   private parentRouter: Router;
 
   constructor(
@@ -23,7 +23,7 @@ export class UserDashboardComponent implements OnInit {
     private authControl: AuthenicationControl,
     private route: ActivatedRoute,
     private router: Router,
-    private updateUserInformationEmitter: UpdateUserInformationEmitter
+    private userDashboardEmitter: UserDashboardEmitter
   ) { }
 
   ngOnInit() {
@@ -50,7 +50,7 @@ export class UserDashboardComponent implements OnInit {
   }
 
   private subscribeToUpdateUserInformationEmitter(): void {
-    this.updateUserInformationEmitter.changeEmitted$.subscribe(response => {
+    this.userDashboardEmitter.changeEmitted$.subscribe(response => {
       if (response === "Update user information on dashboard") {
         this.getUserDashboardInformation();
       }
@@ -61,6 +61,7 @@ export class UserDashboardComponent implements OnInit {
     this.userDashboardService.getUserInformation().subscribe(response => {
       if (response.status) {
         this.username = response.username;
+        this.profileImage = response.profileImage;
       }
     }, (error) => {
       // TODO: some kind of error modal if some information wasn't able to be loaded.

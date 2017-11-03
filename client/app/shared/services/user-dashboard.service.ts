@@ -41,4 +41,13 @@ export class UserDashboardService {
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }
+
+  // TODO: create observable type
+  public changeUserProfileImage(formData: FormData): Observable<any> {
+    const options: RequestOptions = this.apiRequests.createAuthorizationHeader();
+    options.headers.delete("Content-Type");
+    return this.http.patch("/api/userdashboard/changeprofileimage", formData, options)
+      .map(this.apiRequests.parseResponse)
+      .catch(this.apiRequests.errorCatcher);
+  }
 }

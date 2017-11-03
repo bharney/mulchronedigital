@@ -99,7 +99,8 @@ export class ResponseMessages {
   public dashboardUserFound(databaseUser: User): object {
     return {
       "status": true,
-      "username": databaseUser.username
+      "username": databaseUser.username,
+      "profileImage": databaseUser.profileImage
     };
   }
 

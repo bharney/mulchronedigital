@@ -3,7 +3,7 @@ import { FormGroup, Validators, FormBuilder } from "@angular/forms";
 import { UserDashboardService } from "../../../../../shared/services/user-dashboard.service";
 import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
 import { UserChangeUsername } from "../../../../../shared/models/dashboard.model";
-import { UpdateUserInformationEmitter } from "../../../../../shared/services/update-user-information-emitter.service";
+import { UserDashboardEmitter } from "../../../../../shared/services/user-dashboard-emitter.service";
 declare const $: any;
 
 @Component({
@@ -20,7 +20,7 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private userDashboardService: UserDashboardService,
-    private updateUserInformationEmitter: UpdateUserInformationEmitter
+    private userDashboardEmitter: UserDashboardEmitter
   ) { }
 
   ngOnInit() {
@@ -57,7 +57,7 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
     this.userDashboardService.changeUsername(changeUsernameObj)
       .subscribe((res) => {
         if (res.status) {
-          this.updateUserInformationEmitter.emitChange("Update user information on dashboard");
+          this.userDashboardEmitter.emitChange("Update user information on dashboard");
           this.modalBody = res.message;
           this.hasTheFormBeenSubmitted = false;
           this.userChangeUsernameForm.reset();
