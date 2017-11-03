@@ -5,7 +5,7 @@ import { NgModule } from "@angular/core";
 
 import { AppComponent } from "./app.component";
 import { AuthenicationControl } from "./shared/authenication/AuthenicationControl";
-import { RequestHeaders } from "./shared/http/RequestHeaders";
+import { ApiRequests } from "./shared/http/ApiRequests";
 import { NavbarTopComponent } from "./components/navbar-top/navbar-top.component";
 
 @NgModule({
@@ -20,7 +20,7 @@ import { NavbarTopComponent } from "./components/navbar-top/navbar-top.component
   ],
   providers: [
     AuthenicationControl,
-    RequestHeaders
+    ApiRequests
   ],
   bootstrap: [AppComponent]
 })
