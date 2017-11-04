@@ -54,29 +54,20 @@ export class UserDashboardRouter extends BaseRouter {
         { "username": 1, "profileImage": 1, "_id": 0 }
       ).toArray();
       if (databaseUsers.length <= 0) {
-        res.status(503).json(res.locals.responseMessages.generalError());
-        res.send();
-
-        return;
+        return res.status(503).json(res.locals.responseMessages.generalError());
       }
       // we are looking by object id there should only user in this array.
-      res.status(200).json(res.locals.responseMessages.dashboardUserFound(databaseUsers[0]));
-      res.end();
-      return;
+      return res.status(200).json(res.locals.responseMessages.dashboardUserFound(databaseUsers[0]));
     } catch (error) {
       // TOOD: log error?
-      res.status(503).json(res.locals.responseMessages.generalError());
-      res.send();
-      return;
+      return res.status(503).json(res.locals.responseMessages.generalError());
     }
   }
 
   private async validateUserChangePassword(req: Request, res: Response) {
     try {
       if (!await UserAuthenicationValidator.isPasswordValid(req.body.currentPassword) || !await UserAuthenicationValidator.isPasswordValid(req.body.newPassword)) {
-        res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
-        res.send();
-        return;
+        return res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
       }
 
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
@@ -86,21 +77,15 @@ export class UserDashboardRouter extends BaseRouter {
         { "password": 1, "_id": 1 }
       ).toArray();
       if (databaseUsers.length <= 0) {
-        res.status(422).json(res.locals.responseMessages.noUserFound());
-        res.send();
-        return;
+        return res.status(422).json(res.locals.responseMessages.noUserFound());
       }
 
       if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
-        res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
-        res.send();
-        return;
+        return res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
       }
       const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
       if (!await user.updateUserPassword()) {
-        res.status(503).json(res.locals.responseMessages.generalError());
-        res.send();
-        return;
+        return res.status(503).json(res.locals.responseMessages.generalError());
       }
 
       const updateResult = await usersCollection.updateOne(
@@ -109,9 +94,7 @@ export class UserDashboardRouter extends BaseRouter {
       );
 
       if (updateResult.modifiedCount === 1) {
-        res.status(200).json(res.locals.responseMessages.userChangedPasswordSuccessfully());
-        res.send();
-        return;
+        return res.status(200).json(res.locals.responseMessages.userChangedPasswordSuccessfully());
       } else {
         throw new Error("There was nothing updated");
       }
@@ -119,22 +102,18 @@ export class UserDashboardRouter extends BaseRouter {
     } catch (error) {
       console.log(error);
       // TOOD: log error?
-      res.status(503).json(res.locals.responseMessages.generalError());
-      res.end();
+      return res.status(503).json(res.locals.responseMessages.generalError());
     }
   }
 
   private async validateUserChangeUsername(req: Request, res: Response) {
     try {
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)) {
-        res.status(422).json(res.locals.responseMessages.usernameIsNotValid());
-        res.end();
-        return;
+        return res.status(422).json(res.locals.responseMessages.usernameIsNotValid());
+
       }
       if (!await UserAuthenicationValidator.isPasswordValid(req.body.password)) {
-        res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
-        res.end();
-        return;
+        return res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
       }
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
       const usersCollection = db.collection("Users");
@@ -142,23 +121,17 @@ export class UserDashboardRouter extends BaseRouter {
         { "username": req.body.newUsername }, { "_id": 1 }
       ).toArray();
       if (existingUsers.length > 0) {
-        res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.newUsername));
-        res.end();
-        return;
+        return res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.newUsername));
       }
       const databaseUsers: User[] = await usersCollection.find(
         { "_id": new ObjectId(res.locals.token.id) },
         { "password": 1, "_id": 1 }
       ).toArray();
       if (databaseUsers.length <= 0) {
-        res.status(422).json(res.locals.responseMessages.noUserFound());
-        res.end();
-        return;
+        return res.status(422).json(res.locals.responseMessages.noUserFound());
       }
       if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.password, databaseUsers[0].password)) {
-        res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
-        res.end();
-        return;
+        return res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
       }
       const user = new User(req.body.newUsername);
       const updateResult = await usersCollection.updateOne(
@@ -166,16 +139,13 @@ export class UserDashboardRouter extends BaseRouter {
         { $set: { "username": user.username, "modifiedAt": user.modifiedAt } }
       );
       if (updateResult.modifiedCount === 1) {
-        res.status(200).json(res.locals.responseMessages.usernameChangeSuccessful(user.username));
-        res.end();
-        return;
+        return res.status(200).json(res.locals.responseMessages.usernameChangeSuccessful(user.username));
       } else {
         throw new Error("Nothing was modified");
       }
     } catch (error) {
       console.log(error);
-      res.status(503).json(res.locals.responseMessages.generalError());
-      res.end();
+      return res.status(503).json(res.locals.responseMessages.generalError());
     }
   }
 
@@ -184,9 +154,7 @@ export class UserDashboardRouter extends BaseRouter {
       parseFile(req, res, (err) => {
         if (err) {
           // file size too large. The client side validation SHOULD keep the this route clean of any files of that are not image.
-          res.status(413).json(res.locals.responseMessages.profilePictureUploadFailedFileToBig());
-          res.end();
-          return;
+          return res.status(413).json(res.locals.responseMessages.profilePictureUploadFailedFileToBig());
         }
         const imageFileExtensions: string[] = ["png", "jpg", "jpeg", "gif"];
         const imageTypeArray = req.file.mimetype.split("/");
@@ -200,14 +168,11 @@ export class UserDashboardRouter extends BaseRouter {
           }
         }
         // Unsupported Media Type
-        res.status(415).json(res.locals.responseMessages.profilePictureUploadFailedUnsupportedType());
-        res.end();
-        return;
+        return res.status(415).json(res.locals.responseMessages.profilePictureUploadFailedUnsupportedType());
      });
     } catch (error) {
       console.log(error);
-      res.status(503).json(res.locals.responseMessages.generalError());
-      res.end();
+      return res.status(503).json(res.locals.responseMessages.generalError());
     }
   }
 
@@ -219,16 +184,13 @@ export class UserDashboardRouter extends BaseRouter {
         { $set: { "profileImage": res.locals.image } }
       );
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
-        res.status(200).json(res.locals.responseMessages.changeProfilePictureSuccessful());
-
-        res.end();
+        return res.status(200).json(res.locals.responseMessages.changeProfilePictureSuccessful());
       } else {
         throw new Error("Updating user profile picture didn't work");
       }
     } catch (error) {
       console.log(error);
-      res.status(503).json(res.locals.responseMessages.generalError());
-      res.end();
+      return res.status(503).json(res.locals.responseMessages.generalError());
     }
   }
 }
