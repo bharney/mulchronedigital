@@ -118,10 +118,17 @@ export class ResponseMessages {
     };
   }
 
-  public profilePictureUploadFailed(): object {
+  public profilePictureUploadFailedFileToBig(): object {
     return {
       "status": false,
       "message": "Uploading your profile failed, please make sure that your file does not exceed 5MB in size."
+    };
+  }
+
+  public profilePictureUploadFailedUnsupportedType(): object {
+    return {
+      "status": false,
+      "message": "Uploading your profile failed, please try a different image type."
     };
   }
 

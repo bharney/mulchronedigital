@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { UserDashboardService } from "../../../../../shared/services/user-dashboard.service";
 import { UserDashboardEmitter } from "../../../../../shared/services/user-dashboard-emitter.service";
 declare const $: any;
@@ -9,7 +9,7 @@ declare const $: any;
   styleUrls: ["./user-dashboard-profile-picture.component.css"]
 })
 
-export class UserDashboardProfilePictureComponent implements OnInit {
+export class UserDashboardProfilePictureComponent {
   private imageFileExtensions: string[] = [".png", ".jpg", ".jpeg", ".gif"];
   @ViewChild("fileInput") fileInput: ElementRef;
   public modalBody: string;
@@ -18,8 +18,6 @@ export class UserDashboardProfilePictureComponent implements OnInit {
     private userDashboardService: UserDashboardService,
     private userDashboardEmitter: UserDashboardEmitter
   ) { }
-
-  ngOnInit() { }
 
   public toggleUploadImage(): void {
     const fileBrowser = this.fileInput.nativeElement;
