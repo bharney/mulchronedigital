@@ -1,5 +1,6 @@
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import { Router, Request, NextFunction, Response } from "express";
+import { db } from "../../cluster/master";
 import { BaseRouter } from "../classes/BaseRouter";
 import { Database } from "../../globals/Database";
 import { User } from "../../models/user";
@@ -55,13 +56,11 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private async doesUsernameOrEmailExistAlready(req: Request, res: Response, next: NextFunction) {
     try {
-      const db = await Database.CreateDatabaseConnection();
       const usersCollection = db.collection("Users");
-      const databaseUser: User[] = await usersCollection.find<User>(
+      const databaseUser: User[] = await usersCollection.find(
         { "username": req.body.username }, { "_id": 1 }
       ).toArray();
       if (databaseUser.length > 0) {
-        db.close();
         res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.username));
         res.end();
         return;
@@ -71,12 +70,10 @@ export class UserAuthenicationRouter extends BaseRouter {
         { "_id": 1 }
       ).toArray();
       if (databaseEmail.length > 0) {
-        db.close();
         res.status(409).json(res.locals.responseMessages.emailIsTaken(req.body.email));
         res.end();
         return;
       }
-      res.locals.db = db;
       next();
     } catch (error) {
       // TODO: router error handler
@@ -89,20 +86,17 @@ export class UserAuthenicationRouter extends BaseRouter {
       const newUser = new User(req.body.username, req.body.email, req.body.password);
       // TODO: split this up into seperate functions. little messy;
       if (await newUser.SetupNewUser()) {
-        const usersCollection = res.locals.db.collection("Users");
+        const usersCollection = db.collection("Users");
         const insertResult = await usersCollection.insertOne(newUser);
         if (insertResult.result.n === 1) {
-          res.locals.db.close();
           res.status(200).json(res.locals.responseMessages.userRegistrationSuccessful(req.body.username));
           res.end();
         } else {
-          res.locals.db.close();
           res.status(503).json(res.locals.responseMessages.generalError());
           res.end();
           return;
         }
       } else {
-        res.locals.db.close();
         res.status(503).json(res.locals.responseMessages.generalError());
         res.end();
         return;
@@ -126,28 +120,23 @@ export class UserAuthenicationRouter extends BaseRouter {
         res.end();
         return;
       }
-
-      const db = await Database.CreateDatabaseConnection();
       const usersCollection = db.collection("Users");
-      const databaseUsers: User[] = await usersCollection.find<User>(
+      const databaseUsers: User[] = await usersCollection.find(
         { "email": req.params.email },
-        {"_id": 1, "password": 1, "username": 1, "isAdmin": 1}
+        { "_id": 1, "password": 1, "username": 1, "isAdmin": 1 }
       ).toArray();
       // should only be one user with this email
       if (databaseUsers.length === 1) {
         if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
-          db.close();
           res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
           res.end();
           return;
         } else {
-          db.close();
           res.status(200).json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
           res.end();
           return;
         }
       } else {
-        db.close();
         res.status(401).json(res.locals.responseMessages.noUserFound());
         res.end();
         return;
