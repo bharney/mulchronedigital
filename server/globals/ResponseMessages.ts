@@ -99,7 +99,8 @@ export class ResponseMessages {
   public dashboardUserFound(databaseUser: User): object {
     return {
       "status": true,
-      "username": databaseUser.username
+      "username": databaseUser.username,
+      "profileImage": databaseUser.profileImage
     };
   }
 
@@ -114,6 +115,12 @@ export class ResponseMessages {
     return {
       "status": true,
       "message": `You have successfully changed your username to ${newUsername}`
+    };
+  }
+
+  public changeProfilePictureSuccessful(): object {
+    return {
+      "status": true
     };
   }
 }
