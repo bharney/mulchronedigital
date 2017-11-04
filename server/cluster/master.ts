@@ -1,13 +1,18 @@
 import { Database } from "../globals/Database";
 import Server from "./server";
+import { Db } from "mongodb";
 import cluster = require("cluster");
 
-if (cluster.isMaster) {
+let db;
+let databaseConnectionFailures = 0;
+
+makeDbConnection();
+
+if (cluster.isMaster && db !== null) {
   isMaster();
-} else if (cluster.isWorker) {
+} else if (cluster.isWorker && db !== null) {
   isWorker();
 }
-
 
 async function isMaster() {
   try {
@@ -32,8 +37,27 @@ async function isMaster() {
 }
 
 async function isWorker() {
-  const newServer = new Server();
-  const serverWorker = newServer.app.listen(newServer.port, () => {
-    console.log(`Server is listening on ${newServer.port}`);
-  });
+  try {
+    const newServer = new Server();
+    const serverWorker = newServer.app.listen(newServer.port, () => {
+      console.log(`Server is listening on ${newServer.port}`);
+    });
+  } catch (error) {
+    console.log(`This process failed to start`);
+  }
 }
+
+async function makeDbConnection() {
+  try {
+    db = await Database.CreateDatabaseConnection();
+  } catch (error) {
+    databaseConnectionFailures++;
+    if (databaseConnectionFailures === 25) {
+      console.log("Database connection failed 25 times, stopping process");
+      process.exit();
+    }
+    return makeDbConnection();
+  }
+}
+
+export { db };
