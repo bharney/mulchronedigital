@@ -31,21 +31,15 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
     try {
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.username)) {
-        res.status(422).json(res.locals.responseMessages.usernameIsNotValid());
-        res.end();
-        return;
+        return res.status(422).json(res.locals.responseMessages.usernameIsNotValid());
       }
 
       if (!await UserAuthenicationValidator.isEmailValid(req.body.email)) {
-        res.status(422).json(res.locals.responseMessages.emailIsNotValid());
-        res.end();
-        return;
+        return res.status(422).json(res.locals.responseMessages.emailIsNotValid());
       }
 
       if (!await UserAuthenicationValidator.isPasswordValid(req.body.password)) {
-        res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
-        res.end();
-        return;
+        return res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
       }
       next();
     } catch (error) {
@@ -61,18 +55,14 @@ export class UserAuthenicationRouter extends BaseRouter {
         { "username": req.body.username }, { "_id": 1 }
       ).toArray();
       if (databaseUser.length > 0) {
-        res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.username));
-        res.end();
-        return;
+        return res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.username));
       }
       const databaseEmail = await usersCollection.find(
         { "email": req.body.email },
         { "_id": 1 }
       ).toArray();
       if (databaseEmail.length > 0) {
-        res.status(409).json(res.locals.responseMessages.emailIsTaken(req.body.email));
-        res.end();
-        return;
+        return res.status(409).json(res.locals.responseMessages.emailIsTaken(req.body.email));
       }
       next();
     } catch (error) {
@@ -89,17 +79,12 @@ export class UserAuthenicationRouter extends BaseRouter {
         const usersCollection = db.collection("Users");
         const insertResult = await usersCollection.insertOne(newUser);
         if (insertResult.result.n === 1) {
-          res.status(200).json(res.locals.responseMessages.userRegistrationSuccessful(req.body.username));
-          res.end();
+          return res.status(200).json(res.locals.responseMessages.userRegistrationSuccessful(req.body.username));
         } else {
-          res.status(503).json(res.locals.responseMessages.generalError());
-          res.end();
-          return;
+          return res.status(503).json(res.locals.responseMessages.generalError());
         }
       } else {
-        res.status(503).json(res.locals.responseMessages.generalError());
-        res.end();
-        return;
+        return res.status(503).json(res.locals.responseMessages.generalError());
       }
     } catch (error) {
       // TODO: router error handler
@@ -110,16 +95,13 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async validateLoginUserRequest(req: Request, res: Response, next: NextFunction) {
     try {
       if (!await UserAuthenicationValidator.isEmailValid(req.params.email)) {
-        res.status(401).json(res.locals.responseMessages.emailIsNotValid());
-        res.end();
-        return;
+        return res.status(401).json(res.locals.responseMessages.emailIsNotValid());
       }
 
       if (!await UserAuthenicationValidator.isPasswordValid(req.params.password)) {
-        res.status(401).json(res.locals.responseMessages.passwordIsNotValid());
-        res.end();
-        return;
+        return res.status(401).json(res.locals.responseMessages.passwordIsNotValid());
       }
+
       const usersCollection = db.collection("Users");
       const databaseUsers: User[] = await usersCollection.find(
         { "email": req.params.email },
@@ -128,18 +110,12 @@ export class UserAuthenicationRouter extends BaseRouter {
       // should only be one user with this email
       if (databaseUsers.length === 1) {
         if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
-          res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
-          res.end();
-          return;
+          return res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
         } else {
-          res.status(200).json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
-          res.end();
-          return;
+          return res.status(200).json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
         }
       } else {
-        res.status(401).json(res.locals.responseMessages.noUserFound());
-        res.end();
-        return;
+        return res.status(401).json(res.locals.responseMessages.noUserFound());
       }
     } catch (error) {
       throw error;
