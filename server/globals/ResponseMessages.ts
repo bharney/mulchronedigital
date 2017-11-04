@@ -117,4 +117,10 @@ export class ResponseMessages {
       "message": `You have successfully changed your username to ${newUsername}`
     };
   }
+
+  public changeProfilePictureSuccessful(): object {
+    return {
+      "status": true
+    };
+  }
 }

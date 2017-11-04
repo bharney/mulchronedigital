@@ -2,7 +2,7 @@
 <div class="main-row row">
   <div class="col-3">
     <div class="card text-center">
-      <img *ngIf="profileImage" class="card-img-top" src="{{profileImage}}" alt="User picture placeholder">
+      <img *ngIf="profileImage" id="profile-picture" class="card-img-top" src="{{profileImage}}" alt="User picture placeholder">
       <i *ngIf="!profileImage" id="user-image-placeholder" class="fa fa-user" aria-hidden="true"></i>
       <h4 class="card-title">Welcome back,
         <br>{{username}}!

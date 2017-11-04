@@ -57,7 +57,8 @@ export class UserDashboardRouter extends BaseRouter {
       ).toArray();
       if (databaseUsers.length <= 0) {
         res.status(503).json(res.locals.responseMessages.generalError());
-        res.end();
+        res.send();
+        db.close();
         return;
       }
       // we are looking by object id there should only user in this array.
@@ -67,10 +68,9 @@ export class UserDashboardRouter extends BaseRouter {
     } catch (error) {
       // TOOD: log error?
       res.status(503).json(res.locals.responseMessages.generalError());
-      res.end();
-      return;
-    } finally {
-      db.close();
+      res.send();
+        db.close();
+        return;
     }
   }
 
@@ -79,7 +79,8 @@ export class UserDashboardRouter extends BaseRouter {
     try {
       if (!await UserAuthenicationValidator.isPasswordValid(req.body.currentPassword) || !await UserAuthenicationValidator.isPasswordValid(req.body.newPassword)) {
         res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
-        res.end();
+        res.send();
+        db.close();
         return;
       }
 
@@ -93,21 +94,24 @@ export class UserDashboardRouter extends BaseRouter {
       if (databaseUsers.length <= 0) {
         db.close();
         res.status(422).json(res.locals.responseMessages.noUserFound());
-        res.end();
+        res.send();
+        db.close();
         return;
       }
 
       if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
         db.close();
         res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
-        res.end();
+        res.send();
+        db.close();
         return;
       }
       const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
       if (!await user.updateUserPassword()) {
         db.close();
         res.status(503).json(res.locals.responseMessages.generalError());
-        res.end();
+        res.send();
+        db.close();
         return;
       }
 
@@ -120,6 +124,7 @@ export class UserDashboardRouter extends BaseRouter {
       if (updateResult.modifiedCount === 1) {
         res.status(200).json(res.locals.responseMessages.userChangedPasswordSuccessfully());
         res.send();
+        db.close();
         return;
       } else {
         throw new Error("There was nothing updated");
@@ -130,8 +135,6 @@ export class UserDashboardRouter extends BaseRouter {
       // TOOD: log error?
       res.status(503).json(res.locals.responseMessages.generalError());
       res.end();
-      return;
-    } finally {
       db.close();
     }
   }
@@ -142,11 +145,13 @@ export class UserDashboardRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)) {
         res.status(422).json(res.locals.responseMessages.usernameIsNotValid());
         res.end();
+        db.close();
         return;
       }
       if (!await UserAuthenicationValidator.isPasswordValid(req.body.password)) {
         res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
         res.end();
+        db.close();
         return;
       }
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
@@ -158,6 +163,7 @@ export class UserDashboardRouter extends BaseRouter {
       if (existingUsers.length > 0) {
         res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.newUsername));
         res.end();
+        db.close();
         return;
       }
       const databaseUsers: User[] = await usersCollection.find(
@@ -167,11 +173,13 @@ export class UserDashboardRouter extends BaseRouter {
       if (databaseUsers.length <= 0) {
         res.status(422).json(res.locals.responseMessages.noUserFound());
         res.end();
+        db.close();
         return;
       }
       if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.password, databaseUsers[0].password)) {
         res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
         res.end();
+        db.close();
         return;
       }
       const user = new User(req.body.newUsername);
@@ -182,6 +190,7 @@ export class UserDashboardRouter extends BaseRouter {
       if (updateResult.modifiedCount === 1) {
         res.status(200).json(res.locals.responseMessages.usernameChangeSuccessful(user.username));
         res.end();
+        db.close();
         return;
       } else {
         throw new Error("Nothing was modified");
@@ -190,7 +199,6 @@ export class UserDashboardRouter extends BaseRouter {
       console.log(error);
       res.status(503).json(res.locals.responseMessages.generalError());
       res.end();
-    } finally {
       db.close();
     }
   }
@@ -221,13 +229,17 @@ export class UserDashboardRouter extends BaseRouter {
     try {
       db = await Database.CreateDatabaseConnection();
       const usersCollection = db.collection("Users");
-      usersCollection.findOneAndUpdate(
+      const updatedProfile = await usersCollection.findOneAndUpdate(
         { "_id": new ObjectId(res.locals.token.id) },
         { $set: { "profileImage": res.locals.image } }
       );
-      // TODO: store this in the db in the user profile.
-      res.status(200).json({ "image": res.locals.image });
-      res.end();
+      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
+        res.status(200).json(res.locals.responseMessages.changeProfilePictureSuccessful());
+        db.close();
+        res.end();
+      } else {
+        throw new Error("Updating user profile picture didn't work");
+      }
     } catch (error) {
       console.log(error);
       res.status(503).json(res.locals.responseMessages.generalError());

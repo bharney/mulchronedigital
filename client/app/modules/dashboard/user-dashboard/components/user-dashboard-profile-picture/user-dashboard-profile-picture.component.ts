@@ -27,6 +27,7 @@ export class UserDashboardProfilePictureComponent implements OnInit {
       this.userDashboardService.changeUserProfileImage(formData).subscribe(response => {
           if (response.status) {
             this.userDashboardEmitter.emitChange("Update user information on dashboard");
+            this.fileInput.nativeElement.value = null;
           }
       });
     }
