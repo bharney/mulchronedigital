@@ -69,8 +69,8 @@ export class UserDashboardRouter extends BaseRouter {
       // TOOD: log error?
       res.status(503).json(res.locals.responseMessages.generalError());
       res.send();
-        db.close();
-        return;
+      db.close();
+      return;
     }
   }
 
@@ -206,16 +206,29 @@ export class UserDashboardRouter extends BaseRouter {
 
   private async validateUploadImage(req: any, res: Response, next: NextFunction) {
     try {
-      parseFile(req, res, function (err) {
+      parseFile(req, res, (err) => {
         if (err) {
-          throw err;
+          res.status(413).json(res.locals.responseMessages.profilePictureUploadFailedFileToBig());
+          res.end();
+          return;
         }
+        const imageFileExtensions: string[] = ["png", "jpg", "jpeg", "gif"];
         const imageTypeArray = req.file.mimetype.split("/");
         const imageType = imageTypeArray[1];
-        // TODO: check if the type matche common picture file names.
-        const image = `data:image/${imageType};base64,` + req.file.buffer.toString("base64");
-        res.locals.image = image;
-        next();
+        for (let i = 0; i < imageFileExtensions.length; i++) {
+          if (imageType === imageFileExtensions[i]) {
+            const image = `data:image/${imageType};base64,` + req.file.buffer.toString("base64");
+            res.locals.image = image;
+            next();
+            return;
+          }
+        }
+        // Unsupported Media Type
+        res.status(415).json(res.locals.responseMessages.profilePictureUploadFailedUnsupportedType());
+        res.end();
+        return;
+
+
       });
     } catch (error) {
       console.log(error);
