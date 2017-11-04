@@ -206,9 +206,11 @@ export class UserDashboardRouter extends BaseRouter {
 
   private async validateUploadImage(req: any, res: Response, next: NextFunction) {
     try {
-      parseFile(req, res, function (err) {
+      parseFile(req, res, (err) => {
         if (err) {
-          throw err;
+          res.status(413).json(res.locals.responseMessages.profilePictureUploadFailed());
+          res.end();
+          return;
         }
         const imageTypeArray = req.file.mimetype.split("/");
         const imageType = imageTypeArray[1];

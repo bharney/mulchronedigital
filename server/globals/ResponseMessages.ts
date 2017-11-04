@@ -118,6 +118,13 @@ export class ResponseMessages {
     };
   }
 
+  public profilePictureUploadFailed(): object {
+    return {
+      "status": false,
+      "message": "Uploading your profile failed, please make sure that your file does not exceed 5MB in size."
+    };
+  }
+
   public changeProfilePictureSuccessful(): object {
     return {
       "status": true
