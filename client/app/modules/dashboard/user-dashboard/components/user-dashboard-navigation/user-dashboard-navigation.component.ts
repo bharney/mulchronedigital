@@ -4,8 +4,8 @@ import { UserDashboardEmitter } from "../../../../../shared/services/emitters/us
 
 @Component({
   selector: "app-user-dashboard-navigation",
-  templateUrl: "./dashboard-navigation.component.html",
-  styleUrls: ["./dashboard-navigation.component.css"]
+  templateUrl: "./user-dashboard-navigation.component.html",
+  styleUrls: ["./user-dashboard-navigation.component.css"]
 })
 
 export class UserDashboardNavigationComponent {

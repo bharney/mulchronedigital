@@ -1,9 +1,9 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { DashboardNavigationComponent } from './dashboard-navigation.component';
+import { UserDashboardNavigationComponent } from './user-dashboard-navigation.component';
 
 describe('a dashboard-navigation component', () => {
-	let component: DashboardNavigationComponent;
+	let component: UserDashboardNavigationComponent;
 
 	// register all needed dependencies
 	beforeEach(() => {
@@ -15,8 +15,8 @@ describe('a dashboard-navigation component', () => {
 	});
 
 	// instantiation through framework injection
-	beforeEach(inject([DashboardNavigationComponent], (DashboardNavigationComponent) => {
-		component = DashboardNavigationComponent;
+	beforeEach(inject([UserDashboardNavigationComponent], (UserDashboardNavigationComponent) => {
+		component = UserDashboardNavigationComponent;
 	}));
 
 	it('should have an instance', () => {

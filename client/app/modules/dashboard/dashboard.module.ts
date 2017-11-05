@@ -14,7 +14,7 @@ import { UserDashboardChangeUsernameComponent } from "./user-dashboard/component
 import { UserDashboardProfilePictureComponent } from "./user-dashboard/components/user-dashboard-profile-picture/user-dashboard-profile-picture.component";
 import { SharedModule } from "../../shared/modules/shared.module";
 import { UserDashboardEmitter } from "../../shared/services/emitters/user-dashboard-emitter.service";
-import { UserDashboardNavigationComponent } from "./user-dashboard/components/user-dashboard-navigation/dashboard-navigation.component";
+import { UserDashboardNavigationComponent } from "./user-dashboard/components/user-dashboard-navigation/user-dashboard-navigation.component";
 
 
 @NgModule({
