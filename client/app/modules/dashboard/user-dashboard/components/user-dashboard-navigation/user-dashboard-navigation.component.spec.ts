@@ -9,7 +9,7 @@ describe('a dashboard-navigation component', () => {
 	beforeEach(() => {
 		TestBed.configureTestingModule({
 			providers: [
-				DashboardNavigationComponent
+				UserDashboardNavigationComponent
 			]
 		});
 	});
