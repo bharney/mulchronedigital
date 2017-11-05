@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { UserDashboardService } from "../../../../../shared/services/user-dashboard.service";
-import { UserDashboardEmitter } from "../../../../../shared/services/user-dashboard-emitter.service";
+import { UserDashboardEmitter } from "../../../../../shared/services/emitters/user-dashboard-emitter.service";
 declare const $: any;
 
 @Component({
@@ -38,7 +38,8 @@ export class UserDashboardProfilePictureComponent {
   private startHttpMethodToUpdatePhoto(formData: FormData): void {
     this.userDashboardService.changeUserProfileImage(formData).subscribe(response => {
       if (response.status) {
-        this.userDashboardEmitter.emitChange("Update user information on dashboard");
+        const emitterObject = {"type": "Update user information on dashboard"};
+        this.userDashboardEmitter.emitChange(emitterObject);
         this.fileInput.nativeElement.value = null;
       }
     }, (error) => {

@@ -1,6 +1,13 @@
 <!-- Start main row -->
 <div class="main-row row">
   <div class="col-sm-3">
+  </div>
+  <div class="col-sm-9">
+    <app-user-dashboard-navigation></app-user-dashboard-navigation>
+  </div>
+</div>
+<div class="second-row row">
+  <div class="col-sm-3">
     <div class="card text-center">
       <img *ngIf="profileImage" id="profile-picture" class="card-img-top" src="{{profileImage}}" alt="User picture placeholder">
       <i *ngIf="!profileImage" id="user-image-placeholder" class="fa fa-user" aria-hidden="true"></i>
@@ -8,23 +15,7 @@
         <br>{{username}}!
       </h4>
       <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <div class="card-block">
-          <ul id="dashboard-navigation">
-            <li>
-              <button class="btn btn-primary" id="dashboard-home-navlink" (click)="navigateDashboad($event)">Dashboard Home</button>
-            </li>
-            <li>
-              <button class="btn btn-primary" id="change-username-navlink" (click)="navigateDashboad($event)">Change Username</button>
-            </li>
-            <li>
-              <button class="btn btn-primary" id="change-password-navlink" (click)="navigateDashboad($event)">Change Password</button>
-            </li>
-            <li>
-              <button class="btn btn-primary" id="change-profile-picture-navlink" (click)="navigateDashboad($event)">Change Profile Picture</button>
-            </li>
-          </ul>
-        </div>
-      </div>
+    </div>
   </div>
   <div class="col-sm-9">
     <router-outlet name="dashboard"></router-outlet>

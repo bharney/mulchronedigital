@@ -7,14 +7,6 @@
   background-color: #000000;
 }
 
-.btn {
-  cursor: pointer;
-}
-
-#dashboard-navigation li {
-  margin-bottom: 10px;
-}
-
 #profile-picture {
   height: 150px;
   width: 100%;

@@ -4,7 +4,7 @@ import { Dashboard } from "../../../shared/models/dashboard.model";
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
 import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 import { UserDashboardService } from "../../../shared/services/user-dashboard.service";
-import { UserDashboardEmitter } from "../../../shared/services/user-dashboard-emitter.service";
+import { UserDashboardEmitter } from "../../../shared/services/emitters/user-dashboard-emitter.service";
 
 @Component({
   selector: "app-users-dashboard",
@@ -29,6 +29,7 @@ export class UserDashboardComponent implements OnInit {
   ngOnInit() {
     this.isUserAuthorizedToBeHere();
     this.subscribeToUpdateUserInformationEmitter();
+    this.subscribeToUserDashboardNaviationEmitter();
   }
 
   private isUserAuthorizedToBeHere(): void {
@@ -51,10 +52,21 @@ export class UserDashboardComponent implements OnInit {
 
   private subscribeToUpdateUserInformationEmitter(): void {
     this.userDashboardEmitter.changeEmitted$.subscribe(response => {
-      if (response === "Update user information on dashboard") {
-        this.getUserDashboardInformation();
+      switch (response.type) {
+        case "Update user information on dashboard":
+          this.getUserDashboardInformation();
+          break;
+        case "Update user dashboard navigation":
+          this.navigateDashboad(response.event);
+          break;
+        default:
+          break;
       }
     });
+  }
+
+  private subscribeToUserDashboardNaviationEmitter(): void {
+
   }
 
   private getUserDashboardInformation(): void {

@@ -13,7 +13,9 @@ import { UserDashboardChangePasswordComponent } from "./user-dashboard/component
 import { UserDashboardChangeUsernameComponent } from "./user-dashboard/components/user-dashboard-change-username/user-dashboard-change-username.component";
 import { UserDashboardProfilePictureComponent } from "./user-dashboard/components/user-dashboard-profile-picture/user-dashboard-profile-picture.component";
 import { SharedModule } from "../../shared/modules/shared.module";
-import { UserDashboardEmitter } from "../../shared/services/user-dashboard-emitter.service";
+import { UserDashboardEmitter } from "../../shared/services/emitters/user-dashboard-emitter.service";
+import { UserDashboardNavigationComponent } from "./user-dashboard/components/user-dashboard-navigation/dashboard-navigation.component";
+
 
 @NgModule({
   imports: [
@@ -28,7 +30,8 @@ import { UserDashboardEmitter } from "../../shared/services/user-dashboard-emitt
     UserDashboardHomeComponent,
     UserDashboardChangePasswordComponent,
     UserDashboardChangeUsernameComponent,
-    UserDashboardProfilePictureComponent
+    UserDashboardProfilePictureComponent,
+    UserDashboardNavigationComponent
   ],
   providers: [
     ClientAuthGuard,
