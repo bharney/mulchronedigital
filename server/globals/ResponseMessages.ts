@@ -1,5 +1,7 @@
 import { JsonWebTokenWorkers } from "../security/JsonWebTokenWorkers";
 import { User } from "../models/user";
+import { UsersCollection } from "../cluster/master";
+import { ObjectId } from "mongodb";
 
 export class ResponseMessages {
 
@@ -81,15 +83,31 @@ export class ResponseMessages {
     };
   }
 
+  public jsonWebTokenDoesntMatchStoredToken(): object {
+    return {
+      "status": false,
+      "message": "Please verify your login information again please",
+      "relogin": true
+    };
+  }
+
   public async successfulUserLogin(databaseUser: User): Promise<object> {
     try {
       const token = await JsonWebTokenWorkers.signSignWebToken(databaseUser._id, databaseUser.isAdmin);
-      const message = {
-        "status": true,
-        "message": `Welcome back ${databaseUser.username}`,
-        "token": token
-      };
-      return message;
+      const updatedProfile = await UsersCollection.findOneAndUpdate(
+        { "_id": new ObjectId(databaseUser._id) },
+        { $set: { "jsonToken": token } }
+      );
+      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
+        const message = {
+          "status": true,
+          "message": `Welcome back ${databaseUser.username}`,
+          "token": token
+        };
+        return message;
+      } else {
+        throw new Error("Updating user token didn't work");
+      }
     } catch (error) {
       // TODO: retry or send user error message?
       throw error;

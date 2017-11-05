@@ -108,7 +108,6 @@ export class UserDashboardRouter extends BaseRouter {
     try {
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)) {
         return res.status(422).json(res.locals.responseMessages.usernameIsNotValid());
-
       }
       if (!await UserAuthenicationValidator.isPasswordValid(req.body.password)) {
         return res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
@@ -150,7 +149,7 @@ export class UserDashboardRouter extends BaseRouter {
     try {
       parseFile(req, res, (err) => {
         if (err) {
-          // file size too large. The client side validation SHOULD keep the this route clean of any files of that are not image.
+          // file size too large. The client side validation SHOULD keep this route clean of any files that are not image.
           return res.status(413).json(res.locals.responseMessages.profilePictureUploadFailedFileToBig());
         }
         const imageFileExtensions: string[] = ["png", "jpg", "jpeg", "gif"];
