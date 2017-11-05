@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { Database } from "../../globals/Database";
-import { JsonWebTokenWorkers } from '../../security/JsonWebTokenWorkers';
+import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { UsersCollection } from "../../cluster/master";
 import { ObjectId } from "mongodb";
 import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
