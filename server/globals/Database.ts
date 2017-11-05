@@ -3,11 +3,16 @@ import { MongoClient, Db, Collection } from "mongodb";
 import { User } from "../models/user";
 
 export class Database {
+  public static databaseConnectionFailures: number = 0;
+
   public static CreateDatabaseConnection(): Promise<Db> {
     return new Promise((resolve, reject) => {
       let url;
       (!process.env.MONGO_URL) ? url = "mongodb://localhost:27017/Node-Angular-Starter" : url = process.env.MONGO_URL;
-      MongoClient.connect(url)
+      const options = {
+        poolSize: 100
+      };
+      MongoClient.connect(url, options)
         .then((db: Db) => {
           resolve(db);
         })

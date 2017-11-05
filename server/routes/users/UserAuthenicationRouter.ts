@@ -1,10 +1,10 @@
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import { Router, Request, NextFunction, Response } from "express";
-import { db } from "../../cluster/master";
 import { BaseRouter } from "../classes/BaseRouter";
 import { Database } from "../../globals/Database";
 import { User } from "../../models/user";
 import { ResponseMessages } from "../../globals/ResponseMessages";
+import { UsersCollection } from "../../cluster/master";
 
 
 export class UserAuthenicationRouter extends BaseRouter {
@@ -50,14 +50,13 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private async doesUsernameOrEmailExistAlready(req: Request, res: Response, next: NextFunction) {
     try {
-      const usersCollection = db.collection("Users");
-      const databaseUser: User[] = await usersCollection.find(
+      const databaseUser: User[] = await UsersCollection.find(
         { "username": req.body.username }, { "_id": 1 }
       ).toArray();
       if (databaseUser.length > 0) {
         return res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.username));
       }
-      const databaseEmail = await usersCollection.find(
+      const databaseEmail = await UsersCollection.find(
         { "email": req.body.email },
         { "_id": 1 }
       ).toArray();
@@ -76,8 +75,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       const newUser = new User(req.body.username, req.body.email, req.body.password);
       // TODO: split this up into seperate functions. little messy;
       if (await newUser.SetupNewUser()) {
-        const usersCollection = db.collection("Users");
-        const insertResult = await usersCollection.insertOne(newUser);
+        const insertResult = await UsersCollection.insertOne(newUser);
         if (insertResult.result.n === 1) {
           return res.status(200).json(res.locals.responseMessages.userRegistrationSuccessful(req.body.username));
         } else {
@@ -101,9 +99,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isPasswordValid(req.params.password)) {
         return res.status(401).json(res.locals.responseMessages.passwordIsNotValid());
       }
-
-      const usersCollection = db.collection("Users");
-      const databaseUsers: User[] = await usersCollection.find(
+      const databaseUsers: User[] = await UsersCollection.find(
         { "email": req.params.email },
         { "_id": 1, "password": 1, "username": 1, "isAdmin": 1 }
       ).toArray();
