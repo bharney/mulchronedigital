@@ -18,6 +18,7 @@ export class RegisterComponent implements OnInit {
   public modalTitle: string = "";
   public modalBody: string = "";
   public registrationSuccessful: boolean = false;
+  public hasSubmitButtonBeenClicked: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -62,6 +63,8 @@ export class RegisterComponent implements OnInit {
   }
 
   public toggleRegisterUser(): void {
+    this.hasSubmitButtonBeenClicked = true;
+    setTimeout(() =>{
     this.hasTheFormBeenSubmitted = true;
     if (!this.userRegistrationForm.valid) {
       return;
@@ -72,11 +75,14 @@ export class RegisterComponent implements OnInit {
         if (res.status) {
           this.registrationSuccessfulTextConfig();
           this.toggleModal(res.message);
+          this.hasSubmitButtonBeenClicked = false;
         }
       }, (error: IUserRegisterResponse) => {
         this.registrationUnSuccessfulTextConfig();
         this.toggleModal(error.message);
+        this.hasSubmitButtonBeenClicked = false;
       });
+    }, 200);
   }
 
   private registrationSuccessfulTextConfig(): void {

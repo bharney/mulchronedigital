@@ -70,7 +70,8 @@
                             <strong>The passwords do not match</strong>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" (click)="toggleRegisterUser()">Register</button>
+                    <button *ngIf="!hasSubmitButtonBeenClicked" type="button" class="btn btn-primary" (click)="toggleRegisterUser()">Register</button>
+                    <i *ngIf="hasSubmitButtonBeenClicked" class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i>
                     <p id="already-have-account-text">Already have an account? Login <a href="" [routerLink]="['../../users/login']">Here</a></p>
                 </div>
             </div>

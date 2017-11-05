@@ -13,6 +13,7 @@ export class UserDashboardProfilePictureComponent {
   private imageFileExtensions: string[] = [".png", ".jpg", ".jpeg", ".gif"];
   @ViewChild("fileInput") fileInput: ElementRef;
   public modalBody: string;
+  public hasSubmitButtonBeenClicked: boolean = false;
 
   constructor(
     private userDashboardService: UserDashboardService,
@@ -20,6 +21,8 @@ export class UserDashboardProfilePictureComponent {
   ) { }
 
   public toggleUploadImage(): void {
+    this.hasSubmitButtonBeenClicked = true;
+    setTimeout(() => {
     const fileBrowser = this.fileInput.nativeElement;
     // TODO: check for common picture file extensions.
     if (fileBrowser.files && fileBrowser.files[0]) {
@@ -31,8 +34,9 @@ export class UserDashboardProfilePictureComponent {
           return;
         }
       }
-      this.triggerInvalidImageTypeModal();
     }
+      this.triggerInvalidImageTypeModal();
+    }, 200);
   }
 
   private startHttpMethodToUpdatePhoto(formData: FormData): void {
@@ -41,6 +45,7 @@ export class UserDashboardProfilePictureComponent {
         const emitterObject = {"type": "Update user information on dashboard"};
         this.userDashboardEmitter.emitChange(emitterObject);
         this.fileInput.nativeElement.value = null;
+        this.hasSubmitButtonBeenClicked = false;
       }
     }, (error) => {
       this.modalBody = error.message;
@@ -53,5 +58,6 @@ export class UserDashboardProfilePictureComponent {
     this.modalBody = "Invalid image type please try again";
     this.fileInput.nativeElement.value = null;
     $("#error-modal").modal();
+    this.hasSubmitButtonBeenClicked = false;
   }
 }
