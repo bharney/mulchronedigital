@@ -9,6 +9,7 @@ export class User {
   public createdAt: string;
   public modifiedAt: string;
   public profileImage: string;
+  public jsonToken: string;
 
   constructor(username: string, email?: string, password?: string) {
     this.username = username;

@@ -5,6 +5,7 @@ import cluster = require("cluster");
 
 let db;
 let databaseConnectionFailures = 0;
+let UsersCollection;
 
 makeDbConnection();
 
@@ -50,6 +51,7 @@ async function isWorker() {
 async function makeDbConnection() {
   try {
     db = await Database.CreateDatabaseConnection();
+    UsersCollection = db.collection("Users");
   } catch (error) {
     databaseConnectionFailures++;
     if (databaseConnectionFailures === 25) {
@@ -60,4 +62,4 @@ async function makeDbConnection() {
   }
 }
 
-export { db };
+export { UsersCollection };

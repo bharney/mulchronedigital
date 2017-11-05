@@ -4,9 +4,9 @@ import { BaseRouter } from "../classes/BaseRouter";
 import { Router, Request, Response, NextFunction } from "express";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
-import { ObjectId, Db } from "mongodb";
+import { ObjectId } from "mongodb";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
-import {db} from "../../cluster/master";
+import { UsersCollection } from "../../cluster/master";
 import * as multer from "multer";
 const parseFile = multer({
   limits: { fileSize: 5000000, files: 1 },
@@ -46,10 +46,9 @@ export class UserDashboardRouter extends BaseRouter {
 
   private async validateUserCredentials(req: Request, res: Response) {
     try {
-      const usersCollection = db.collection("Users");
       // TODO: why does this have to be to return as an array?
       // return only the username for the time being, omit the userid
-      const databaseUsers: User[] = await usersCollection.find(
+      const databaseUsers: User[] = await UsersCollection.find(
         { "_id": new ObjectId(res.locals.token.id) },
         { "username": 1, "profileImage": 1, "_id": 0 }
       ).toArray();
@@ -71,8 +70,7 @@ export class UserDashboardRouter extends BaseRouter {
       }
 
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
-      const usersCollection = db.collection("Users");
-      const databaseUsers: User[] = await usersCollection.find(
+      const databaseUsers: User[] = await UsersCollection.find(
         { "_id": new ObjectId(res.locals.token.id) },
         { "password": 1, "_id": 1 }
       ).toArray();
@@ -88,7 +86,7 @@ export class UserDashboardRouter extends BaseRouter {
         return res.status(503).json(res.locals.responseMessages.generalError());
       }
 
-      const updateResult = await usersCollection.updateOne(
+      const updateResult = await UsersCollection.updateOne(
         { "_id": new ObjectId(databaseUsers[0]._id) },
         { $set: { "password": user.password, "modifiedAt": user.modifiedAt } }
       );
@@ -116,14 +114,13 @@ export class UserDashboardRouter extends BaseRouter {
         return res.status(422).json(res.locals.responseMessages.passwordIsNotValid());
       }
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
-      const usersCollection = db.collection("Users");
-      const existingUsers: User[] = await usersCollection.find(
+      const existingUsers: User[] = await UsersCollection.find(
         { "username": req.body.newUsername }, { "_id": 1 }
       ).toArray();
       if (existingUsers.length > 0) {
         return res.status(409).json(res.locals.responseMessages.usernameIsTaken(req.body.newUsername));
       }
-      const databaseUsers: User[] = await usersCollection.find(
+      const databaseUsers: User[] = await UsersCollection.find(
         { "_id": new ObjectId(res.locals.token.id) },
         { "password": 1, "_id": 1 }
       ).toArray();
@@ -134,7 +131,7 @@ export class UserDashboardRouter extends BaseRouter {
         return res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
       }
       const user = new User(req.body.newUsername);
-      const updateResult = await usersCollection.updateOne(
+      const updateResult = await UsersCollection.updateOne(
         { "_id": new ObjectId(databaseUsers[0]._id) },
         { $set: { "username": user.username, "modifiedAt": user.modifiedAt } }
       );
@@ -178,8 +175,7 @@ export class UserDashboardRouter extends BaseRouter {
 
   private async storeUploadedImageInDatabase(req: any, res: Response) {
     try {
-      const usersCollection = db.collection("Users");
-      const updatedProfile = await usersCollection.findOneAndUpdate(
+      const updatedProfile = await UsersCollection.findOneAndUpdate(
         { "_id": new ObjectId(res.locals.token.id) },
         { $set: { "profileImage": res.locals.image } }
       );
