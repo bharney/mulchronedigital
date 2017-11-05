@@ -4,7 +4,8 @@
     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
     <div class="card-block">
       <input type="file" #fileInput placeholder="Upload file..." />
-      <button type="button" (click)="toggleUploadImage()">Upload</button>
+      <button *ngIf="!hasSubmitButtonBeenClicked" type="button" (click)="toggleUploadImage()">Upload</button>
+      <i *ngIf="hasSubmitButtonBeenClicked" class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i>
     </div>
   </div>
 </div>

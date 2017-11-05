@@ -16,6 +16,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
   public hasTheFormBeenSubmitted: boolean = false;
   public modalBody: string;
   public modalTitle: string;
+  public hasSubmitButtonBeenClicked: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -44,14 +45,18 @@ export class UserDashboardChangePasswordComponent implements OnInit {
   }
 
   public toggleSubmitNewUserPassword(): void {
+    this.hasSubmitButtonBeenClicked = true;
+    setTimeout(() => {
     if (!this.hasTheFormBeenSubmitted) {
       this.hasTheFormBeenSubmitted = true;
+      this.hasSubmitButtonBeenClicked = false;
     }
     if (!this.userChangePasswordForm.valid) {
       return;
     }
     const changePasswordObj: UserChangePassword = this.createUserChangePasswordWord();
     this.subcribeToChangePasswordService(changePasswordObj);
+    }, 200);
   }
 
   private createUserChangePasswordWord(): UserChangePassword {
@@ -66,12 +71,14 @@ export class UserDashboardChangePasswordComponent implements OnInit {
           this.hasTheFormBeenSubmitted = false;
           this.userChangePasswordForm.reset();
           $("#error-modal").modal();
+          this.hasSubmitButtonBeenClicked = false;
           // TODO: clear the inputs.
         }
       }, (error: IUserChangePasswordResponse) => {
         this.modalTitle = "There was a problem changing your password";
         this.modalBody = error.message;
         $("#error-modal").modal();
+        this.hasSubmitButtonBeenClicked = false;
       });
   }
 }

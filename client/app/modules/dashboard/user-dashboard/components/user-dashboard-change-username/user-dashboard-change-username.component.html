@@ -37,7 +37,8 @@
                   and one special character</strong>
               </div>
             </div>
-            <button type="button" class="btn btn-primary pull-left" (click)="toggleSubmitUsernameChange()">Submit New Username</button>
+            <button *ngIf="!hasSubmitButtonBeenClicked" type="button" class="btn btn-primary pull-left" (click)="toggleSubmitUsernameChange()">Submit New Username</button>
+            <i *ngIf="hasSubmitButtonBeenClicked" class="fa fa-spinner fa-pulse fa-3x fa-fw pull-left" aria-hidden="true"></i>
           </div>
         </div>
       </div>

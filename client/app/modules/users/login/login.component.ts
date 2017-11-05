@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
   public hasTheFormBeenSubmitted = false;
   public modalTitle: string = "";
   public modalBody: string = "";
+  public hasSubmitButtonBeenClicked: boolean = false;
 
   constructor(
     private loginService: LoginService,
@@ -52,21 +53,25 @@ export class LoginComponent implements OnInit {
   }
 
   public toggleLoginUser() {
+    this.hasSubmitButtonBeenClicked = true;
+    setTimeout(() => {
     this.hasTheFormBeenSubmitted = true;
     if (!this.userLoginForm.valid) {
       return;
     }
-
     const loginUser = this.createLoginUser();
     this.loginService.loginUser(loginUser)
       .subscribe((res: ILoginUserResponse) => {
         if (res.status) {
           this.authControl.storeJsonWebToken(res.token);
+          this.hasSubmitButtonBeenClicked = false;
           this.routerToUserDashboardOrAdminDashboard();
         }
       }, (error: IUserRegisterResponse) => {
         this.loginFailure(error.message);
+        this.hasSubmitButtonBeenClicked = false;
       });
+    }, 200);
   }
 
   private loginFailure(errorMessage: string): void {

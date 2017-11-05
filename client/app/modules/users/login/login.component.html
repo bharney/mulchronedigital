@@ -28,7 +28,8 @@
                             <strong>This password does not meet our minimum requirements, did you forget your password? If so, click <a href="" [routerLink]="['../../users/forgot-password']">here</a> to reset it.</strong>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" (click)="toggleLoginUser()">Login</button>
+                    <button *ngIf="!hasSubmitButtonBeenClicked" type="button" class="btn btn-primary" (click)="toggleLoginUser()">Login</button>
+                    <i *ngIf="hasSubmitButtonBeenClicked" class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i>
                     <p id="dont-have-account-text">Dont have an account? Register <a href="" [routerLink]="['../../users/register']">Here</a></p>
                 </div>
             </div>

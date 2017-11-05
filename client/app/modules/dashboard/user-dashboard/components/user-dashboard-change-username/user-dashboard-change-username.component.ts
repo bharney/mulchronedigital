@@ -16,6 +16,7 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
   public userChangeUsernameForm: FormGroup;
   public hasTheFormBeenSubmitted: boolean = false;
   public modalBody: string;
+  public hasSubmitButtonBeenClicked: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -41,12 +42,15 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
   }
 
   public toggleSubmitUsernameChange(): void {
+    this.hasSubmitButtonBeenClicked = true;
+    setTimeout(() => {
     this.hasTheFormBeenSubmitted = true;
     if (!this.userChangeUsernameForm.valid) {
       return;
     }
     const changeUsernameObj: UserChangeUsername = this.createChangeUsernameObject();
     this.toggleChangeUsernameService(changeUsernameObj);
+    }, 200);
   }
 
   private createChangeUsernameObject(): UserChangeUsername {
@@ -63,10 +67,12 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
           this.hasTheFormBeenSubmitted = false;
           this.userChangeUsernameForm.reset();
           $("#error-modal").modal();
+          this.hasSubmitButtonBeenClicked = false;
         }
       }, (error) => {
         this.modalBody = error.message;
         $("#error-modal").modal();
+        this.hasSubmitButtonBeenClicked = false;
       });
   }
 }
