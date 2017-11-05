@@ -73,10 +73,4 @@ export class JsonWebTokenWorkers {
         });
     });
   }
-
-  public static storeJsonWebTokenInUserAccount(): Promise<string> {
-    return new Promise((resolve, reject) => {
-
-    });
-  }
 }
