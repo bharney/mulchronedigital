@@ -64,9 +64,10 @@ export class RegisterComponent implements OnInit {
 
   public toggleRegisterUser(): void {
     this.hasSubmitButtonBeenClicked = true;
-    setTimeout(() =>{
+    setTimeout(() => {
     this.hasTheFormBeenSubmitted = true;
     if (!this.userRegistrationForm.valid) {
+      this.hasSubmitButtonBeenClicked = false;
       return;
     }
     const newUser = this.createRegisterUserObject();

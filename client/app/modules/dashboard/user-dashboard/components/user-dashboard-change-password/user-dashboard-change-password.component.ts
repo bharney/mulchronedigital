@@ -52,6 +52,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
       this.hasSubmitButtonBeenClicked = false;
     }
     if (!this.userChangePasswordForm.valid) {
+      this.hasSubmitButtonBeenClicked = false;
       return;
     }
     const changePasswordObj: UserChangePassword = this.createUserChangePasswordWord();

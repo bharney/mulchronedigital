@@ -57,6 +57,7 @@ export class LoginComponent implements OnInit {
     setTimeout(() => {
     this.hasTheFormBeenSubmitted = true;
     if (!this.userLoginForm.valid) {
+      this.hasSubmitButtonBeenClicked = false;
       return;
     }
     const loginUser = this.createLoginUser();

@@ -23,18 +23,19 @@ export class UserDashboardProfilePictureComponent {
   public toggleUploadImage(): void {
     this.hasSubmitButtonBeenClicked = true;
     setTimeout(() => {
-    const fileBrowser = this.fileInput.nativeElement;
-    // TODO: check for common picture file extensions.
-    if (fileBrowser.files && fileBrowser.files[0]) {
-      const formData = new FormData();
-      formData.append("image", fileBrowser.files[0]);
-      for (let i = 0; i < this.imageFileExtensions.length; i++) {
-        if (fileBrowser.files[0].name.includes(this.imageFileExtensions[i])) {
-          this.startHttpMethodToUpdatePhoto(formData);
-          return;
+      const fileBrowser = this.fileInput.nativeElement;
+      // TODO: check for common picture file extensions.
+      if (fileBrowser.files && fileBrowser.files[0]) {
+        const formData = new FormData();
+        formData.append("image", fileBrowser.files[0]);
+        for (let i = 0; i < this.imageFileExtensions.length; i++) {
+          if (fileBrowser.files[0].name.includes(this.imageFileExtensions[i])) {
+            this.startHttpMethodToUpdatePhoto(formData);
+            return;
+          }
         }
       }
-    }
+      this.hasSubmitButtonBeenClicked = false;
       this.triggerInvalidImageTypeModal();
     }, 200);
   }
@@ -42,7 +43,7 @@ export class UserDashboardProfilePictureComponent {
   private startHttpMethodToUpdatePhoto(formData: FormData): void {
     this.userDashboardService.changeUserProfileImage(formData).subscribe(response => {
       if (response.status) {
-        const emitterObject = {"type": "Update user information on dashboard"};
+        const emitterObject = { "type": "Update user information on dashboard" };
         this.userDashboardEmitter.emitChange(emitterObject);
         this.fileInput.nativeElement.value = null;
         this.hasSubmitButtonBeenClicked = false;

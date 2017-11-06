@@ -46,6 +46,7 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
     setTimeout(() => {
     this.hasTheFormBeenSubmitted = true;
     if (!this.userChangeUsernameForm.valid) {
+      this.hasSubmitButtonBeenClicked = false;
       return;
     }
     const changeUsernameObj: UserChangeUsername = this.createChangeUsernameObject();
