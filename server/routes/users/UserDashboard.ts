@@ -42,6 +42,11 @@ export class UserDashboardRouter extends BaseRouter {
     this.router.use("/changeprofileimage", this.checkForUserJsonWebToken);
     this.router.use("/changeprofileimage", this.validateUploadImage);
     this.router.patch("/changeprofileimage", this.storeUploadedImageInDatabase);
+
+    // update users geolocation image
+    this.router.use("/updateuserlocation", this.createStandardLocalResponseObjects);
+    this.router.use("/updateuserlocation", this.checkForUserJsonWebToken);
+    this.router.patch("/updateuserlocation", this.updateUserLocationInformation);
   }
 
   private async validateUserCredentials(req: Request, res: Response) {
@@ -165,14 +170,14 @@ export class UserDashboardRouter extends BaseRouter {
         }
         // Unsupported Media Type
         return res.status(415).json(res.locals.responseMessages.profilePictureUploadFailedUnsupportedType());
-     });
+      });
     } catch (error) {
       console.log(error);
       return res.status(503).json(res.locals.responseMessages.generalError());
     }
   }
 
-  private async storeUploadedImageInDatabase(req: any, res: Response) {
+  private async storeUploadedImageInDatabase(req: Request, res: Response) {
     try {
       const updatedProfile = await UsersCollection.findOneAndUpdate(
         { "_id": new ObjectId(res.locals.token.id) },
@@ -180,6 +185,26 @@ export class UserDashboardRouter extends BaseRouter {
       );
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
         return res.status(200).json(res.locals.responseMessages.changeProfilePictureSuccessful());
+      } else {
+        throw new Error("Updating user profile picture didn't work");
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(503).json(res.locals.responseMessages.generalError());
+    }
+  }
+
+  private async updateUserLocationInformation(req: Request, res: Response) {
+    try {
+      if (typeof (req.body.latitude) !== "number" || typeof (req.body.longitude) !== "number") {
+        return res.status(409).json(res.locals.responseMessages.generalError());
+      }
+      const updatedProfile = await UsersCollection.findOneAndUpdate(
+        { "_id": new ObjectId(res.locals.token.id) },
+        { $set: { "latitude": req.body.latitude, "longitude": req.body.longitude } }
+      );
+      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
+        return res.status(200);
       } else {
         throw new Error("Updating user profile picture didn't work");
       }

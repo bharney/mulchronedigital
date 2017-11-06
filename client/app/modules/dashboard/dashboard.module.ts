@@ -8,13 +8,13 @@ import { ClientAuthGuard } from "../../shared/authenication/ClientAuthGuard";
 import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.component";
 import { UserDashboardComponent } from "./user-dashboard/user-dashboard.component";
 import { UserDashboardHomeComponent } from "./user-dashboard/components/user-dashboard-home/user-dashboard-home.component";
-import { UserDashboardService } from "../../shared/services/user-dashboard.service";
 import { UserDashboardChangePasswordComponent } from "./user-dashboard/components/user-dashboard-change-password/user-dashboard-change-password.component";
 import { UserDashboardChangeUsernameComponent } from "./user-dashboard/components/user-dashboard-change-username/user-dashboard-change-username.component";
 import { UserDashboardProfilePictureComponent } from "./user-dashboard/components/user-dashboard-profile-picture/user-dashboard-profile-picture.component";
 import { SharedModule } from "../../shared/modules/shared.module";
 import { UserDashboardEmitter } from "../../shared/services/emitters/user-dashboard-emitter.service";
 import { UserDashboardNavigationComponent } from "./user-dashboard/components/user-dashboard-navigation/user-dashboard-navigation.component";
+import { ChangeUsernameService, ChangeUserPasswordService, ChangeUserProfileImageService, MainDashboardService } from "../../shared/services/user-dashboard.service";
 
 
 @NgModule({
@@ -36,8 +36,11 @@ import { UserDashboardNavigationComponent } from "./user-dashboard/components/us
   providers: [
     ClientAuthGuard,
     AuthenicationControl,
-    UserDashboardService,
-    UserDashboardEmitter
+    UserDashboardEmitter,
+    ChangeUserPasswordService,
+    ChangeUsernameService,
+    ChangeUserProfileImageService,
+    MainDashboardService
   ]
 })
 export class DashboardLazyModule { }

@@ -10,6 +10,8 @@ export class User {
   public modifiedAt: string;
   public profileImage: string;
   public jsonToken: string;
+  public latitude: number;
+  public longitude: number;
 
   constructor(username: string, email?: string, password?: string) {
     this.username = username;

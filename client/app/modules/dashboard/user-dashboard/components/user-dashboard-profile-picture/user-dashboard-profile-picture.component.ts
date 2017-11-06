@@ -1,5 +1,5 @@
+import { ChangeUserProfileImageService } from "../../../../../shared/services/user-dashboard.service";
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import { UserDashboardService } from "../../../../../shared/services/user-dashboard.service";
 import { UserDashboardEmitter } from "../../../../../shared/services/emitters/user-dashboard-emitter.service";
 declare const $: any;
 
@@ -16,33 +16,34 @@ export class UserDashboardProfilePictureComponent {
   public hasSubmitButtonBeenClicked: boolean = false;
 
   constructor(
-    private userDashboardService: UserDashboardService,
+    private changeUserProfileImageService: ChangeUserProfileImageService,
     private userDashboardEmitter: UserDashboardEmitter
   ) { }
 
   public toggleUploadImage(): void {
     this.hasSubmitButtonBeenClicked = true;
     setTimeout(() => {
-    const fileBrowser = this.fileInput.nativeElement;
-    // TODO: check for common picture file extensions.
-    if (fileBrowser.files && fileBrowser.files[0]) {
-      const formData = new FormData();
-      formData.append("image", fileBrowser.files[0]);
-      for (let i = 0; i < this.imageFileExtensions.length; i++) {
-        if (fileBrowser.files[0].name.includes(this.imageFileExtensions[i])) {
-          this.startHttpMethodToUpdatePhoto(formData);
-          return;
+      const fileBrowser = this.fileInput.nativeElement;
+      // TODO: check for common picture file extensions.
+      if (fileBrowser.files && fileBrowser.files[0]) {
+        const formData = new FormData();
+        formData.append("image", fileBrowser.files[0]);
+        for (let i = 0; i < this.imageFileExtensions.length; i++) {
+          if (fileBrowser.files[0].name.includes(this.imageFileExtensions[i])) {
+            this.startHttpMethodToUpdatePhoto(formData);
+            return;
+          }
         }
       }
-    }
+      this.hasSubmitButtonBeenClicked = false;
       this.triggerInvalidImageTypeModal();
     }, 200);
   }
 
   private startHttpMethodToUpdatePhoto(formData: FormData): void {
-    this.userDashboardService.changeUserProfileImage(formData).subscribe(response => {
+    this.changeUserProfileImageService.changeUserProfileImage(formData).subscribe(response => {
       if (response.status) {
-        const emitterObject = {"type": "Update user information on dashboard"};
+        const emitterObject = { "type": "Update user information on dashboard" };
         this.userDashboardEmitter.emitChange(emitterObject);
         this.fileInput.nativeElement.value = null;
         this.hasSubmitButtonBeenClicked = false;

@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup, Validators, FormBuilder } from "@angular/forms";
 import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
-import { UserDashboardService } from "../../../../../shared/services/user-dashboard.service";
 import { UserChangePassword, IUserChangePasswordResponse } from "../../../../../shared/models/dashboard.model";
+import { ChangeUserPasswordService } from "../../../../../shared/services/user-dashboard.service";
 declare const $: any;
 
 @Component({
@@ -20,7 +20,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private userDashboardService: UserDashboardService
+    private changeUserPasswordService: ChangeUserPasswordService
   ) { }
 
   ngOnInit() {
@@ -52,6 +52,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
       this.hasSubmitButtonBeenClicked = false;
     }
     if (!this.userChangePasswordForm.valid) {
+      this.hasSubmitButtonBeenClicked = false;
       return;
     }
     const changePasswordObj: UserChangePassword = this.createUserChangePasswordWord();
@@ -64,7 +65,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
   }
 
   private subcribeToChangePasswordService(changePasswordObj: UserChangePassword): void {
-    this.userDashboardService.changeUserPassword(changePasswordObj)
+    this.changeUserPasswordService.changeUserPassword(changePasswordObj)
       .subscribe((res: IUserChangePasswordResponse) => {
         if (res.status) {
           this.modalBody = res.message;
