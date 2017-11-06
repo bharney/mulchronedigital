@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Http, RequestOptions, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { Dashboard, UserChangePassword, UserChangeUsername } from "../models/dashboard.model";
+import { UserLocation } from "../../../../shared/interfaces/IUserLocation";
 import { AuthenicationControl } from "../authenication/AuthenicationControl";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
@@ -10,7 +11,7 @@ import "rxjs/add/operator/catch";
 
 // TODO: Make all of these calls into seperate injectables.
 @Injectable()
-export class GetUserInformationService {
+export class MainDashboardService {
   constructor(
     private http: Http,
     private apiRequests: ApiRequests,
@@ -21,6 +22,13 @@ export class GetUserInformationService {
   public getUserInformation(): Observable<any> {
     const options: RequestOptions = this.apiRequests.createAuthorizationHeader();
     return this.http.get("/api/userdashboard/getuserinformation", options)
+      .map(this.apiRequests.parseResponse)
+      .catch(this.apiRequests.errorCatcher);
+  }
+
+  public updateUserLocation(location: UserLocation): Observable<any> {
+    const options: RequestOptions = this.apiRequests.createAuthorizationHeader();
+    return this.http.patch("/api/userdashboard/updateuserlocation", location, options)
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }

@@ -3,8 +3,9 @@ import { Component, OnInit } from "@angular/core";
 import { Dashboard } from "../../../shared/models/dashboard.model";
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
 import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
-import { GetUserInformationService } from "../../../shared/services/user-dashboard.service";
+import { MainDashboardService } from "../../../shared/services/user-dashboard.service";
 import { UserDashboardEmitter } from "../../../shared/services/emitters/user-dashboard-emitter.service";
+import { UserLocation } from "../../../../../shared/interfaces/IUserLocation";
 
 @Component({
   selector: "app-users-dashboard",
@@ -19,7 +20,7 @@ export class UserDashboardComponent implements OnInit {
   private parentRouter: Router;
 
   constructor(
-    private getUserInformationService: GetUserInformationService,
+    private mainDashboardService: MainDashboardService,
     private authControl: AuthenicationControl,
     private route: ActivatedRoute,
     private router: Router,
@@ -30,13 +31,18 @@ export class UserDashboardComponent implements OnInit {
     this.isUserAuthorizedToBeHere();
     this.subscribeToUpdateUserInformationEmitter();
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this.saveUserLocationInformation);
+      navigator.geolocation.getCurrentPosition(position => {
+        this.saveUserLocationInformation(position);
+      });
     }
   }
 
   private saveUserLocationInformation(position): void {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
+    const location = new UserLocation(position.coords.latitude, position.coords.longitude);
+    this.mainDashboardService.updateUserLocation(location).subscribe(response => {
+      // something with response?
+      // i dont see a reason to display an error here.
+    });
   }
 
   private isUserAuthorizedToBeHere(): void {
@@ -73,7 +79,7 @@ export class UserDashboardComponent implements OnInit {
   }
 
   private getUserDashboardInformation(): void {
-    this.getUserInformationService.getUserInformation().subscribe(response => {
+    this.mainDashboardService.getUserInformation().subscribe(response => {
       if (response.status) {
         this.username = response.username;
         this.profileImage = response.profileImage;

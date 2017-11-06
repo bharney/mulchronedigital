@@ -14,7 +14,7 @@ import { UserDashboardProfilePictureComponent } from "./user-dashboard/component
 import { SharedModule } from "../../shared/modules/shared.module";
 import { UserDashboardEmitter } from "../../shared/services/emitters/user-dashboard-emitter.service";
 import { UserDashboardNavigationComponent } from "./user-dashboard/components/user-dashboard-navigation/user-dashboard-navigation.component";
-import { ChangeUsernameService, ChangeUserPasswordService, ChangeUserProfileImageService, GetUserInformationService } from "../../shared/services/user-dashboard.service";
+import { ChangeUsernameService, ChangeUserPasswordService, ChangeUserProfileImageService, MainDashboardService } from "../../shared/services/user-dashboard.service";
 
 
 @NgModule({
@@ -40,7 +40,7 @@ import { ChangeUsernameService, ChangeUserPasswordService, ChangeUserProfileImag
     ChangeUserPasswordService,
     ChangeUsernameService,
     ChangeUserProfileImageService,
-    GetUserInformationService
+    MainDashboardService
   ]
 })
 export class DashboardLazyModule { }
