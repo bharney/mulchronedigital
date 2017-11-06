@@ -29,7 +29,6 @@ export class UserDashboardComponent implements OnInit {
   ngOnInit() {
     this.isUserAuthorizedToBeHere();
     this.subscribeToUpdateUserInformationEmitter();
-    this.subscribeToUserDashboardNaviationEmitter();
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(this.saveUserLocationInformation);
     }
@@ -71,10 +70,6 @@ export class UserDashboardComponent implements OnInit {
           break;
       }
     });
-  }
-
-  private subscribeToUserDashboardNaviationEmitter(): void {
-
   }
 
   private getUserDashboardInformation(): void {
