@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { FormGroup, Validators, FormBuilder } from "@angular/forms";
-import { UserDashboardService } from "../../../../../shared/services/user-dashboard.service";
+import { ChangeUsernameService } from "../../../../../shared/services/user-dashboard.service";
 import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
 import { UserChangeUsername } from "../../../../../shared/models/dashboard.model";
 import { UserDashboardEmitter } from "../../../../../shared/services/emitters/user-dashboard-emitter.service";
@@ -20,7 +20,7 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private userDashboardService: UserDashboardService,
+    private changeUsernameService: ChangeUsernameService,
     private userDashboardEmitter: UserDashboardEmitter
   ) { }
 
@@ -59,7 +59,7 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
   }
 
   private toggleChangeUsernameService(changeUsernameObj: UserChangeUsername): void {
-    this.userDashboardService.changeUsername(changeUsernameObj)
+    this.changeUsernameService.changeUsername(changeUsernameObj)
       .subscribe((res) => {
         if (res.status) {
           const emitterObject = {"type": "Update user information on dashboard"};

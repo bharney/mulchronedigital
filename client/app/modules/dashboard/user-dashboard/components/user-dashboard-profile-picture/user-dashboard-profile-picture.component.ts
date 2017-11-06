@@ -1,5 +1,5 @@
+import { ChangeUserProfileImageService } from "../../../../../shared/services/user-dashboard.service";
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import { UserDashboardService } from "../../../../../shared/services/user-dashboard.service";
 import { UserDashboardEmitter } from "../../../../../shared/services/emitters/user-dashboard-emitter.service";
 declare const $: any;
 
@@ -16,7 +16,7 @@ export class UserDashboardProfilePictureComponent {
   public hasSubmitButtonBeenClicked: boolean = false;
 
   constructor(
-    private userDashboardService: UserDashboardService,
+    private changeUserProfileImageService: ChangeUserProfileImageService,
     private userDashboardEmitter: UserDashboardEmitter
   ) { }
 
@@ -41,7 +41,7 @@ export class UserDashboardProfilePictureComponent {
   }
 
   private startHttpMethodToUpdatePhoto(formData: FormData): void {
-    this.userDashboardService.changeUserProfileImage(formData).subscribe(response => {
+    this.changeUserProfileImageService.changeUserProfileImage(formData).subscribe(response => {
       if (response.status) {
         const emitterObject = { "type": "Update user information on dashboard" };
         this.userDashboardEmitter.emitChange(emitterObject);

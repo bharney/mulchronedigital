@@ -3,7 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { Dashboard } from "../../../shared/models/dashboard.model";
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
 import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
-import { UserDashboardService } from "../../../shared/services/user-dashboard.service";
+import { GetUserInformationService } from "../../../shared/services/user-dashboard.service";
 import { UserDashboardEmitter } from "../../../shared/services/emitters/user-dashboard-emitter.service";
 
 @Component({
@@ -19,7 +19,7 @@ export class UserDashboardComponent implements OnInit {
   private parentRouter: Router;
 
   constructor(
-    private userDashboardService: UserDashboardService,
+    private getUserInformationService: GetUserInformationService,
     private authControl: AuthenicationControl,
     private route: ActivatedRoute,
     private router: Router,
@@ -30,6 +30,14 @@ export class UserDashboardComponent implements OnInit {
     this.isUserAuthorizedToBeHere();
     this.subscribeToUpdateUserInformationEmitter();
     this.subscribeToUserDashboardNaviationEmitter();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(this.saveUserLocationInformation);
+    }
+  }
+
+  private saveUserLocationInformation(position): void {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
   }
 
   private isUserAuthorizedToBeHere(): void {
@@ -70,7 +78,7 @@ export class UserDashboardComponent implements OnInit {
   }
 
   private getUserDashboardInformation(): void {
-    this.userDashboardService.getUserInformation().subscribe(response => {
+    this.getUserInformationService.getUserInformation().subscribe(response => {
       if (response.status) {
         this.username = response.username;
         this.profileImage = response.profileImage;

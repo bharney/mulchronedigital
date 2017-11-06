@@ -10,8 +10,7 @@ import "rxjs/add/operator/catch";
 
 // TODO: Make all of these calls into seperate injectables.
 @Injectable()
-export class UserDashboardService {
-
+export class GetUserInformationService {
   constructor(
     private http: Http,
     private apiRequests: ApiRequests,
@@ -25,6 +24,15 @@ export class UserDashboardService {
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }
+}
+
+@Injectable()
+export class ChangeUserPasswordService {
+  constructor(
+    private http: Http,
+    private apiRequests: ApiRequests,
+    private authenicationControl: AuthenicationControl
+  ) { }
 
   // TODO: create observable type
   public changeUserPassword(changePasswordObj: UserChangePassword): Observable<any> {
@@ -33,6 +41,15 @@ export class UserDashboardService {
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }
+}
+
+@Injectable()
+export class ChangeUsernameService {
+  constructor(
+    private http: Http,
+    private apiRequests: ApiRequests,
+    private authenicationControl: AuthenicationControl
+  ) { }
 
   // TODO: create observable type
   public changeUsername(changeUsernameObj: UserChangeUsername): Observable<any> {
@@ -41,6 +58,16 @@ export class UserDashboardService {
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }
+}
+
+@Injectable()
+export class ChangeUserProfileImageService {
+
+  constructor(
+    private http: Http,
+    private apiRequests: ApiRequests,
+    private authenicationControl: AuthenicationControl
+  ) { }
 
   // TODO: create observable type
   public changeUserProfileImage(formData: FormData): Observable<any> {
