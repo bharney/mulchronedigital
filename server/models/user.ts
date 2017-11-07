@@ -15,7 +15,7 @@ export class User {
   public longitude: number;
   public ipAddresses: UserIpAddress[];
 
-  constructor(username: string, ipAddress?: UserIpAddress, email?: string, password?: string) {
+  constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress) {
     this.username = username;
     this.email = email;
     this.password = password;
