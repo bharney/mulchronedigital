@@ -5,6 +5,7 @@ import { Database } from "../../globals/Database";
 import { User } from "../../models/user";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
+import { UserIpAddress } from "../classes/UserIpAddress";
 
 
 export class UserAuthenicationRouter extends BaseRouter {
@@ -72,7 +73,8 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private async insertNewUser(req: Request, res: Response) {
     try {
-      const newUser = new User(req.body.username, req.body.email, req.body.password);
+      const ipAddressObject = new UserIpAddress(req.ip);
+      const newUser = new User(req.body.username, ipAddressObject, req.body.email, req.body.password);
       // TODO: split this up into seperate functions. little messy;
       if (await newUser.SetupNewUser()) {
         const insertResult = await UsersCollection.insertOne(newUser);

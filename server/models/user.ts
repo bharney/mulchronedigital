@@ -1,4 +1,5 @@
 import bcrypt = require("bcryptjs");
+import { UserIpAddress } from "../routes/classes/UserIpAddress";
 
 export class User {
   public _id?: string;
@@ -12,13 +13,18 @@ export class User {
   public jsonToken: string;
   public latitude: number;
   public longitude: number;
+  public ipAddresses: UserIpAddress[];
 
-  constructor(username: string, email?: string, password?: string) {
+  constructor(username: string, ipAddress?: UserIpAddress, email?: string, password?: string) {
     this.username = username;
     this.email = email;
     this.password = password;
     this.isAdmin = false;
     this.modifiedAt = new Date().toLocaleString();
+    if (ipAddress) {
+      this.ipAddresses = [];
+      this.ipAddresses.push(ipAddress);
+    }
   }
 
   public async SetupNewUser(): Promise<boolean> {
