@@ -6,6 +6,8 @@ import { User } from "../../models/user";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
 import { UserIpAddress } from "../classes/UserIpAddress";
+import { HttpHelpers } from "../../globals/HttpHelpers";
+import { ObjectId } from 'mongodb';
 
 
 export class UserAuthenicationRouter extends BaseRouter {
@@ -73,10 +75,8 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private async insertNewUser(req: Request, res: Response) {
     try {
-      let ip = req.ip;
-      if (ip.substr(0, 7) === "::ffff:") {
-        ip = ip.substring(7);
-      }
+      const httpHelpers = new HttpHelpers();
+      const ip = await httpHelpers.getIpAddressFromRequestObject(req);
       const ipAddressObject = new UserIpAddress(ip);
       const newUser = new User(req.body.username, req.body.email, req.body.password, ipAddressObject);
       // TODO: split this up into seperate functions. little messy;
@@ -84,6 +84,7 @@ export class UserAuthenicationRouter extends BaseRouter {
         const insertResult = await UsersCollection.insertOne(newUser);
         if (insertResult.result.n === 1) {
           return res.status(200).json(res.locals.responseMessages.userRegistrationSuccessful(req.body.username));
+          // TODO: send email to have user confirm their registration (can remove the return statement and execute afterwards);
         } else {
           return res.status(503).json(res.locals.responseMessages.generalError());
         }
@@ -114,7 +115,20 @@ export class UserAuthenicationRouter extends BaseRouter {
         if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
           return res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
         } else {
-          return res.status(200).json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
+          res.status(200).json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
+          const httpHelpers = new HttpHelpers();
+          const ip = await httpHelpers.getIpAddressFromRequestObject(req);
+          const ipAddressObject = new UserIpAddress(ip);
+          const matchingUserIpAddresses = await UsersCollection.find(
+            { "_id": new ObjectId(databaseUsers[0]._id) },
+            { "ipAddresses": { $elemMatch: { "ipAddress": ip } } }
+          ).toArray();
+          if (matchingUserIpAddresses.length === 0) {
+            await UsersCollection.findOneAndUpdate(
+              { "_id": new ObjectId(databaseUsers[0]._id) },
+              { $push: { "ipAddresses": ipAddressObject } }
+            );
+          }
         }
       } else {
         return res.status(401).json(res.locals.responseMessages.noUserFound());
