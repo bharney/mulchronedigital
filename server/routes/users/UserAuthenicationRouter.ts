@@ -116,6 +116,7 @@ export class UserAuthenicationRouter extends BaseRouter {
           return res.status(401).json(res.locals.responseMessages.passwordsDoNotMatch());
         } else {
           res.status(200).json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
+          // TODO: MAKE A FUNCTION!!!!
           const httpHelpers = new HttpHelpers();
           const ip = await httpHelpers.getIpAddressFromRequestObject(req);
           const ipAddressObject = new UserIpAddress(ip);
@@ -124,9 +125,12 @@ export class UserAuthenicationRouter extends BaseRouter {
             { "ipAddresses": { $elemMatch: { "ipAddress": ip } } }
           ).toArray();
           if (matchingUserIpAddresses.length === 0) {
+            // TODO: we are now associating a new or unknown IP address to the user.
+            // we probably dont have to await this, but here is where we can pass something out to RabbitMQ... maybe????
             await UsersCollection.findOneAndUpdate(
               { "_id": new ObjectId(databaseUsers[0]._id) },
-              { $push: { "ipAddresses": ipAddressObject } }
+              { $push: { "ipAddresses": ipAddressObject } },
+              { new: true }
             );
           }
         }
