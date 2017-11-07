@@ -21,8 +21,8 @@ export class User {
     this.password = password;
     this.isAdmin = false;
     this.modifiedAt = new Date().toLocaleString();
+    this.ipAddresses = [];
     if (ipAddress) {
-      this.ipAddresses = [];
       this.ipAddresses.push(ipAddress);
     }
   }
