@@ -46,14 +46,10 @@ export abstract class BaseRouter {
         return res.status(409).json(res.locals.responseMessages.jsonWebTokenExpired());
       }
       const decodedDbToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseUsers[0].jsonToken);
-      let matchingTokenAttributes = 0;
       for (const key in decodedDbToken) {
-        if (decodedDbToken[key] === res.locals.token[key]) {
-          matchingTokenAttributes++;
+        if (decodedDbToken[key] !== res.locals.token[key]) {
+          return res.status(409).json(res.locals.responseMessages.jsonWebTokenDoesntMatchStoredToken());
         }
-      }
-      if (matchingTokenAttributes < 4) {
-        return res.status(409).json(res.locals.responseMessages.jsonWebTokenDoesntMatchStoredToken());
       }
       next();
     } catch (error) {
