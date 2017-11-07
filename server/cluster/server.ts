@@ -27,6 +27,7 @@ export default class Server {
     this.app.use(bodyParser.text());
     this.app.use(bodyParser.json({ type: "application/vnd.api+json" }));
     this.app.disable("x-powered-by");
+    this.app.enable("trust proxy");
     this.app.use("/", this.configureRequestHeaders);
     this.app.use("/", this.indexRouter);
   }

@@ -73,7 +73,11 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private async insertNewUser(req: Request, res: Response) {
     try {
-      const ipAddressObject = new UserIpAddress(req.ip);
+      let ip = req.ip;
+      if (ip.substr(0, 7) === "::ffff:") {
+        ip = ip.substring(7);
+      }
+      const ipAddressObject = new UserIpAddress(ip);
       const newUser = new User(req.body.username, req.body.email, req.body.password, ipAddressObject);
       // TODO: split this up into seperate functions. little messy;
       if (await newUser.SetupNewUser()) {
