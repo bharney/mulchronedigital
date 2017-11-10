@@ -3,9 +3,9 @@ import { MongoClient, Db, Collection } from "mongodb";
 import { User } from "../models/user";
 
 export class Database {
-  public static databaseConnectionFailures: number = 0;
+  public databaseConnectionFailures: number = 0;
 
-  public static CreateDatabaseConnection(): Promise<Db> {
+  public CreateDatabaseConnection(): Promise<Db> {
     return new Promise((resolve, reject) => {
       let url;
       (!process.env.MONGO_URL) ? url = "mongodb://localhost:27017/Node-Angular-Starter" : url = process.env.MONGO_URL;
@@ -22,7 +22,7 @@ export class Database {
     });
   }
 
-  public static async SeedDatabase(): Promise<boolean> {
+  public async SeedDatabase(): Promise<boolean> {
     const db = await this.CreateDatabaseConnection();
     try {
       const userCollection = await db.listCollections({ "name": "Users" }).toArray();
@@ -39,7 +39,7 @@ export class Database {
     }
   }
 
-  private static async CreateUsersCollection(db: Db): Promise<boolean> {
+  private async CreateUsersCollection(db: Db): Promise<boolean> {
     try {
       const collection: Collection<User> = await db.createCollection<User>("Users");
       if (!await this.CreateUserCollectionIndexes(collection)) {
@@ -58,7 +58,7 @@ export class Database {
     }
   }
 
-  private static async CreateUserCollectionIndexes(collection: Collection<User>): Promise<boolean> {
+  private async CreateUserCollectionIndexes(collection: Collection<User>): Promise<boolean> {
     try {
       const indexes: object[] = [
         {
@@ -85,7 +85,7 @@ export class Database {
     }
   }
 
-  private static async CreateUserObjects(collection: Collection<User>): Promise<boolean> {
+  private async CreateUserObjects(collection: Collection<User>): Promise<boolean> {
     try {
       const usernames: string[] = ["admin", "basicuser"];
       const emails: string[] = ["admin@gmail.com", "basicuser@gmail.com"];

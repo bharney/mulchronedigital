@@ -6,19 +6,26 @@ import cluster = require("cluster");
 let db;
 let UsersCollection;
 
-makeDbConnection();
+makeDbConnection().then(response => {
+  if (response) {
+    startCluster();
+  }
+});
 
-if (cluster.isMaster && db !== null) {
-  isMaster();
-} else if (cluster.isWorker && db !== null) {
-  isWorker();
+async function startCluster() {
+  if (cluster.isMaster && db !== null) {
+    await isMaster();
+  } else if (cluster.isWorker && db !== null) {
+    await isWorker();
+  }
 }
 
-async function isMaster() {
+async function isMaster(): Promise<void> {
   try {
+    const database = new Database();
     console.log(`Master ${process.pid} is running`);
     console.log(`Master ${process.pid} running database seed`);
-    if (await Database.SeedDatabase()) {
+    if (await database.SeedDatabase()) {
       console.log(`Master ${process.pid} database seed complete`);
     }
 
@@ -36,7 +43,7 @@ async function isMaster() {
   }
 }
 
-async function isWorker() {
+async function isWorker(): Promise<void> {
   try {
     const newServer = new Server();
     const serverWorker = newServer.app.listen(newServer.port, () => {
@@ -47,13 +54,15 @@ async function isWorker() {
   }
 }
 
-async function makeDbConnection() {
+async function makeDbConnection(): Promise<boolean> {
+  const database = new Database();
   try {
-    db = await Database.CreateDatabaseConnection();
+    db = await database.CreateDatabaseConnection();
     UsersCollection = db.collection("Users");
+    return true;
   } catch (error) {
-    Database.databaseConnectionFailures++;
-    if (Database.databaseConnectionFailures === 25) {
+    database.databaseConnectionFailures++;
+    if (database.databaseConnectionFailures === 25) {
       console.log("Database connection failed 25 times, stopping process");
       process.exit();
     }
