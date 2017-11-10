@@ -4,9 +4,8 @@ export class HttpHelpers {
 
   constructor() { }
 
-  public getIpAddressFromRequestObject(req: Request): Promise<string> {
+  public getIpAddressFromRequestObject(ip: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      let ip = req.ip;
       if (ip.substr(0, 7) === "::ffff:") {
         ip = ip.substring(7);
       }

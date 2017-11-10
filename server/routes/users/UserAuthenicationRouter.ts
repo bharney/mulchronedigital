@@ -76,7 +76,7 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async insertNewUser(req: Request, res: Response) {
     try {
       const httpHelpers = new HttpHelpers();
-      const ip = await httpHelpers.getIpAddressFromRequestObject(req);
+      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const ipAddressObject = new UserIpAddress(ip);
       const newUser = new User(req.body.username, req.body.email, req.body.password, ipAddressObject);
       // TODO: split this up into seperate functions. little messy;
@@ -118,7 +118,7 @@ export class UserAuthenicationRouter extends BaseRouter {
           res.status(200).json(await res.locals.responseMessages.successfulUserLogin(databaseUsers[0]));
           // TODO: MAKE A FUNCTION!!!!
           const httpHelpers = new HttpHelpers();
-          const ip = await httpHelpers.getIpAddressFromRequestObject(req);
+          const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
           const ipAddressObject = new UserIpAddress(ip);
           const matchingUserIpAddresses = await UsersCollection.find(
             { "_id": new ObjectId(databaseUsers[0]._id) },
