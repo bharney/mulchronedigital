@@ -43,26 +43,19 @@ export class UserDashboardRouter extends BaseRouter {
 
     // update users geolocation image
     this.router.use("/updateuserlocation", this.checkForUserJsonWebToken);
-    this.router.patch(
-      "/updateuserlocation",
-      this.updateUserLocationInformation
-    );
+    this.router.patch("/updateuserlocation", this.updateUserLocationInformation);
   }
 
   private async getUserInformation(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
       const userdashboardDataAccess = new UserDashboardDataAccess();
-      const databaseUsers: User[] = await userdashboardDataAccess.getUserDashboardInformation(
-        res.locals.token.id
-      );
+      const databaseUsers: User[] = await userdashboardDataAccess.getUserDashboardInformation(res.locals.token.id);
       if (databaseUsers.length <= 0) {
         return res.status(503).json(responseMessages.generalError());
       }
       // we are looking by object id there should only be one user in this array.
-      return res
-        .status(200)
-        .json(responseMessages.dashboardUserFound(databaseUsers[0]));
+      return res.status(200).json(responseMessages.dashboardUserFound(databaseUsers[0]));
     } catch (error) {
       // TOOD: log error?
       return res.status(503).json(responseMessages.generalError());
@@ -72,52 +65,24 @@ export class UserDashboardRouter extends BaseRouter {
   private async validateUserChangePassword(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      if (
-        !await UserAuthenicationValidator.isPasswordValid(
-          req.body.currentPassword
-        ) ||
-        !await UserAuthenicationValidator.isPasswordValid(req.body.newPassword)
-      ) {
+      if (!await UserAuthenicationValidator.isPasswordValid(req.body.currentPassword) || !await UserAuthenicationValidator.isPasswordValid(req.body.newPassword)) {
         return res.status(422).json(responseMessages.passwordIsNotValid());
       }
-
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
-      const databaseUsers: User[] = await UsersCollection.find(
-        { _id: new ObjectId(res.locals.token.id) },
-        { password: 1, _id: 1 }
-      ).toArray();
+      const userdashboardDataAccess = new UserDashboardDataAccess();
+      const databaseUsers: User[] = await userdashboardDataAccess.getUserPassword(res.locals.token.id);
       if (databaseUsers.length <= 0) {
         return res.status(422).json(responseMessages.noUserFound());
       }
-
-      if (
-        !await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(
-          req.body.currentPassword,
-          databaseUsers[0].password
-        )
-      ) {
+      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
         return res.status(401).json(responseMessages.passwordsDoNotMatch());
       }
-      const user = new User(
-        databaseUsers[0].username,
-        databaseUsers[0].email,
-        req.body.newPassword
-      );
-      if (!await user.updateUserPassword()) {
-        return res.status(503).json(responseMessages.generalError());
-      }
-
-      const updateResult = await UsersCollection.updateOne(
-        { _id: new ObjectId(databaseUsers[0]._id) },
-        { $set: { password: user.password, modifiedAt: user.modifiedAt } }
-      );
-
-      if (updateResult.modifiedCount === 1) {
-        return res
-          .status(200)
-          .json(responseMessages.userChangedPasswordSuccessfully());
+      const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
+      const updatePasswordResult = await userdashboardDataAccess.updateUserPassword(databaseUsers[0]._id, user);
+      if (updatePasswordResult.modifiedCount === 1) {
+        return res.status(200).json(responseMessages.userChangedPasswordSuccessfully());
       } else {
-        throw new Error("There was nothing updated");
+        throw new Error("There was nothing updated when attemtping to update the users password");
       }
     } catch (error) {
       console.log(error);
