@@ -1,3 +1,4 @@
+import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
 import { User } from "../../models/user";
 import { Database } from "../../globals/Database";
 import { BaseRouter } from "../classes/BaseRouter";
@@ -6,9 +7,9 @@ import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { ObjectId } from "mongodb";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
-import { UsersCollection } from "../../cluster/master";
 import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
+import { UsersCollection } from "../../cluster/master";
 const parseFile = multer({
   limits: { fileSize: 5000000, files: 1 }
 }).single("image");
@@ -25,7 +26,7 @@ export class UserDashboardRouter extends BaseRouter {
   private configureRouter(): void {
     // Register user
     this.router.use("/getuserinformation", this.checkForUserJsonWebToken);
-    this.router.get("/getuserinformation", this.validateUserCredentials);
+    this.router.get("/getuserinformation", this.getUserInformation);
 
     // change user password
     this.router.use("/changepassword", this.checkForUserJsonWebToken);
@@ -42,22 +43,23 @@ export class UserDashboardRouter extends BaseRouter {
 
     // update users geolocation image
     this.router.use("/updateuserlocation", this.checkForUserJsonWebToken);
-    this.router.patch("/updateuserlocation", this.updateUserLocationInformation);
+    this.router.patch(
+      "/updateuserlocation",
+      this.updateUserLocationInformation
+    );
   }
 
-  private async validateUserCredentials(req: Request, res: Response) {
+  private async getUserInformation(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      // TODO: why does this have to be to return as an array?
-      // return only the username for the time being, omit the userid
-      const databaseUsers: User[] = await UsersCollection.find(
-        { _id: new ObjectId(res.locals.token.id) },
-        { username: 1, profileImage: 1, _id: 0 }
-      ).toArray();
+      const userdashboardDataAccess = new UserDashboardDataAccess();
+      const databaseUsers: User[] = await userdashboardDataAccess.getUserDashboardInformation(
+        res.locals.token.id
+      );
       if (databaseUsers.length <= 0) {
         return res.status(503).json(responseMessages.generalError());
       }
-      // we are looking by object id there should only user in this array.
+      // we are looking by object id there should only be one user in this array.
       return res
         .status(200)
         .json(responseMessages.dashboardUserFound(databaseUsers[0]));
@@ -130,7 +132,7 @@ export class UserDashboardRouter extends BaseRouter {
       if (
         !await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)
       ) {
-        return res.status(422).json(responseMessages.usernameIsNotValid());
+        return res.status(422).json(responseMessages.userNameIsNotValid());
       }
       if (
         !await UserAuthenicationValidator.isPasswordValid(req.body.password)
@@ -220,6 +222,7 @@ export class UserDashboardRouter extends BaseRouter {
   }
 
   private async storeUploadedImageInDatabase(req: Request, res: Response) {
+    const responseMessages = new ResponseMessages();
     try {
       const updatedProfile = await UsersCollection.findOneAndUpdate(
         { _id: new ObjectId(res.locals.token.id) },
@@ -231,39 +234,34 @@ export class UserDashboardRouter extends BaseRouter {
       ) {
         return res
           .status(200)
-          .json(res.locals.responseMessages.changeProfilePictureSuccessful());
+          .json(responseMessages.changeProfilePictureSuccessful());
       } else {
         throw new Error("Updating user profile picture didn't work");
       }
     } catch (error) {
       console.log(error);
-      return res.status(503).json(res.locals.responseMessages.generalError());
+      return res.status(503).json(responseMessages.generalError());
     }
   }
 
   private async updateUserLocationInformation(req: Request, res: Response) {
+    const responseMessages = new ResponseMessages();
     try {
-      if (
-        typeof req.body.latitude !== "number" ||
-        typeof req.body.longitude !== "number"
-      ) {
-        return res.status(409).json(res.locals.responseMessages.generalError());
+      if (typeof req.body.latitude !== "number" || typeof req.body.longitude !== "number") {
+        return res.status(409).json(responseMessages.generalError());
       }
       const updatedProfile = await UsersCollection.findOneAndUpdate(
         { _id: new ObjectId(res.locals.token.id) },
         { $set: { latitude: req.body.latitude, longitude: req.body.longitude } }
       );
-      if (
-        updatedProfile.lastErrorObject.updatedExisting &&
-        updatedProfile.lastErrorObject.n === 1
-      ) {
+      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
         return res.status(200);
       } else {
         throw new Error("Updating user profile picture didn't work");
       }
     } catch (error) {
       console.log(error);
-      return res.status(503).json(res.locals.responseMessages.generalError());
+      return res.status(503).json(responseMessages.generalError());
     }
   }
 }
