@@ -4,7 +4,7 @@ export class DataAccessObjects {
   public findUserByIdQuery(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userId === null) {
-        reject(null);
+        reject(new Error("No user ID was provided at findUserByIdQuery(userId: string)"));
       }
       const query = { _id: new ObjectId(userId) };
       resolve(query);
