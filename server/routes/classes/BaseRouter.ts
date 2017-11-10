@@ -8,31 +8,24 @@ import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { User } from "../../models/user";
 
 export abstract class BaseRouter {
-
-  public async createStandardLocalResponseObjects(req: Request, res: Response, next: NextFunction) {
-    try {
-      res.locals.responseMessages = new ResponseMessages();
-    } catch (error) {
-      // TODO: error handler
-      throw error;
-    }
-    next();
-  }
-
   public async checkForUserJsonWebToken(req: Request, res: Response, next: NextFunction) {
     try {
+      // TODO: this looks god awful. FIX IT!
       const headerToken = req.headers["user-authenication-token"];
       if (headerToken === null) {
-        return res.json(res.locals.responseMessages.noJsonWebTokenInHeader());
+        const responseMessages = new ResponseMessages();
+        return res.json(responseMessages.noJsonWebTokenInHeader());
       }
 
       if (!await JsonWebTokenWorkers.verifiyJsonWebToken(headerToken)) {
-        return res.status(409).json(res.locals.responseMessages.jsonWebTokenExpired());
+        const responseMessages = new ResponseMessages();
+        return res.status(409).json(responseMessages.jsonWebTokenExpired());
       }
 
       res.locals.token = await JsonWebTokenWorkers.getDecodedJsonWebToken(headerToken);
       if (!res.locals.token) {
-        return res.status(503).json(res.locals.responseMessages.generalError());
+        const responseMessages = new ResponseMessages();
+        return res.status(503).json(responseMessages.generalError());
       }
       const databaseUsers: User[] = await UsersCollection.find(
         { "_id": new ObjectId(res.locals.token.id) },
@@ -40,21 +33,25 @@ export abstract class BaseRouter {
       ).toArray();
       if (databaseUsers.length <= 0) {
         // send user message and redirect them client side to login screen or whatever.
-        return res.status(503).json(res.locals.responseMessages.generalError());
+        const responseMessages = new ResponseMessages();
+        return res.status(503).json(responseMessages.generalError());
       }
       if (!await JsonWebTokenWorkers.verifiyJsonWebToken(databaseUsers[0].jsonToken)) {
-        return res.status(409).json(res.locals.responseMessages.jsonWebTokenExpired());
+        const responseMessages = new ResponseMessages();
+        return res.status(409).json(responseMessages.jsonWebTokenExpired());
       }
       const decodedDbToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseUsers[0].jsonToken);
       for (const key in decodedDbToken) {
         if (decodedDbToken[key] !== res.locals.token[key]) {
-          return res.status(409).json(res.locals.responseMessages.jsonWebTokenDoesntMatchStoredToken());
+          const responseMessages = new ResponseMessages();
+          return res.status(409).json(responseMessages.jsonWebTokenDoesntMatchStoredToken());
         }
       }
       next();
     } catch (error) {
       // TODO: error handler
-      return res.status(503).json(res.locals.responseMessages.generalError());
+      const responseMessages = new ResponseMessages();
+      return res.status(503).json(responseMessages.generalError());
     }
   }
 }
