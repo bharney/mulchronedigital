@@ -10,7 +10,6 @@ declare const $: any;
   templateUrl: "./user-dashboard-change-password.component.html",
   styleUrls: ["./user-dashboard-change-password.component.css"]
 })
-
 export class UserDashboardChangePasswordComponent implements OnInit {
   public userChangePasswordForm: FormGroup;
   public hasTheFormBeenSubmitted: boolean = false;
@@ -21,7 +20,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private changeUserPasswordService: ChangeUserPasswordService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.configureUserChangePasswordForm();
@@ -39,47 +38,65 @@ export class UserDashboardChangePasswordComponent implements OnInit {
       ],
       confirmPassword: [
         "TestPassword1!@#$%",
-        [Validators.required, UserAuthenicationValidator.confirmPasswordValidation]
+        [
+          Validators.required,
+          UserAuthenicationValidator.confirmPasswordValidation
+        ]
       ]
     });
+  }
+
+  public handleDownKeyOnForm(event): void {
+    if (event.keyCode === 13) {
+      this.toggleSubmitNewUserPassword();
+    }
   }
 
   public toggleSubmitNewUserPassword(): void {
     this.hasSubmitButtonBeenClicked = true;
     setTimeout(() => {
-    if (!this.hasTheFormBeenSubmitted) {
-      this.hasTheFormBeenSubmitted = true;
-      this.hasSubmitButtonBeenClicked = false;
-    }
-    if (!this.userChangePasswordForm.valid) {
-      this.hasSubmitButtonBeenClicked = false;
-      return;
-    }
-    const changePasswordObj: UserChangePassword = this.createUserChangePasswordWord();
-    this.subcribeToChangePasswordService(changePasswordObj);
+      if (!this.hasTheFormBeenSubmitted) {
+        this.hasTheFormBeenSubmitted = true;
+        this.hasSubmitButtonBeenClicked = false;
+      }
+      if (!this.userChangePasswordForm.valid) {
+        this.hasSubmitButtonBeenClicked = false;
+        return;
+      }
+      const changePasswordObj: UserChangePassword = this.createUserChangePasswordWord();
+      this.subcribeToChangePasswordService(changePasswordObj);
     }, 200);
   }
 
   private createUserChangePasswordWord(): UserChangePassword {
-    return new UserChangePassword(this.userChangePasswordForm.value.currentPassword, this.userChangePasswordForm.value.password);
+    return new UserChangePassword(
+      this.userChangePasswordForm.value.currentPassword,
+      this.userChangePasswordForm.value.password
+    );
   }
 
-  private subcribeToChangePasswordService(changePasswordObj: UserChangePassword): void {
-    this.changeUserPasswordService.changeUserPassword(changePasswordObj)
-      .subscribe((res: IUserChangePasswordResponse) => {
-        if (res.status) {
-          this.modalBody = res.message;
-          this.hasTheFormBeenSubmitted = false;
-          this.userChangePasswordForm.reset();
+  private subcribeToChangePasswordService(
+    changePasswordObj: UserChangePassword
+  ): void {
+    this.changeUserPasswordService
+      .changeUserPassword(changePasswordObj)
+      .subscribe(
+        (res: IUserChangePasswordResponse) => {
+          if (res.status) {
+            this.modalBody = res.message;
+            this.hasTheFormBeenSubmitted = false;
+            this.userChangePasswordForm.reset();
+            $("#error-modal").modal();
+            this.hasSubmitButtonBeenClicked = false;
+            // TODO: clear the inputs.
+          }
+        },
+        (error: IUserChangePasswordResponse) => {
+          this.modalTitle = "There was a problem changing your password";
+          this.modalBody = error.message;
           $("#error-modal").modal();
           this.hasSubmitButtonBeenClicked = false;
-          // TODO: clear the inputs.
         }
-      }, (error: IUserChangePasswordResponse) => {
-        this.modalTitle = "There was a problem changing your password";
-        this.modalBody = error.message;
-        $("#error-modal").modal();
-        this.hasSubmitButtonBeenClicked = false;
-      });
+      );
   }
 }

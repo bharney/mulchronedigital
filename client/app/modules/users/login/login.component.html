@@ -9,7 +9,7 @@
         <div class="card">
             <div class="card-block">
                 <h1 class="text-center">Login</h1>
-                <div class="form" [formGroup]="userLoginForm">
+                <div class="form" [formGroup]="userLoginForm" (keydown)="handleDownKeyOnForm($event)">
                     <div class="form-group">
                         <label for="login-email">Email Address</label>
                         <div class="input-group">
