@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { Headers, RequestOptions } from "@angular/http";
-import * as jwtDecode from "jwt-decode";
 import { JsonWebToken } from "../../../../shared/interfaces/IJsonWebToken";
 import * as jwt from "jsonwebtoken";
 

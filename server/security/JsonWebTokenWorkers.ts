@@ -2,7 +2,7 @@ const promise = require("bluebird");
 const fs = promise.promisifyAll(require("fs"));
 import path = require("path");
 import jwt = require("jsonwebtoken");
-import { JsonWebToken } from "../../shared/interfaces/IJsonWebToken";
+import { JsonWebToken, IJsonWebToken } from '../../shared/interfaces/IJsonWebToken';
 import { UsersCollection} from "../cluster/master";
 
 export class JsonWebTokenWorkers {
@@ -71,6 +71,17 @@ export class JsonWebTokenWorkers {
         .catch((error: Error) => {
           reject(error);
         });
+    });
+  }
+
+  public static comparedHeaderTokenWithDbToken(headerToken: IJsonWebToken, dbToken: IJsonWebToken): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+        for (const key in headerToken) {
+          if (headerToken[key] !== dbToken[key]) {
+            reject(false);
+          }
+        }
+        resolve(true);
     });
   }
 }
