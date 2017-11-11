@@ -54,7 +54,7 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  public handleDownKeyDown(event): void {
+  public handleDownKeyOnForm(event): void {
     if (event.keyCode === 13) {
       this.toggleRegisterUser();
     }
