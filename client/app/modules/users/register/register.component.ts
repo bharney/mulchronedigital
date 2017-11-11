@@ -24,8 +24,7 @@ export class RegisterComponent implements OnInit {
     private formBuilder: FormBuilder,
     private registerService: RegisterService,
     private router: Router
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.createFormGroup();
@@ -55,35 +54,43 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  private createRegisterUserObject(): RegisterUser {
-    const username = this.userRegistrationForm.value.username;
-    const password = this.userRegistrationForm.value.password;
-    const email = this.userRegistrationForm.value.email;
-    return new RegisterUser(username, password, email);
+  public handleDownKeyDown(event): void {
+    if (event.keyCode === 13) {
+      this.toggleRegisterUser();
+    }
   }
 
   public toggleRegisterUser(): void {
     this.hasSubmitButtonBeenClicked = true;
     setTimeout(() => {
-    this.hasTheFormBeenSubmitted = true;
-    if (!this.userRegistrationForm.valid) {
-      this.hasSubmitButtonBeenClicked = false;
-      return;
-    }
-    const newUser = this.createRegisterUserObject();
-    this.registerService.registerNewUser(newUser)
-      .subscribe((res: IUserRegisterResponse) => {
-        if (res.status) {
-          this.registrationSuccessfulTextConfig();
-          this.toggleModal(res.message);
+      this.hasTheFormBeenSubmitted = true;
+      if (!this.userRegistrationForm.valid) {
+        this.hasSubmitButtonBeenClicked = false;
+        return;
+      }
+      const newUser = this.createRegisterUserObject();
+      this.registerService.registerNewUser(newUser).subscribe(
+        (res: IUserRegisterResponse) => {
+          if (res.status) {
+            this.registrationSuccessfulTextConfig();
+            this.toggleModal(res.message);
+            this.hasSubmitButtonBeenClicked = false;
+          }
+        },
+        (error: IUserRegisterResponse) => {
+          this.registrationUnSuccessfulTextConfig();
+          this.toggleModal(error.message);
           this.hasSubmitButtonBeenClicked = false;
         }
-      }, (error: IUserRegisterResponse) => {
-        this.registrationUnSuccessfulTextConfig();
-        this.toggleModal(error.message);
-        this.hasSubmitButtonBeenClicked = false;
-      });
+      );
     }, 200);
+  }
+
+  private createRegisterUserObject(): RegisterUser {
+    const username = this.userRegistrationForm.value.username;
+    const password = this.userRegistrationForm.value.password;
+    const email = this.userRegistrationForm.value.email;
+    return new RegisterUser(username, password, email);
   }
 
   private registrationSuccessfulTextConfig(): void {
