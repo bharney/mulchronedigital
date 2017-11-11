@@ -8,6 +8,8 @@ import { UsersCollection } from "../../cluster/master";
 import { UserIpAddress } from "../classes/UserIpAddress";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { ObjectId } from "mongodb";
+import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
+import { IJsonWebToken, JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 
 
 export class UserAuthenicationRouter extends BaseRouter {
@@ -27,6 +29,9 @@ export class UserAuthenicationRouter extends BaseRouter {
 
     // Login User
     this.router.get("/loginuser/:email/:password", this.validateLoginUserRequest);
+
+    // RefreshJsonWebToken
+    this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
   }
 
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
@@ -141,6 +146,31 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
     } catch (error) {
       throw error;
+    }
+  }
+
+  private async validateRefreshJsonWebToken(req: Request, res: Response, next: NextFunction) {
+    const responseMessages = new ResponseMessages();
+    try {
+      // here we are not going to check to see if the user session expired.
+      // what if the user was logged out for like 5 days?
+      const token: IJsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(req.headers["user-authenication-token"]);
+      if (token === null) {
+        return res.status(401).json(responseMessages.noJsonWebTokenInHeader());
+      }
+      const databaseUsers: User[] = await UsersCollection.find({ _id: new ObjectId(token.id) }, { _id: 1, username: 1, isAdmin: 1, jsonToken: 1 }).toArray();
+      if (databaseUsers.length <= 0) {
+        return res.status(401).json(responseMessages.noUserFound());
+      }
+      const dbToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseUsers[0].jsonToken);
+      if (!await JsonWebTokenWorkers.comparedHeaderTokenWithDbToken(token, dbToken)) {
+        return res.status(401).json(responseMessages.jsonWebTokenDoesntMatchStoredToken());
+      }
+      return res.status(200).json(await responseMessages.successfulUserLogin(databaseUsers[0]));
+    } catch (error) {
+      // TODO: log error with winston
+      console.log(error);
+      return res.status(503).json(responseMessages.generalError());
     }
   }
 }
