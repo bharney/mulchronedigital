@@ -11,7 +11,6 @@ declare const $: any;
   templateUrl: "./user-dashboard-change-username.component.html",
   styleUrls: ["./user-dashboard-change-username.component.css"]
 })
-
 export class UserDashboardChangeUsernameComponent implements OnInit {
   public userChangeUsernameForm: FormGroup;
   public hasTheFormBeenSubmitted: boolean = false;
@@ -22,7 +21,7 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
     private formBuilder: FormBuilder,
     private changeUsernameService: ChangeUsernameService,
     private userDashboardEmitter: UserDashboardEmitter
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.configureUserChangeUsernameForm();
@@ -37,32 +36,45 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
       password: [
         "TestPassword1!",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
-      ],
+      ]
     });
+  }
+
+  public handleDownKeyOnForm(event): void {
+    if (event.keyCode === 13) {
+      this.toggleSubmitUsernameChange();
+    }
   }
 
   public toggleSubmitUsernameChange(): void {
     this.hasSubmitButtonBeenClicked = true;
     setTimeout(() => {
-    this.hasTheFormBeenSubmitted = true;
-    if (!this.userChangeUsernameForm.valid) {
-      this.hasSubmitButtonBeenClicked = false;
-      return;
-    }
-    const changeUsernameObj: UserChangeUsername = this.createChangeUsernameObject();
-    this.toggleChangeUsernameService(changeUsernameObj);
+      this.hasTheFormBeenSubmitted = true;
+      if (!this.userChangeUsernameForm.valid) {
+        this.hasSubmitButtonBeenClicked = false;
+        return;
+      }
+      const changeUsernameObj: UserChangeUsername = this.createChangeUsernameObject();
+      this.toggleChangeUsernameService(changeUsernameObj);
     }, 200);
   }
 
   private createChangeUsernameObject(): UserChangeUsername {
-    return new UserChangeUsername(this.userChangeUsernameForm.value.newUsername, this.userChangeUsernameForm.value.password);
+    return new UserChangeUsername(
+      this.userChangeUsernameForm.value.newUsername,
+      this.userChangeUsernameForm.value.password
+    );
   }
 
-  private toggleChangeUsernameService(changeUsernameObj: UserChangeUsername): void {
-    this.changeUsernameService.changeUsername(changeUsernameObj)
-      .subscribe((res) => {
+  private toggleChangeUsernameService(
+    changeUsernameObj: UserChangeUsername
+  ): void {
+    this.changeUsernameService.changeUsername(changeUsernameObj).subscribe(
+      res => {
         if (res.status) {
-          const emitterObject = {"type": "Update user information on dashboard"};
+          const emitterObject = {
+            type: "Update user information on dashboard"
+          };
           this.userDashboardEmitter.emitChange(emitterObject);
           this.modalBody = res.message;
           this.hasTheFormBeenSubmitted = false;
@@ -70,10 +82,12 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
           $("#error-modal").modal();
           this.hasSubmitButtonBeenClicked = false;
         }
-      }, (error) => {
+      },
+      error => {
         this.modalBody = error.message;
         $("#error-modal").modal();
         this.hasSubmitButtonBeenClicked = false;
-      });
+      }
+    );
   }
 }

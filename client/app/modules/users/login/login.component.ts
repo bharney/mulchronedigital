@@ -14,7 +14,6 @@ declare const $: any;
   templateUrl: "login.component.html",
   providers: [LoginService]
 })
-
 export class LoginComponent implements OnInit {
   public userLoginForm: FormGroup;
   public hasTheFormBeenSubmitted = false;
@@ -27,7 +26,7 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authControl: AuthenicationControl,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.createFormGroup();
@@ -46,35 +45,42 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  private createLoginUser(): LoginUser {
-    const email = this.userLoginForm.value.email;
-    const password = this.userLoginForm.value.password;
-    return new LoginUser(password, email);
+  public handleDownKeyOnForm(event): void {
+    if (event.keyCode === 13) {
+      this.toggleLoginUser();
+    }
   }
 
   public toggleLoginUser() {
     this.hasSubmitButtonBeenClicked = true;
     setTimeout(() => {
-    this.hasTheFormBeenSubmitted = true;
-    if (!this.userLoginForm.valid) {
-      this.hasSubmitButtonBeenClicked = false;
-      return;
-    }
-    const loginUser = this.createLoginUser();
-    this.loginService.loginUser(loginUser)
-      .subscribe((res: ILoginUserResponse) => {
-        if (res.status) {
-          this.authControl.storeJsonWebToken(res.token);
-          this.hasSubmitButtonBeenClicked = false;
-          this.routerToUserDashboardOrAdminDashboard();
-        }
-      }, (error: IUserRegisterResponse) => {
-        this.loginFailure(error.message);
+      this.hasTheFormBeenSubmitted = true;
+      if (!this.userLoginForm.valid) {
         this.hasSubmitButtonBeenClicked = false;
-      });
+        return;
+      }
+      const loginUser = this.createLoginUser();
+      this.loginService.loginUser(loginUser).subscribe(
+        (res: ILoginUserResponse) => {
+          if (res.status) {
+            this.authControl.storeJsonWebToken(res.token);
+            this.hasSubmitButtonBeenClicked = false;
+            this.routerToUserDashboardOrAdminDashboard();
+          }
+        },
+        (error: IUserRegisterResponse) => {
+          this.loginFailure(error.message);
+          this.hasSubmitButtonBeenClicked = false;
+        }
+      );
     }, 200);
   }
 
+  private createLoginUser(): LoginUser {
+    const email = this.userLoginForm.value.email;
+    const password = this.userLoginForm.value.password;
+    return new LoginUser(password, email);
+  }
   private loginFailure(errorMessage: string): void {
     this.modalBody = errorMessage;
     this.modalTitle = "Login Failure";
@@ -86,7 +92,11 @@ export class LoginComponent implements OnInit {
     if (token.isAdmin) {
       // TODO: route to admin dashboard
     } else {
-      this.router.navigate([`../../dashboard/user`, { id: token.id }, { outlets: { "dashboard": ["home"] } }]);
+      this.router.navigate([
+        `../../dashboard/user`,
+        { id: token.id },
+        { outlets: { dashboard: ["home"] } }
+      ]);
     }
   }
 }
