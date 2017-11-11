@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Headers, RequestOptions } from "@angular/http";
-import { AuthenicationControl } from "../authenication/AuthenicationControl";
+import { AuthenicationControl } from '../authenication/AuthenicationControl';
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/throw";
 
@@ -12,12 +12,11 @@ export class ApiRequests {
   ) { }
 
   public createAuthorizationHeader(): RequestOptions {
-    const authControl: AuthenicationControl = new AuthenicationControl();
-    if (!authControl.isTheUserAuthenicated) {
+    if (!this.authenicationControl.isTheUserAuthenicated()) {
       return;
     } else {
       const options = this.createRequestOptionsWithApplicationJsonHeaders();
-      const token = authControl.getJsonWebTokenFromLocalStorage();
+      const token = this.authenicationControl.getJsonWebTokenFromLocalStorage();
       options.headers.set("user-authenication-token", token);
       return options;
     }
@@ -36,6 +35,9 @@ export class ApiRequests {
   public errorCatcher(error: any): any {
     const errorResponse = error.json();
     if (errorResponse.relogin) {
+      if (this.authenicationControl === undefined) {
+        this.authenicationControl = new AuthenicationControl();
+      }
       this.authenicationControl.removeJsonWebToken();
     }
     console.log(errorResponse);

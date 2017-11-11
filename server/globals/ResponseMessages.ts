@@ -57,7 +57,8 @@ export class ResponseMessages {
   public noUserFound(): object {
     return {
       "status": false,
-      "message": "Sorry, we did not find any users with that email address"
+      "message": "Sorry, we did not find any users with that email address",
+      "relogin": true
     };
   }
 
@@ -71,7 +72,8 @@ export class ResponseMessages {
   public noJsonWebTokenInHeader(): object {
     return {
       "status": false,
-      "message": "Please login in before trying to access your dashboard"
+      "message": "No token in header",
+      "relogin": true
     };
   }
 
@@ -95,7 +97,7 @@ export class ResponseMessages {
     try {
       const token = await JsonWebTokenWorkers.signSignWebToken(databaseUser._id, databaseUser.isAdmin);
       const updatedProfile = await UsersCollection.findOneAndUpdate(
-        { "_id": new ObjectId(databaseUser._id) },
+        { _id: new ObjectId(databaseUser._id) },
         { $set: { "jsonToken": token } }
       );
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {

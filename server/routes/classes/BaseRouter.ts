@@ -14,7 +14,7 @@ export abstract class BaseRouter {
       const headerToken = req.headers["user-authenication-token"];
       if (headerToken === null) {
         const responseMessages = new ResponseMessages();
-        return res.json(responseMessages.noJsonWebTokenInHeader());
+        return res.status(401).json(responseMessages.noJsonWebTokenInHeader());
       }
 
       if (!await JsonWebTokenWorkers.verifiyJsonWebToken(headerToken)) {
@@ -40,12 +40,10 @@ export abstract class BaseRouter {
         const responseMessages = new ResponseMessages();
         return res.status(409).json(responseMessages.jsonWebTokenExpired());
       }
-      const decodedDbToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseUsers[0].jsonToken);
-      for (const key in decodedDbToken) {
-        if (decodedDbToken[key] !== res.locals.token[key]) {
-          const responseMessages = new ResponseMessages();
-          return res.status(409).json(responseMessages.jsonWebTokenDoesntMatchStoredToken());
-        }
+      const decodedDbToken: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseUsers[0].jsonToken);
+      if (!await JsonWebTokenWorkers.comparedHeaderTokenWithDbToken(res.locals.token, decodedDbToken)) {
+        const responseMessages = new ResponseMessages();
+        return res.status(409).json(responseMessages.jsonWebTokenDoesntMatchStoredToken());
       }
       next();
     } catch (error) {
