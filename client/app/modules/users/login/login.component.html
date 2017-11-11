@@ -13,6 +13,9 @@
                     <div class="form-group">
                         <label for="login-email">Email Address</label>
                         <div class="input-group">
+                          <div class="input-group-addon input-addon-fa">
+                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                          </div>
                           <input type="email" class="form-control" id="login-email-input" placeholder="Enter email address" formControlName="email">
                         </div>
                         <div class="alert alert-danger" role="alert" *ngIf="userLoginForm.controls.email.errors && hasTheFormBeenSubmitted">
@@ -22,6 +25,9 @@
                     <div class="form-group">
                         <label for="login-password">Password</label>
                         <div class="input-group">
+                          <div class="input-group-addon input-addon-fa">
+                            <i class="fa fa-unlock" aria-hidden="true"></i>
+                          </div>
                           <input type="password" class="form-control" id="login-password-input" placeholder="Enter password" formControlName="password">
                         </div>
                         <div class="alert alert-danger" role="alert" *ngIf="userLoginForm.controls.password.errors && hasTheFormBeenSubmitted">

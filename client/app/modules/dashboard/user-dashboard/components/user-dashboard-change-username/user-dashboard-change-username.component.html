@@ -9,9 +9,11 @@
             <div class="form-group">
               <label for="currentPassword">
                 <strong>Your new username</strong>
-                <i class="fa fa-user" aria-hidden="true"></i>
               </label>
               <div class="input-group">
+                <div class="input-group-addon input-addon-fa">
+                  <i class="fa fa-user" aria-hidden="true"></i>
+                </div>
                 <input type="text" class="form-control" id="new-username" placeholder="You new username here" formControlName="newUsername">
                 <span class="input-group-addon custom-input-addons" *ngIf="!userChangeUsernameForm.controls.newUsername.errors">
                   <i class="fa fa-check-circle-o input-checkbox" aria-hidden="true"></i>
@@ -19,7 +21,7 @@
               </div>
               <div class="alert alert-danger" role="alert" *ngIf="userChangeUsernameForm.controls.newUsername.errors && hasTheFormBeenSubmitted">
                 <strong>You must enter a usename between 4 and 12 characters long</strong>
-            </div>
+              </div>
             </div>
             <div class="form-group">
               <label for="newPassword">
@@ -27,6 +29,9 @@
                 <i class="fa fa-unlock" aria-hidden="true"></i>
               </label>
               <div class="input-group">
+                <div class="input-group-addon input-addon-fa">
+                  <i class="fa fa-unlock" aria-hidden="true"></i>
+                </div>
                 <input type="password" class="form-control" id="password" placeholder="Super Secret" formControlName="password">
                 <span class="input-group-addon custom-input-addons" *ngIf="!userChangeUsernameForm.controls.password.errors">
                   <i class="fa fa-check-circle-o input-checkbox" aria-hidden="true"></i>
