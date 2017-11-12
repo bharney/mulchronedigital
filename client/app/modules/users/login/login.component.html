@@ -11,7 +11,9 @@
                 <h1 class="text-center">Login</h1>
                 <div class="form" [formGroup]="userLoginForm" (keydown)="handleDownKeyOnForm($event)">
                     <div class="form-group">
-                        <label for="login-email">Email Address</label>
+                        <label for="login-email">
+                          <strong>Email Address</strong>
+                        </label>
                         <div class="input-group">
                           <div class="input-group-addon input-addon-fa">
                             <i class="fa fa-envelope" aria-hidden="true"></i>
@@ -23,7 +25,9 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="login-password">Password</label>
+                        <label for="login-password">
+                          <strong>Password</strong>
+                        </label>
                         <div class="input-group">
                           <div class="input-group-addon input-addon-fa">
                             <i class="fa fa-unlock" aria-hidden="true"></i>
