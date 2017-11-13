@@ -11,8 +11,6 @@ export class User {
   public modifiedAt: string;
   public profileImage: string;
   public jsonToken: string;
-  public latitude: number;
-  public longitude: number;
   public ipAddresses: UserIpAddress[];
 
   constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress) {
