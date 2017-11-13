@@ -1,3 +1,4 @@
+import { HttpHelpers } from '../../globals/HttpHelpers';
 import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
 import { User } from "../../models/user";
 import { Database } from "../../globals/Database";
@@ -7,7 +8,7 @@ import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { ObjectId } from "mongodb";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
-import * as multer from "multer";
+import * as multer from 'multer';
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
 const parseFile = multer({
@@ -110,9 +111,7 @@ export class UserDashboardRouter extends BaseRouter {
         { _id: 1 }
       ).toArray();
       if (existingUsers.length > 0) {
-        return res
-          .status(409)
-          .json(responseMessages.usernameIsTaken(req.body.newUsername));
+        return res.status(409).json(responseMessages.usernameIsTaken(req.body.newUsername));
       }
       const databaseUsers: User[] = await UsersCollection.find(
         { _id: new ObjectId(res.locals.token.id) },
@@ -121,12 +120,7 @@ export class UserDashboardRouter extends BaseRouter {
       if (databaseUsers.length <= 0) {
         return res.status(422).json(responseMessages.noUserFound());
       }
-      if (
-        !await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(
-          req.body.password,
-          databaseUsers[0].password
-        )
-      ) {
+      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.password, databaseUsers[0].password)) {
         return res.status(401).json(responseMessages.passwordsDoNotMatch());
       }
       const user = new User(req.body.newUsername);
@@ -135,9 +129,8 @@ export class UserDashboardRouter extends BaseRouter {
         { $set: { username: user.username, modifiedAt: user.modifiedAt } }
       );
       if (updateResult.modifiedCount === 1) {
-        return res
-          .status(200)
-          .json(responseMessages.usernameChangeSuccessful(user.username));
+        return res.status(200)
+.json(responseMessages.usernameChangeSuccessful(user.username));
       } else {
         throw new Error("Nothing was modified");
       }
@@ -157,9 +150,7 @@ export class UserDashboardRouter extends BaseRouter {
       parseFile(req, res, err => {
         if (err) {
           // file size too large. The client side validation SHOULD keep this route clean of any files that are not image.
-          return res
-            .status(413)
-            .json(responseMessages.profilePictureUploadFailedFileToBig());
+          return res.status(413).json(responseMessages.profilePictureUploadFailedFileToBig());
         }
         // TODO: abstract it
         const imageFileExtensions: string[] = ["png", "jpg", "jpeg", "gif"];
@@ -167,18 +158,14 @@ export class UserDashboardRouter extends BaseRouter {
         const imageType = imageTypeArray[1];
         for (let i = 0; i < imageFileExtensions.length; i++) {
           if (imageType === imageFileExtensions[i]) {
-            const image =
-              `data:image/${imageType};base64,` +
-              req.file.buffer.toString("base64");
+            const image = `data:image/${imageType};base64,` + req.file.buffer.toString("base64");
             res.locals.image = image;
             next();
             return;
           }
         }
         // Unsupported Media Type
-        return res
-          .status(415)
-          .json(responseMessages.profilePictureUploadFailedUnsupportedType());
+        return res.status(415).json(responseMessages.profilePictureUploadFailedUnsupportedType());
       });
     } catch (error) {
       console.log(error);
@@ -215,14 +202,16 @@ export class UserDashboardRouter extends BaseRouter {
       if (typeof req.body.latitude !== "number" || typeof req.body.longitude !== "number") {
         return res.status(409).json(responseMessages.generalError());
       }
+      const httpHelpers = new HttpHelpers();
+      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const updatedProfile = await UsersCollection.findOneAndUpdate(
-        { _id: new ObjectId(res.locals.token.id) },
-        { $set: { latitude: req.body.latitude, longitude: req.body.longitude } }
+        { _id: new ObjectId(res.locals.token.id), "ipAddresses": { $elemMatch: {"ipAddress": ip} } },
+        { $set: { "ipAddresses.$.latitude": req.body.latitude, "ipAddresses.$.longitude": req.body.longitude } }
       );
-      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
+      if (updatedProfile.result.n === 1) {
         return res.status(200);
       } else {
-        throw new Error("Updating user profile picture didn't work");
+        throw new Error("Updating user location information didn't work");
       }
     } catch (error) {
       console.log(error);
