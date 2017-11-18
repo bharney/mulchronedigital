@@ -1,24 +1,34 @@
 import { Database } from "../globals/Database";
+import { EmailQueue } from "../queues/EmailQueue";
 import Server from "./server";
 import { Db } from "mongodb";
 import cluster = require("cluster");
 
 let db;
 let UsersCollection;
+let emailQueue;
 
-makeDbConnection().then(response => {
-  if (response && process.env.MONGO_URL) {
-    return startCluster();
-  } else {
-   return spawnWorker();
-  }
-});
+makeDbConnection()
+  .then(response => {
+    if (response) {
+      return createEmailQueueConnection();
+    }
+  })
+  .then(response => {
+    if (response) {
+      startCluster();
+    }
+  });
 
 async function startCluster() {
-  if (cluster.isMaster && db !== null) {
-    await startMasterProcess();
-  } else if (cluster.isMaster && db !== null) {
-    await spawnWorker();
+  if (!process.env.MONGO_URL || !process.env.RABBITMQ_BIGWIG_URL) {
+    spawnWorker();
+  } else {
+    if (cluster.isMaster && db !== null) {
+      await startMasterProcess();
+    } else if (cluster.isWorker && db !== null) {
+      await spawnWorker();
+    }
   }
 }
 
@@ -51,6 +61,7 @@ async function spawnWorker(): Promise<void> {
     const serverWorker = newServer.app.listen(newServer.port, () => {
       console.log(`Server is listening on ${newServer.port}`);
     });
+    
   } catch (error) {
     console.log(`This process failed to start`);
   }
@@ -73,10 +84,13 @@ async function makeDbConnection(): Promise<boolean> {
   }
 }
 
-function isThisLocalhost(): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    (!process.env.MONGO_URL) ? resolve(true) : resolve(false);
-  });
+async function createEmailQueueConnection(): Promise<boolean> {
+  try {
+    const queue = new EmailQueue();
+    emailQueue = queue;
+    return true;
+  } catch (error) {
+  }
 }
 
 export { UsersCollection };
