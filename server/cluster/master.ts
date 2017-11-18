@@ -1,26 +1,38 @@
 import { Database } from "../globals/Database";
+import { EmailQueue } from "../queues/EmailQueue";
 import Server from "./server";
 import { Db } from "mongodb";
 import cluster = require("cluster");
 
 let db;
 let UsersCollection;
+let emailQueue;
 
-makeDbConnection().then(response => {
-  if (response) {
-    startCluster();
-  }
-});
+makeDbConnection()
+  .then(response => {
+    if (response) {
+      return createEmailQueueConnection();
+    }
+  })
+  .then(response => {
+    if (response) {
+      startCluster();
+    }
+  });
 
 async function startCluster() {
-  if (cluster.isMaster && db !== null) {
-    await isMaster();
-  } else if (cluster.isWorker && db !== null) {
-    await isWorker();
+  if (!process.env.MONGO_URL || !process.env.RABBITMQ_BIGWIG_URL) {
+    spawnWorker();
+  } else {
+    if (cluster.isMaster && db !== null) {
+      await startMasterProcess();
+    } else if (cluster.isWorker && db !== null) {
+      await spawnWorker();
+    }
   }
 }
 
-async function isMaster(): Promise<void> {
+async function startMasterProcess(): Promise<void> {
   try {
     const database = new Database();
     console.log(`Master ${process.pid} is running`);
@@ -43,12 +55,13 @@ async function isMaster(): Promise<void> {
   }
 }
 
-async function isWorker(): Promise<void> {
+async function spawnWorker(): Promise<void> {
   try {
     const newServer = new Server();
     const serverWorker = newServer.app.listen(newServer.port, () => {
       console.log(`Server is listening on ${newServer.port}`);
     });
+    
   } catch (error) {
     console.log(`This process failed to start`);
   }
@@ -62,11 +75,21 @@ async function makeDbConnection(): Promise<boolean> {
     return true;
   } catch (error) {
     database.databaseConnectionFailures++;
+    console.log("Datbase connection failed" + database.CreateDatabaseConnection.toString() + "!!");
     if (database.databaseConnectionFailures === 25) {
       console.log("Database connection failed 25 times, stopping process");
       process.exit();
     }
     return makeDbConnection();
+  }
+}
+
+async function createEmailQueueConnection(): Promise<boolean> {
+  try {
+    const queue = new EmailQueue();
+    emailQueue = queue;
+    return true;
+  } catch (error) {
   }
 }
 
