@@ -24,9 +24,9 @@ async function startCluster() {
   if (!process.env.MONGO_URL || !process.env.RABBITMQ_BIGWIG_URL) {
     spawnWorker();
   } else {
-    if (cluster.isMaster && db !== null) {
+    if (cluster.isMaster && db !== undefined) {
       await startMasterProcess();
-    } else if (cluster.isWorker && db !== null) {
+    } else if (cluster.isWorker && db !== undefined) {
       await spawnWorker();
     }
   }
@@ -97,6 +97,7 @@ async function createEmailQueueConnection(): Promise<boolean> {
     emailQueue = queue;
     return true;
   } catch (error) {
+
   }
 }
 
