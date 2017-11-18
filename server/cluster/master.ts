@@ -7,20 +7,22 @@ let db;
 let UsersCollection;
 
 makeDbConnection().then(response => {
-  if (response) {
-    startCluster();
+  if (response && process.env.MONGO_URL) {
+    return startCluster();
+  } else {
+   return spawnWorker();
   }
 });
 
 async function startCluster() {
   if (cluster.isMaster && db !== null) {
-    await isMaster();
-  } else if (cluster.isWorker && db !== null) {
-    await isWorker();
+    await startMasterProcess();
+  } else if (cluster.isMaster && db !== null) {
+    await spawnWorker();
   }
 }
 
-async function isMaster(): Promise<void> {
+async function startMasterProcess(): Promise<void> {
   try {
     const database = new Database();
     console.log(`Master ${process.pid} is running`);
@@ -43,7 +45,7 @@ async function isMaster(): Promise<void> {
   }
 }
 
-async function isWorker(): Promise<void> {
+async function spawnWorker(): Promise<void> {
   try {
     const newServer = new Server();
     const serverWorker = newServer.app.listen(newServer.port, () => {
@@ -62,12 +64,19 @@ async function makeDbConnection(): Promise<boolean> {
     return true;
   } catch (error) {
     database.databaseConnectionFailures++;
+    console.log("Datbase connection failed" + database.CreateDatabaseConnection.toString() + "!!");
     if (database.databaseConnectionFailures === 25) {
       console.log("Database connection failed 25 times, stopping process");
       process.exit();
     }
     return makeDbConnection();
   }
+}
+
+function isThisLocalhost(): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    (!process.env.MONGO_URL) ? resolve(true) : resolve(false);
+  });
 }
 
 export { UsersCollection };
