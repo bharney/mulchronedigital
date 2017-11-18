@@ -3,8 +3,6 @@ import { MongoClient, Db, Collection } from "mongodb";
 import { User } from "../models/user";
 
 export class Database {
-  public databaseConnectionFailures: number = 0;
-
   public CreateDatabaseConnection(): Promise<Db> {
     return new Promise((resolve, reject) => {
       let url;

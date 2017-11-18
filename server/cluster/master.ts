@@ -61,7 +61,7 @@ async function spawnWorker(): Promise<void> {
     const serverWorker = newServer.app.listen(newServer.port, () => {
       console.log(`Server is listening on ${newServer.port}`);
     });
-    
+
   } catch (error) {
     console.log(`This process failed to start`);
   }
@@ -69,18 +69,25 @@ async function spawnWorker(): Promise<void> {
 
 async function makeDbConnection(): Promise<boolean> {
   const database = new Database();
+  const connectionAttempts = 0;
+  await makeDbConnectionHelper(database, connectionAttempts);
+  return true;
+}
+
+async function makeDbConnectionHelper(database: Database, connectionAttempts: number): Promise<void> {
   try {
-    db = await database.CreateDatabaseConnection();
-    UsersCollection = db.collection("Users");
-    return true;
-  } catch (error) {
-    database.databaseConnectionFailures++;
-    console.log("Datbase connection failed" + database.CreateDatabaseConnection.toString() + "!!");
-    if (database.databaseConnectionFailures === 25) {
+    if (connectionAttempts < 25) {
+      db = await database.CreateDatabaseConnection();
+      UsersCollection = db.collection("Users");
+    } else {
       console.log("Database connection failed 25 times, stopping process");
       process.exit();
     }
-    return makeDbConnection();
+
+  } catch (error) {
+    connectionAttempts++;
+    console.log("Datbase connection failed, retrying!!");
+    return await makeDbConnectionHelper(database, connectionAttempts);
   }
 }
 
