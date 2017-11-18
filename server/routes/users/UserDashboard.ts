@@ -1,4 +1,4 @@
-import { HttpHelpers } from '../../globals/HttpHelpers';
+import { HttpHelpers } from "../../globals/HttpHelpers";
 import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
 import { User } from "../../models/user";
 import { Database } from "../../globals/Database";
@@ -8,7 +8,7 @@ import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { ObjectId } from "mongodb";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
-import * as multer from 'multer';
+import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
 const parseFile = multer({
@@ -208,7 +208,7 @@ export class UserDashboardRouter extends BaseRouter {
         { _id: new ObjectId(res.locals.token.id), "ipAddresses": { $elemMatch: {"ipAddress": ip} } },
         { $set: { "ipAddresses.$.latitude": req.body.latitude, "ipAddresses.$.longitude": req.body.longitude } }
       );
-      if (updatedProfile.result.n === 1) {
+      if (updatedProfile.n === 1) {
         return res.status(200);
       } else {
         throw new Error("Updating user location information didn't work");
