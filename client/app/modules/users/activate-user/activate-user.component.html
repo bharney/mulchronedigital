@@ -2,11 +2,14 @@
   <div class="col-sm-12">
     <div class="card">
       <div class="card-block">
-        <h1 class="text-center">Welcome to Mulchrone Digital
-          <br/>{{username}}</h1>
+        <h1 class="text-center">Welcome to Mulchrone Digital, {{username}}!</h1>
         <div class="text-center" *ngIf="isActivationProcessHappening">
           <p>Please give us a moment while we activate your account</p>
           <i class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i>
+        </div>
+        <div class="text-center" *ngIf="!isActivationProcessHappening">
+          <p>Your account as been activated!</p>
+          <p>Click <a href="" onclick="return false;" (click)="toggleNavigateToUserLogin()">here</a> to login.</p>
         </div>
       </div>
     </div>

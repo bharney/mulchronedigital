@@ -22,6 +22,7 @@ export class User {
     this.email = email;
     this.password = password;
     this.isAdmin = false;
+    this.profileImage = new ProfileImage();
     this.modifiedAt = new Date().toLocaleString();
     this.ipAddresses = [];
     if (ipAddress) {

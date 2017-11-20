@@ -165,4 +165,11 @@ export class ResponseMessages {
       "message": `The account for ${username} currently isn't active. If you just registered, an email is on its way. If this account isn't new your access has been revoked.`
     };
   }
+
+  public userAccountActiveSuccess() {
+    return {
+      "status": true,
+      "message": `Thanks for activating your account`
+    };
+  }
 }

@@ -33,6 +33,8 @@ export class UserAuthenicationRouter extends BaseRouter {
 
     // RefreshJsonWebToken
     this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
+
+    this.router.patch("/activateuser", this.validateActivateUser);
   }
 
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
@@ -175,5 +177,30 @@ export class UserAuthenicationRouter extends BaseRouter {
       console.log(error);
       return res.status(503).json(responseMessages.generalError());
     }
+  }
+
+  private async validateActivateUser(req: Request, res: Response) {
+    const responseMessages = new ResponseMessages();
+    try {
+      if (!UserAuthenicationValidator.isUserNameValid(req.body.username)) {
+        return res.status(401).json(responseMessages.userNameIsNotValid());
+      }
+      if (!UserAuthenicationValidator.isThisAValidMongoObjectId(req.body.id)) {
+        // todo: create some kind of message.
+        return res.status(401).json(responseMessages.generalError());
+      }
+      const updatedProfile = await UsersCollection.findOneAndUpdate(
+        { _id: new ObjectId(req.body.id), username: req.body.username },
+        { $set: { isActive: true } }
+      );
+      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
+        return res.status(200).json(responseMessages.userAccountActiveSuccess());
+      }
+    } catch (error) {
+      // TODO: log error with winston
+      console.log(error);
+      return res.status(503).json(responseMessages.generalError());
+    }
+    console.log(req.body);
   }
 }

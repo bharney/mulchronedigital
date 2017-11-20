@@ -61,6 +61,7 @@ export class UserDashboardRouter extends BaseRouter {
       return res.status(200).json(responseMessages.dashboardUserFound(databaseUsers[0]));
     } catch (error) {
       // TOOD: log error?
+      console.log(error);
       return res.status(503).json(responseMessages.generalError());
     }
   }
@@ -223,7 +224,8 @@ export class UserDashboardRouter extends BaseRouter {
         { _id: new ObjectId(res.locals.token.id), "ipAddresses": { $elemMatch: { "ipAddress": ip } } },
         { $set: { "ipAddresses.$.latitude": req.body.latitude, "ipAddresses.$.longitude": req.body.longitude } }
       );
-      if (updatedProfile.n === 1) {
+      console.log(updatedProfile);
+      if (updatedProfile.lastErrorObject.n === 1) {
         return res.status(200);
       } else {
         throw new Error("Updating user location information didn't work");

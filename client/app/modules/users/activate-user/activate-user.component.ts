@@ -2,6 +2,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
 import { ActivateUser } from "../../../shared/models/user-authenication.model";
 import { ActivateUserService } from "../../../shared/services/activate-user.service";
+import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
 
 @Component({
   selector: "app-activate-user",
@@ -24,8 +25,15 @@ export class ActivateUserComponent implements OnInit {
       if (!this.validateParameters(params)) {
         this.router.navigate(["../../users/register"]);
       }
+      this.username = params["username"];
       const activateUser = new ActivateUser(params["id"], params["username"]);
-      // this.activateUserService();
+      this.activateUserService.makeUserActive(activateUser).subscribe(response => {
+        this.isActivationProcessHappening = false;
+
+        console.log(response);
+      }, (error) => {
+        console.log(error);
+      });
     });
   }
 
@@ -36,13 +44,16 @@ export class ActivateUserComponent implements OnInit {
     if (params["id"] === undefined || params["username"] === undefined) {
       return false;
     }
-    if (params["username"].toString().length < 4 || params["username"].toString().length > 12) {
+    if (!UserAuthenicationValidator.isUserNameValid(params["username"])) {
       return false;
     }
-    const hexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
-    if (!hexRegExp.test(params["id"])) {
+    if (!UserAuthenicationValidator.isThisAValidMongoObjectId(params["id"])) {
       return false;
     }
     return true;
+  }
+
+  public toggleNavigateToUserLogin(): void {
+    this.router.navigate(["../../users/login"]);
   }
 }
