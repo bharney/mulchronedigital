@@ -10,4 +10,4 @@ import { FourOhFourRouting } from './four-oh-four-routing';
   ],
   declarations: [FourOhFourComponent]
 })
-export class FourOhFourModule { }
+export class FourOhFourLazyModule { }
