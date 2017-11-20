@@ -1,10 +1,12 @@
 import open = require("amqplib");
+import { User } from "../models/user";
+import { QueueMessages } from "./QueueMessages";
 
 export class EmailQueue {
   private emailQueueChannel = "email_queue";
   private connectionString;
   private badConnectionAttempts = null;
-  public channel;
+  private channel;
   constructor() {
     this.createChannelForEmailQueue();
   }
@@ -32,5 +34,11 @@ export class EmailQueue {
           return this.createChannelForEmailQueue();
         }
       });
+  }
+
+  public async sendUserActivationEmailToQueue(user: User): Promise<void> {
+    const messages = new QueueMessages();
+    const userDetails = await messages.userActivationDetailsMessage(user);
+    this.channel.sendToQueue(this.emailQueueChannel, new Buffer(JSON.stringify(userDetails)), {persistent: true});
   }
 }

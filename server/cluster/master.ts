@@ -6,7 +6,7 @@ import cluster = require("cluster");
 
 let db;
 let UsersCollection;
-let emailQueue;
+let EmailQueueExport: EmailQueue;
 
 makeDbConnection()
   .then(response => {
@@ -94,11 +94,11 @@ async function makeDbConnectionHelper(database: Database, connectionAttempts: nu
 async function createEmailQueueConnection(): Promise<boolean> {
   try {
     const queue = new EmailQueue();
-    emailQueue = queue;
+    EmailQueueExport = queue;
     return true;
   } catch (error) {
 
   }
 }
 
-export { UsersCollection };
+export { UsersCollection, EmailQueueExport };

@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
   public modalTitle: string = "";
   public modalBody: string = "";
   public hasSubmitButtonBeenClicked: boolean = false;
+  private doesUserWantToBeRembered: boolean = false;
 
   constructor(
     private loginService: LoginService,
@@ -79,7 +80,8 @@ export class LoginComponent implements OnInit {
   private createLoginUser(): LoginUser {
     const email = this.userLoginForm.value.email;
     const password = this.userLoginForm.value.password;
-    return new LoginUser(password, email);
+    const rememberMe = this.doesUserWantToBeRembered;
+    return new LoginUser(password, email, rememberMe);
   }
   private loginFailure(errorMessage: string): void {
     this.modalBody = errorMessage;
@@ -98,5 +100,9 @@ export class LoginComponent implements OnInit {
         { outlets: { dashboard: ["home"] } }
       ]);
     }
+  }
+
+  public toggleUserWantsToRememberLogin(): void {
+    this.doesUserWantToBeRembered = !this.doesUserWantToBeRembered;
   }
 }

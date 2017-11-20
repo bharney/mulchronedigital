@@ -10,6 +10,7 @@ import { HttpHelpers } from "../../globals/HttpHelpers";
 import { ObjectId } from "mongodb";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { IJsonWebToken, JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
+import { EmailQueueExport } from "../../cluster/master";
 
 
 export class UserAuthenicationRouter extends BaseRouter {
@@ -89,8 +90,8 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (await newUser.SetupNewUser()) {
         const insertResult = await UsersCollection.insertOne(newUser);
         if (insertResult.result.n === 1) {
-          return res.status(200).json(responseMessages.userRegistrationSuccessful(req.body.username));
-          // TODO: send email to have user confirm their registration (can remove the return statement and execute afterwards);
+          res.status(200).json(responseMessages.userRegistrationSuccessful(req.body.username, req.body.email));
+          EmailQueueExport.sendUserActivationEmailToQueue(newUser);
         } else {
           return res.status(503).json(responseMessages.generalError());
         }

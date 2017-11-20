@@ -7,6 +7,7 @@ import { LoginComponent } from "./login/login.component";
 import { UsersRouting } from "./users.routing";
 import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
 import { SharedModule } from "../../shared/modules/shared.module";
+import { ActivateUserComponent } from "./activate-user/activate-user.component";
 
 @NgModule({
   imports: [
@@ -17,8 +18,9 @@ import { SharedModule } from "../../shared/modules/shared.module";
   ],
   declarations: [
     RegisterComponent,
-    LoginComponent
-  ],
+    LoginComponent,
+    ActivateUserComponent
+],
   providers: [
     AuthenicationControl
   ]

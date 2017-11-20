@@ -40,10 +40,11 @@ export class ResponseMessages {
     };
   }
 
-  public userRegistrationSuccessful(username: string): object {
+  public userRegistrationSuccessful(username: string, email: string): object {
     return {
       "status": true,
-      "message": `Thanks for registering ${username}!`
+      "message": `Thanks for registering ${username}! We have sent a email to ${email} so we can verify your account. 
+                  You must click the link in this email to active your account.`
     };
   }
 
@@ -155,6 +156,13 @@ export class ResponseMessages {
   public changeProfilePictureSuccessful(): object {
     return {
       "status": true
+    };
+  }
+
+  public userAccountNotActive(username: string) {
+    return {
+      "status": false,
+      "message": `The account for ${username} currently isn't active. If you just registered, an email is on its way. If this account isn't new your access has been revoked.`
     };
   }
 }
