@@ -18,11 +18,13 @@ export class NavbarTopComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.authControl.isTheUserAuthenicated()) {
-      this.refreshTokenService.refreshToken().subscribe(response => {
-        this.authControl.storeJsonWebToken(response.token);
-      });
-    }
+    setTimeout(() => {
+      if (this.authControl.isTheUserAuthenicated()) {
+        this.refreshTokenService.refreshToken().subscribe(response => {
+          this.authControl.storeJsonWebToken(response.token);
+        });
+      }
+    }, 2500);
   }
 
   public toggleNavigateToUserDashboardClick(): void {

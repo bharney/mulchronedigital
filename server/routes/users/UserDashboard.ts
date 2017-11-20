@@ -224,7 +224,6 @@ export class UserDashboardRouter extends BaseRouter {
         { _id: new ObjectId(res.locals.token.id), "ipAddresses": { $elemMatch: { "ipAddress": ip } } },
         { $set: { "ipAddresses.$.latitude": req.body.latitude, "ipAddresses.$.longitude": req.body.longitude } }
       );
-      console.log(updatedProfile);
       if (updatedProfile.lastErrorObject.n === 1) {
         return res.status(200);
       } else {

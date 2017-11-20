@@ -49,6 +49,7 @@ export abstract class BaseRouter {
     } catch (error) {
       // TODO: error handler
       const responseMessages = new ResponseMessages();
+      console.log(error);
       return res.status(503).json(responseMessages.generalError());
     }
   }
