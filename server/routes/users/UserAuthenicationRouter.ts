@@ -115,11 +115,13 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       const databaseUsers: User[] = await UsersCollection.find(
         { "email": req.params.email },
-        { "_id": 1, "password": 1, "username": 1, "isAdmin": 1 }
+        { "_id": 1, "password": 1, "username": 1, "isAdmin": 1, "isActive": 1 }
       ).toArray();
       // should only be one user with this email
       if (databaseUsers.length === 1) {
-        if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
+        if (!databaseUsers[0].isActive) {
+          return res.status(401).json(responseMessages.userAccountNotActive(databaseUsers[0].username));
+        } else if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
           return res.status(401).json(responseMessages.passwordsDoNotMatch());
         } else {
           res.status(200).json(await responseMessages.successfulUserLogin(databaseUsers[0]));

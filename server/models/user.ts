@@ -3,6 +3,8 @@ import { UserIpAddress } from "../routes/classes/UserIpAddress";
 
 export class User {
   public _id?: string;
+  public isActive: boolean;
+  public rememberMe: boolean;
   public username: string;
   public email: string;
   public password: string;
@@ -13,7 +15,9 @@ export class User {
   public jsonToken: string;
   public ipAddresses: UserIpAddress[];
 
-  constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress) {
+  constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress, rememberMe?: boolean) {
+    this.isActive = false;
+    (rememberMe) ? this.rememberMe = true : this.rememberMe = false;
     this.username = username;
     this.email = email;
     this.password = password;
@@ -24,7 +28,7 @@ export class User {
       this.ipAddresses.push(ipAddress);
     }
   }
-
+  
   public async SetupNewUser(): Promise<boolean> {
     try {
       this.createdAt = new Date().toLocaleString();
