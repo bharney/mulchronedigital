@@ -14,7 +14,7 @@ export class DataAccessObjects {
 
          public usernameAndProfileImageProjection(): Promise<object> {
            return new Promise(resolve => {
-             const projection = { username: 1, profileImage: 1, _id: 0 };
+             const projection = { username: 1, "profileImage.secure_url": 1, _id: 0 };
              resolve(projection);
            });
          }

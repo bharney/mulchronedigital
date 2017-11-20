@@ -11,6 +11,7 @@ import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationVal
 import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
+import { Cloudinary } from "../../apis/Cloudinary";
 const parseFile = multer({
   limits: { fileSize: 5000000, files: 1 }
 }).single("image");
@@ -39,7 +40,8 @@ export class UserDashboardRouter extends BaseRouter {
 
     // upload profile image
     this.router.use("/changeprofileimage", this.checkForUserJsonWebToken);
-    this.router.use("/changeprofileimage", this.validateUploadImage);
+    this.router.use("/changeprofileimage", this.parseImageUpload);
+    this.router.use("/changeprofileimage", this.validateImageUpload);
     this.router.patch("/changeprofileimage", this.storeUploadedImageInDatabase);
 
     // update users geolocation image
@@ -130,7 +132,7 @@ export class UserDashboardRouter extends BaseRouter {
       );
       if (updateResult.modifiedCount === 1) {
         return res.status(200)
-.json(responseMessages.usernameChangeSuccessful(user.username));
+          .json(responseMessages.usernameChangeSuccessful(user.username));
       } else {
         throw new Error("Nothing was modified");
       }
@@ -140,33 +142,51 @@ export class UserDashboardRouter extends BaseRouter {
     }
   }
 
-  private async validateUploadImage(
-    req: any,
-    res: Response,
-    next: NextFunction
-  ) {
-    const responseMessages = new ResponseMessages();
+  private async parseImageUpload(req: any, res: Response, next: NextFunction) {
     try {
       parseFile(req, res, err => {
         if (err) {
           // file size too large. The client side validation SHOULD keep this route clean of any files that are not image.
-          return res.status(413).json(responseMessages.profilePictureUploadFailedFileToBig());
+          const responseMessages = new ResponseMessages();
+          return res.status(413).json(responseMessages.generalError());
         }
-        // TODO: abstract it
-        const imageFileExtensions: string[] = ["png", "jpg", "jpeg", "gif"];
-        const imageTypeArray = req.file.mimetype.split("/");
-        const imageType = imageTypeArray[1];
-        for (let i = 0; i < imageFileExtensions.length; i++) {
-          if (imageType === imageFileExtensions[i]) {
-            const image = `data:image/${imageType};base64,` + req.file.buffer.toString("base64");
-            res.locals.image = image;
+        res.locals.image = req.file;
+        next();
+      });
+    } catch (error) {
+      console.log(error);
+      const responseMessages = new ResponseMessages();
+      return res.status(503).json(responseMessages.generalError());
+    }
+  }
+
+  private async validateImageUpload(req: Request, res: Response, next: NextFunction) {
+    const responseMessages = new ResponseMessages();
+    try {
+      const imageFileExtensions: string[] = ["png", "jpg", "jpeg", "gif"];
+      const imageTypeArray = res.locals.image.mimetype.split("/");
+      const imageType = imageTypeArray[1];
+      for (let i = 0; i < imageFileExtensions.length; i++) {
+        if (imageType === imageFileExtensions[i]) {
+          const user: User = await UsersCollection.findOne(
+            { "_id": new ObjectId(res.locals.token.id) },
+            { "profileImage.secure_url": 1, "profileImage.public_id": 1, "_id": 1 });
+          const cloudinary = new Cloudinary();
+          const profileImage = await cloudinary.uploadCloudinaryImage(res.locals.image.buffer);
+          if (profileImage) {
+            if (typeof (user.profileImage) !== "undefined" && typeof (user.profileImage.secure_url) !== "undefined" && typeof (user.profileImage.public_id) !== "undefined") {
+              cloudinary.deleteCloudinaryImage(user.profileImage.public_id);
+            }
+            res.locals.image = profileImage;
             next();
             return;
+          } else {
+            throw new Error("Upload to cloudinary failed");
           }
         }
-        // Unsupported Media Type
-        return res.status(415).json(responseMessages.profilePictureUploadFailedUnsupportedType());
-      });
+      }
+      // Unsupported Media Type
+      return res.status(415).json(responseMessages.profilePictureUploadFailedUnsupportedType());
     } catch (error) {
       console.log(error);
       return res.status(503).json(responseMessages.generalError());
@@ -180,13 +200,8 @@ export class UserDashboardRouter extends BaseRouter {
         { _id: new ObjectId(res.locals.token.id) },
         { $set: { profileImage: res.locals.image } }
       );
-      if (
-        updatedProfile.lastErrorObject.updatedExisting &&
-        updatedProfile.lastErrorObject.n === 1
-      ) {
-        return res
-          .status(200)
-          .json(responseMessages.changeProfilePictureSuccessful());
+      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
+        return res.status(200).json(responseMessages.changeProfilePictureSuccessful());
       } else {
         throw new Error("Updating user profile picture didn't work");
       }
@@ -205,7 +220,7 @@ export class UserDashboardRouter extends BaseRouter {
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const updatedProfile = await UsersCollection.findOneAndUpdate(
-        { _id: new ObjectId(res.locals.token.id), "ipAddresses": { $elemMatch: {"ipAddress": ip} } },
+        { _id: new ObjectId(res.locals.token.id), "ipAddresses": { $elemMatch: { "ipAddress": ip } } },
         { $set: { "ipAddresses.$.latitude": req.body.latitude, "ipAddresses.$.longitude": req.body.longitude } }
       );
       if (updatedProfile.n === 1) {

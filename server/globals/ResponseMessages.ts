@@ -120,7 +120,7 @@ export class ResponseMessages {
     return {
       "status": true,
       "username": databaseUser.username,
-      "profileImage": databaseUser.profileImage
+      "profileImage": databaseUser.profileImage.secure_url
     };
   }
 
