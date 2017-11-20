@@ -8,6 +8,8 @@ const appRoutes: Routes = [
   // { path: "home", loadChildren: "./modules/home/home.module#HomeLazyModule" },
   { path: "users", loadChildren: "./modules/users/users.module#UsersLazyModule" },
   { path: "dashboard", loadChildren: "./modules/dashboard/dashboard.module#DashboardLazyModule" },
+  { path: "notfound", loadChildren: "./modules/four-oh-four/four-oh-four.module#FourOhFourModule" },
+  { path: "**", redirectTo: "notfound"}
 ];
 
 @NgModule({
