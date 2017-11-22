@@ -13,7 +13,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "dev": "concurrently \"ng serve --proxy-config proxy.conf.json\" \"webpack --watch\" \"nodemon dist/server.js\" \"mongod\"",
-    "postinstall": "ng build --prod --aot && webpack"
+    "postinstall": "concurrently \"ng build --prod --aot\" \"webpack\""
   },
   "private": true,
   "dependencies": {

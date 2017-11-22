@@ -16,11 +16,10 @@ declare const $: any;
 })
 export class LoginComponent implements OnInit {
   public userLoginForm: FormGroup;
-  public hasTheFormBeenSubmitted = false;
+  public hasTheFormBeenSubmitted: boolean = false;
   public modalTitle: string = "";
   public modalBody: string = "";
   public hasSubmitButtonBeenClicked: boolean = false;
-  private doesUserWantToBeRembered: boolean = false;
 
   constructor(
     private loginService: LoginService,
@@ -80,8 +79,7 @@ export class LoginComponent implements OnInit {
   private createLoginUser(): LoginUser {
     const email = this.userLoginForm.value.email;
     const password = this.userLoginForm.value.password;
-    const rememberMe = this.doesUserWantToBeRembered;
-    return new LoginUser(password, email, rememberMe);
+    return new LoginUser(password, email);
   }
   private loginFailure(errorMessage: string): void {
     this.modalBody = errorMessage;
@@ -100,9 +98,5 @@ export class LoginComponent implements OnInit {
         { outlets: { dashboard: ["home"] } }
       ]);
     }
-  }
-
-  public toggleUserWantsToRememberLogin(): void {
-    this.doesUserWantToBeRembered = !this.doesUserWantToBeRembered;
   }
 }
