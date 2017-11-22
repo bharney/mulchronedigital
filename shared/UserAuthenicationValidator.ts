@@ -61,4 +61,11 @@ export class UserAuthenicationValidator {
         });
     });
   }
+
+  public static isThisAValidMongoObjectId(id: string): Promise<boolean> {
+    return new Promise(resolve => {
+      const hexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
+      (hexRegExp.test(id)) ? resolve(true) : resolve(false);
+    });
+  }
 }

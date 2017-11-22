@@ -3,28 +3,33 @@ import { UserIpAddress } from "../routes/classes/UserIpAddress";
 
 export class User {
   public _id?: string;
+  public isActive: boolean;
+  public rememberMe: boolean;
   public username: string;
   public email: string;
   public password: string;
   public isAdmin: boolean;
   public createdAt: string;
   public modifiedAt: string;
-  public profileImage: string;
+  public profileImage: ProfileImage;
   public jsonToken: string;
   public ipAddresses: UserIpAddress[];
 
-  constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress) {
+  constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress, rememberMe?: boolean) {
+    this.isActive = false;
+    (rememberMe) ? this.rememberMe = true : this.rememberMe = false;
     this.username = username;
     this.email = email;
     this.password = password;
     this.isAdmin = false;
+    this.profileImage = new ProfileImage();
     this.modifiedAt = new Date().toLocaleString();
     this.ipAddresses = [];
     if (ipAddress) {
       this.ipAddresses.push(ipAddress);
     }
   }
-
+  
   public async SetupNewUser(): Promise<boolean> {
     try {
       this.createdAt = new Date().toLocaleString();
@@ -62,5 +67,23 @@ export class User {
         });
     });
   }
+}
 
+class ProfileImage {
+  public public_id: string;
+  public version: number;
+  public signature: string;
+  public width: number;
+  public height: number;
+  public format: string;
+  public resource_type: string;
+  public created_at: string;
+  public tags: string[];
+  public bytes: number;
+  public type: string;
+  public etag: string;
+  public placeholder: boolean;
+  public url: string;
+  public secure_url: string;
+  public original_filename: string;
 }

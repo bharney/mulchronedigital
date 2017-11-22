@@ -13,7 +13,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "dev": "concurrently \"ng serve --proxy-config proxy.conf.json\" \"webpack --watch\" \"nodemon dist/server.js\" \"mongod\"",
-    "postinstall": "concurrently \"ng build --prod --aot\" \"webpack\""
+    "postinstall": "ng build --prod --aot && webpack"
   },
   "private": true,
   "dependencies": {
@@ -49,6 +49,7 @@
     "bluebird": "^3.5.0",
     "body-parser": "^1.18.1",
     "bootstrap": "^4.0.0-alpha.6",
+    "cloudinary": "^1.9.1",
     "concurrently": "^3.5.0",
     "core-js": "^2.4.1",
     "express": "^4.15.4",

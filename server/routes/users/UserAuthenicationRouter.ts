@@ -10,6 +10,7 @@ import { HttpHelpers } from "../../globals/HttpHelpers";
 import { ObjectId } from "mongodb";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { IJsonWebToken, JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
+import { EmailQueueExport } from "../../cluster/master";
 
 
 export class UserAuthenicationRouter extends BaseRouter {
@@ -32,6 +33,8 @@ export class UserAuthenicationRouter extends BaseRouter {
 
     // RefreshJsonWebToken
     this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
+
+    this.router.patch("/activateuser", this.validateActivateUser);
   }
 
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
@@ -89,8 +92,8 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (await newUser.SetupNewUser()) {
         const insertResult = await UsersCollection.insertOne(newUser);
         if (insertResult.result.n === 1) {
-          return res.status(200).json(responseMessages.userRegistrationSuccessful(req.body.username));
-          // TODO: send email to have user confirm their registration (can remove the return statement and execute afterwards);
+          res.status(200).json(responseMessages.userRegistrationSuccessful(req.body.username, req.body.email));
+          EmailQueueExport.sendUserActivationEmailToQueue(newUser);
         } else {
           return res.status(503).json(responseMessages.generalError());
         }
@@ -115,11 +118,13 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       const databaseUsers: User[] = await UsersCollection.find(
         { "email": req.params.email },
-        { "_id": 1, "password": 1, "username": 1, "isAdmin": 1 }
+        { "_id": 1, "password": 1, "username": 1, "isAdmin": 1, "isActive": 1 }
       ).toArray();
       // should only be one user with this email
       if (databaseUsers.length === 1) {
-        if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
+        if (!databaseUsers[0].isActive) {
+          return res.status(401).json(responseMessages.userAccountNotActive(databaseUsers[0].username));
+        } else if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
           return res.status(401).json(responseMessages.passwordsDoNotMatch());
         } else {
           res.status(200).json(await responseMessages.successfulUserLogin(databaseUsers[0]));
@@ -172,5 +177,30 @@ export class UserAuthenicationRouter extends BaseRouter {
       console.log(error);
       return res.status(503).json(responseMessages.generalError());
     }
+  }
+
+  private async validateActivateUser(req: Request, res: Response) {
+    const responseMessages = new ResponseMessages();
+    try {
+      if (!UserAuthenicationValidator.isUserNameValid(req.body.username)) {
+        return res.status(401).json(responseMessages.userNameIsNotValid());
+      }
+      if (!UserAuthenicationValidator.isThisAValidMongoObjectId(req.body.id)) {
+        // todo: create some kind of message.
+        return res.status(401).json(responseMessages.generalError());
+      }
+      const updatedProfile = await UsersCollection.findOneAndUpdate(
+        { _id: new ObjectId(req.body.id), username: req.body.username },
+        { $set: { isActive: true } }
+      );
+      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
+        return res.status(200).json(responseMessages.userAccountActiveSuccess());
+      }
+    } catch (error) {
+      // TODO: log error with winston
+      console.log(error);
+      return res.status(503).json(responseMessages.generalError());
+    }
+    console.log(req.body);
   }
 }

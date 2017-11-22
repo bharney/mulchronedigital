@@ -1,6 +1,7 @@
 export interface IUser {
   email: string;
   password: string;
+  rememberMe?: boolean;
 }
 
 export class RegisterUser implements IUser {
@@ -19,10 +20,27 @@ export class RegisterUser implements IUser {
 export class LoginUser implements IUser {
   public email;
   public password;
+  public rememberMe;
 
-  constructor(password, email) {
+  constructor(password, email, rememberMe) {
     this.password = password;
     this.email = email;
+    this.rememberMe = rememberMe;
+  }
+}
+
+export interface IActivateUser {
+  id: string;
+  username: string;
+}
+
+export class ActivateUser implements IActivateUser {
+  public id;
+  public username;
+
+  constructor(id: string, username: string) {
+    this.id = id;
+    this.username = username;
   }
 }
 

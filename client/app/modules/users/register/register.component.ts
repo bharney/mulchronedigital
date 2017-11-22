@@ -24,7 +24,7 @@ export class RegisterComponent implements OnInit {
     private formBuilder: FormBuilder,
     private registerService: RegisterService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.createFormGroup();
@@ -72,9 +72,11 @@ export class RegisterComponent implements OnInit {
       this.registerService.registerNewUser(newUser).subscribe(
         (res: IUserRegisterResponse) => {
           if (res.status) {
+            this.hasSubmitButtonBeenClicked = false;
+            this.userRegistrationForm.reset();
             this.registrationSuccessfulTextConfig();
             this.toggleModal(res.message);
-            this.hasSubmitButtonBeenClicked = false;
+            this.hasTheFormBeenSubmitted = false;
           }
         },
         (error: IUserRegisterResponse) => {

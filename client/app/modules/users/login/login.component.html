@@ -37,6 +37,11 @@
                         <div class="alert alert-danger" role="alert" *ngIf="userLoginForm.controls.password.errors && hasTheFormBeenSubmitted">
                             <strong>This password does not meet our minimum requirements, did you forget your password? If so, click <a href="" [routerLink]="['../../users/forgot-password']">here</a> to reset it.</strong>
                         </div>
+                        <div class="input-group">
+                          <div class="checkbox">
+                            <label><input type="checkbox" (click)="toggleUserWantsToRememberLogin()"> Remember me</label>
+                          </div>
+                        </div>
                     </div>
                     <button *ngIf="!hasSubmitButtonBeenClicked" type="button" class="btn btn-primary" (click)="toggleLoginUser()">Login</button>
                     <i *ngIf="hasSubmitButtonBeenClicked" class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i>

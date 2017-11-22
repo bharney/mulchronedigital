@@ -48,7 +48,7 @@ export class UserDashboardComponent implements OnInit {
   private isUserAuthorizedToBeHere(): void {
     this.parentRouter = this.router;
     this.route.params.subscribe(params => {
-      if (params["id"] === null) {
+      if (params["id"] === undefined) {
         this.router.navigate(["../../users/login"]);
         return;
       }
