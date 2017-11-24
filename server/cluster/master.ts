@@ -42,7 +42,7 @@ async function startMasterProcess(): Promise<void> {
     }
 
     const numCPUs = require("os").cpus().length;
-    for (let i = 0; i < numCPUs; i++) {
+    for (let i = 0; i < 3; i++) {
       cluster.fork();
     }
 

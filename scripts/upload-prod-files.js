@@ -8,9 +8,7 @@ cloudinary.config({
     api_secret: "NLPoIfTZykRrw0ZC55TQaWFdu8s"
 });
 
-const distDir = path.join(__dirname, "../client/assets/");
-
-
+const distDir = path.join(__dirname, "../dist/");
 
 const readDirectory = (filePath) => {
     return new Promise((resolve, reject) => {
@@ -32,7 +30,10 @@ const areAnyOfTheFilesInTheDirectoryADirectory = (files) => {
 
     for (let i = 0; i < files.length; i++) {
         if (files[i].includes(".") && !files[i].includes("gitkeep")) {
+            console.log(files);
             uploadFileToCloudinary(files[i]);
+        } else {
+            
         }
     }
 };
@@ -51,11 +52,54 @@ const uploadFileToCloudinary = (filePath) => {
             if (error) {
                 throw new Error(error);
             }
-            console.log(result);
+            storeCloudinaryObjectToFileSystem(result);
         }).end(dataBuffer);
     });
 };
 
+const storeCloudinaryObjectToFileSystem = (cloudinaryObject) => {
+    readStoredCloudinaryObjects()
+        .then(result => {
+            if (cloudinaryObject)
+                result.objects.push(cloudinaryObject);
+            return writeNewCloudinaryObjectToDisk(result);
+        })
+        .then(result => {
+            // console.log(result);
+        })
+        .catch(error => {
+            throw new Error(error);
+        });
+};
+
+const readStoredCloudinaryObjects = () => {
+    return new Promise((resolve, reject) => {
+        const jsonFile = path.join(__dirname, "./json/cloudinary-files.json");
+        const readStream = fs.createReadStream(jsonFile);
+        let data = "";
+        readStream.on("data", (chunk) => {
+            data += chunk;
+        });
+        readStream.on("end", () => {
+            resolve(JSON.parse(data));
+            readStream.close();
+        });
+    });
+};
+
+const writeNewCloudinaryObjectToDisk = (json) => {
+    return new Promise((resolve, reject) => {
+        try {
+            const jsonFile = path.join(__dirname, "./json/cloudinary-files.json");
+            const writeStream = fs.createWriteStream(jsonFile);
+            writeStream.write(JSON.stringify(json));
+            writeStream.close();
+            resolve(true);
+        } catch (error) {
+            reject(false);
+        }
+    });
+};
 
 const deleteCloudinaryImage = (cloudinaryImageId) => {
     cloudinary.v2.uploader.destroy(cloudinaryImageId, { resource_type: "raw", invalidate: true }, function (error, result) {
@@ -67,7 +111,6 @@ const deleteCloudinaryImage = (cloudinaryImageId) => {
         // dont need to worry about returning anything, the user's response is not dependant on the deletion of their user image from thier CDN.
     });
 };
-
 
 
 readDirectory(distDir)
