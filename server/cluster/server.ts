@@ -3,6 +3,7 @@ import express = require("express");
 import path = require("path");
 import logger = require("morgan");
 import bodyParser = require("body-parser");
+import compression = require("compression");
 
 import { IndexRouter } from "../routes/IndexRouter";
 import { Database } from "../globals/Database";
@@ -21,6 +22,7 @@ export default class Server {
 
   private configureMiddleware(): void {
     this.app.use(logger("dev"));
+    this.app.use(compression());
     this.app.use(express.static(path.join(process.env.PWD + "/dist/client/")));
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));

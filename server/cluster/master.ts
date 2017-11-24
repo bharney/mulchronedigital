@@ -24,11 +24,10 @@ async function startCluster() {
   if (!process.env.MONGO_URL || !process.env.RABBITMQ_BIGWIG_URL) {
     spawnWorker();
   } else {
-    if (cluster.isMaster && db !== undefined) {
-      await startMasterProcess();
-    } else if (cluster.isWorker && db !== undefined) {
+    // if (cluster.isMaster && db !== undefined) {
+    //   await startMasterProcess();
+    // } else if (cluster.isWorker && db !== undefined) {
       await spawnWorker();
-    }
   }
 }
 
@@ -42,7 +41,7 @@ async function startMasterProcess(): Promise<void> {
     }
 
     const numCPUs = require("os").cpus().length;
-    for (let i = 0; i < numCPUs; i++) {
+    for (let i = 0; i < 3; i++) {
       cluster.fork();
     }
 
