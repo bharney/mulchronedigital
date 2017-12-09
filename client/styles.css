@@ -1,5 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
 
+/*font-family: 'Roboto Mono', monospace;
+font-family: 'Rubik', sans-serif; */
+body {
+  background-color: #f0f0f0;
+}
+
+.card {
+  border: 1px inset black;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Rubik', sans-serif
+}
+
+p, a, button {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.card {
+  background-color: #f7f7f7;
+}
+
+
 .main-row {
   margin-top: 25px;
 }
@@ -15,4 +38,28 @@
 
 .input-addon-fa {
   color: black;
+}
+
+.btn-primary {
+  text-transform: uppercase;
+  background-color: #002fff;
+  border: 2px outset #000;
+  transition: 0.75s;
+  color: rgb(241, 241, 241);
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: #440096;
+  color: rgb(0, 128, 0);
+  transition: 0.75s;
+}
+
+.btn-primary:active {
+  border: 2px inset rgba(5, 233, 24, 0);
+}
+
+.nav-link {
+  color: #0366db;
+  cursor: pointer;
 }

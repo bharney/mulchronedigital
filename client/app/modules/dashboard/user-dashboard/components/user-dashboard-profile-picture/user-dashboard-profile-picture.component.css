@@ -1,3 +1,22 @@
-.user-dashboard-profile-picture {
+.image-uploader {
+    cursor: pointer;
+    border: 5px dashed #000;
+    transition: 0.5s;
+    height: 225px;
+    width: 100%;
+    text-align: center;
+}
 
+.image-uploader:hover {
+    background-color: #440096;
+    border-color: #f0f0f0;
+    color: #f0f0f0;
+    transition: 0.5s;
+}
+
+.dragover-image-upload {
+    background-color: #440096;
+    border-color: #f0f0f0;
+    color: #f0f0f0;
+    transition: 0.5s;
 }

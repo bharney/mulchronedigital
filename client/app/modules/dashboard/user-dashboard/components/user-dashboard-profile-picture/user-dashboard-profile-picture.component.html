@@ -1,11 +1,8 @@
 <div class="col-sm-12">
-  <div class="card text-center">
-    <h4 class="card-title">Welcome to the profile picture changer home screen</h4>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <div class="card-block">
-      <input type="file" #fileInput placeholder="Upload file..." />
-      <button *ngIf="!hasSubmitButtonBeenClicked" type="button" (click)="toggleUploadImage()">Upload</button>
-      <i *ngIf="hasSubmitButtonBeenClicked" class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i>
+  <div class="card image-uploader" (dragover)="handleDragoverEvent($event)" (dragleave)="handleDragLeave($event)" (drop)="handleDragDrop($event)" (click)="handleClickEvent($event)">
+    <div class="card-block text-center">
+      <input hidden type="file" #fileInput (change)="toggleUploadImage()" placeholder="Upload file..." />
+      <h2>Drag Image Here (or click)</h2>
     </div>
   </div>
 </div>

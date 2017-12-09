@@ -1,0 +1,117 @@
+#for-science-icon {
+    position: relative;
+    font-size: 3.75em;
+    margin: 0 auto;
+    top: -50px;
+    left: 200px;
+    animation: for-science 3000ms linear infinite;
+}
+
+#github-icon {
+    position: relative;
+    font-size: 3.75em;
+    color:  #000;
+    left: 310px;
+}
+
+#github-icon {
+    transition: 1s;
+}
+
+.tech-logo-images {
+    height: 150px;
+    width: 150px;
+}
+
+@-webkit-keyframes for-science {
+    0% { color: #002fff;  }
+    33% { color: #440096;   }  
+    67% { color: #002fff;  }
+    100% { color: #440096; }
+    from {
+        -webkit-transform:rotate(0deg);
+    }
+    to {
+        -webkit-transform:rotate(360deg);
+    }
+}
+
+@-moz-keyframes for-science {
+    0% { color: #002fff;  }
+    33% { color: #440096;   }  
+    67% { color: #002fff;  }
+    100% { color: #440096; }
+    from {
+        -webkit-transform:rotate(0deg);
+    }
+    to {
+        -webkit-transform:rotate(360deg);
+    }
+}
+
+@keyframes for-science {
+    0% { color: #002fff;  }
+    33% { color: #440096;   }  
+    67% { color: #002fff;  }
+    100% { color: #440096; }
+    from {
+        -webkit-transform:rotate(0deg);
+    }
+    to {
+        -webkit-transform:rotate(360deg);
+    }
+}
+
+
+
+
+@media screen and (max-width: 320px) {
+    #for-science-icon {
+        position: relative;
+        font-size: 3.50em;
+        top: -30px;
+        left: 80px;
+    }
+}
+
+@media screen and (max-width: 1190px) {
+    #for-science-icon {
+        position: relative;
+        left: 140px;
+    }
+
+    #github-icon {
+        left: 250px;
+    }
+}
+
+@media screen and (max-width: 978px) {
+    #for-science-icon {
+        position: relative;
+        left: 60px;
+    }
+
+    #github-icon {
+        left: 170px;
+    }
+}
+
+@media screen and (max-width: 780px) {
+    #for-science-icon {
+        visibility: hidden;
+    }
+}
+
+
+@media screen and (max-width: 727px) {
+    #for-science-icon {
+        visibility: hidden;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    #github-icon {
+        position: relative;
+        left: 75px;
+    }
+}

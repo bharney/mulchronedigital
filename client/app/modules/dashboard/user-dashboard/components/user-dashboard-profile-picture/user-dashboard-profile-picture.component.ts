@@ -1,6 +1,7 @@
 import { ChangeUserProfileImageService } from "../../../../../shared/services/user-dashboard.service";
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { UserDashboardEmitter } from "../../../../../shared/services/emitters/user-dashboard-emitter.service";
+import { Element } from "@angular/compiler";
 declare const $: any;
 
 @Component({
@@ -56,9 +57,48 @@ export class UserDashboardProfilePictureComponent {
   }
 
   private triggerInvalidImageTypeModal(): void {
-    this.modalBody = "Invalid image type please try again";
+    this.modalBody = "Invalid image type please try again. (We only accpect .pngs, .jpgs, .jpeg, .gif)";
     this.fileInput.nativeElement.value = null;
     $("#error-modal").modal();
     this.hasSubmitButtonBeenClicked = false;
+  }
+
+  public handleDragoverEvent(event: any): void {
+    $(".card-block").addClass("dragover-image-upload");
+    $(".card").addClass("dragover-image-upload");
+    // need to prevent default for 
+    event.stopPropagation();
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+  }
+
+  public handleDragLeave(event: any): void {
+    $(".card-block").removeClass("dragover-image-upload");
+    $(".card").removeClass("dragover-image-upload");
+  }
+
+  public handleDragDrop(event: any): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.hasSubmitButtonBeenClicked = true;
+    const files = event.dataTransfer.files;
+    if (files.length > 1) {
+      this.modalBody = "You can only upload 1 image at a time";
+      $("#error-modal").modal();
+      return;
+    }
+    const formData = new FormData();
+    formData.append("image", files[0]);
+    for (let i = 0; i < this.imageFileExtensions.length; i++) {
+      if (files[0].name.includes(this.imageFileExtensions[i])) {
+        this.startHttpMethodToUpdatePhoto(formData);
+        return;
+      }
+      this.hasSubmitButtonBeenClicked = false;
+    }
+  }
+
+  public handleClickEvent(fileInput: any): void {
+    this.fileInput.nativeElement.click();
   }
 }

@@ -9,9 +9,6 @@ Node.js (TypeScript)
 
 Changes can be seen via the following links. (Work in progress obviously)
 
-Production Version
-https://www.mulchronedigital.com/
+Service1: https://github.com/mtmulch/service1.mulchronedigital.com
 
-Development Branch
-https://development.mulchronedigital.com/
-
+Service2: https://github.com/mtmulch/service2.mulchronedigital.com
