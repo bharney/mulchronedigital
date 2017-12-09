@@ -6,6 +6,7 @@ import cluster = require("cluster");
 
 let db;
 let UsersCollection;
+let UserActionsCollection;
 let EmailQueueExport: EmailQueue;
 
 makeDbConnection()
@@ -78,6 +79,7 @@ async function makeDbConnectionHelper(database: Database, connectionAttempts: nu
     if (connectionAttempts < 25) {
       db = await database.CreateDatabaseConnection();
       UsersCollection = db.collection("Users");
+      UserActionsCollection = db.collection("UserActions");
     } else {
       console.log("Database connection failed 25 times, stopping process");
       process.exit();
@@ -100,4 +102,4 @@ async function createEmailQueueConnection(): Promise<boolean> {
   }
 }
 
-export { UsersCollection, EmailQueueExport };
+export { UsersCollection, UserActionsCollection, EmailQueueExport };

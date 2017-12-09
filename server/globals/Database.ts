@@ -1,3 +1,4 @@
+import { UserAction } from "../models/UserAction";
 import { Resolve } from "@angular/router";
 import { MongoClient, Db, Collection } from "mongodb";
 import { User } from "../models/user";
@@ -39,19 +40,59 @@ export class Database {
 
   private async CreateUsersCollection(db: Db): Promise<boolean> {
     try {
-      const collection: Collection<User> = await db.createCollection<User>("Users");
-      if (!await this.CreateUserCollectionIndexes(collection)) {
+      const usersCollection: Collection<User> = await db.createCollection<User>("Users");
+      if (!await this.CreateUserCollectionIndexes(usersCollection)) {
         throw new Error("user collection index creation failed");
       }
 
-      if (!await this.CreateUserObjects(collection)) {
-        throw new Error("user objects failed");
+      const userActionsCollection: Collection<UserAction> = await db.createCollection<UserAction>("UserActions");
+      if (!await this.createUserActionCollectionIndexes(userActionsCollection)) {
+        throw new Error("user action collection index creation failed");
+      }
+
+      if (!await this.CreateUserObjects(usersCollection)) {
+        throw new Error("user objects usersCollection");
       }
 
       return true;
     } catch (error) {
       console.log(error);
       // TODO: log error??
+      return false;
+    }
+  }
+
+  private async createUserActionCollectionIndexes(collection: Collection<UserAction>): Promise<boolean> {
+    try {
+      const indexes: object[] = [
+        {
+          "key": {
+            userId: 1
+          },
+          "name": "userId",
+          unique: true,
+          background: true
+        },
+        {
+          "key": {
+            actionType: 1
+          },
+          "name": "actionType",
+          unique: true,
+          background: true
+        },
+        {
+          "key": {
+            happenedAt: 1
+          },
+          "name": "happenedAt",
+          unique: true,
+          background: true
+        },
+      ];
+      await collection.createIndexes(indexes);
+      return true;
+    } catch (error) {
       return false;
     }
   }

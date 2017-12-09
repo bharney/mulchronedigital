@@ -1,3 +1,4 @@
+import { UserActionHelper } from '../../helpers/UserActionHelper';
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import { Router, Request, NextFunction, Response } from "express";
 import { BaseRouter } from "../classes/BaseRouter";
@@ -130,21 +131,24 @@ export class UserAuthenicationRouter extends BaseRouter {
           res.status(200).json(await responseMessages.successfulUserLogin(databaseUsers[0]));
           // TODO: MAKE A FUNCTION!!!!
           const httpHelpers = new HttpHelpers();
+          const userId = new ObjectId(databaseUsers[0]._id);
           const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
           const ipAddressObject = new UserIpAddress(ip);
           const matchingUserIpAddresses = await UsersCollection.find(
-            { "_id": new ObjectId(databaseUsers[0]._id) },
+            { "_id": userId },
             { "ipAddresses": { $elemMatch: { "ipAddress": ip } } }
           ).toArray();
           if (matchingUserIpAddresses[0].ipAddresses === undefined) {
             // TODO: we are now associating a new or unknown IP address to the user.
             // we probably dont have to await this, but here is where we can pass something out to RabbitMQ... maybe????
             await UsersCollection.findOneAndUpdate(
-              { "_id": new ObjectId(databaseUsers[0]._id) },
+              { "_id": userId },
               { $push: { "ipAddresses": ipAddressObject } },
               { new: true }
             );
           }
+          const userActions = new UserActionHelper();
+          await userActions.userLoggedIn(userId, ip);
         }
       } else {
         return res.status(401).json(responseMessages.noUserFound());
