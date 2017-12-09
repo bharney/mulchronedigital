@@ -15,8 +15,8 @@
 
 .dragover-image-upload {
     background-color: #440096;
-    border-color: #f0f0f0;
-    color: #f0f0f0;
+    border-color: rgb(0, 128, 0);
+     color: rgb(0, 128, 0);
     transition: 0.5s;
 }
 
