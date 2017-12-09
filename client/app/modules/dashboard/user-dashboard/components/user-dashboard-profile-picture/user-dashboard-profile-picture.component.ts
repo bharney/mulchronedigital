@@ -64,17 +64,14 @@ export class UserDashboardProfilePictureComponent {
   }
 
   public handleDragoverEvent(event: any): void {
-    $(".card-block").addClass("dragover-image-upload");
-    $(".card").addClass("dragover-image-upload");
-    // need to prevent default for 
+    $("#image-uploader").addClass("dragover-image-upload");
     event.stopPropagation();
     event.preventDefault();
     event.dataTransfer.dropEffect = "copy";
   }
 
   public handleDragLeave(event: any): void {
-    $(".card-block").removeClass("dragover-image-upload");
-    $(".card").removeClass("dragover-image-upload");
+    $("#image-uploader").removeClass("dragover-image-upload");
   }
 
   public handleDragDrop(event: any): void {
@@ -82,20 +79,22 @@ export class UserDashboardProfilePictureComponent {
     event.preventDefault();
     this.hasSubmitButtonBeenClicked = true;
     const files = event.dataTransfer.files;
-    if (files.length > 1) {
-      this.modalBody = "You can only upload 1 image at a time";
-      $("#error-modal").modal();
-      return;
-    }
-    const formData = new FormData();
-    formData.append("image", files[0]);
-    for (let i = 0; i < this.imageFileExtensions.length; i++) {
-      if (files[0].name.includes(this.imageFileExtensions[i])) {
-        this.startHttpMethodToUpdatePhoto(formData);
+    setTimeout(() => {
+      if (files.length > 1) {
+        this.modalBody = "You can only upload 1 image at a time";
+        $("#error-modal").modal();
         return;
       }
-      this.hasSubmitButtonBeenClicked = false;
-    }
+      const formData = new FormData();
+      formData.append("image", files[0]);
+      for (let i = 0; i < this.imageFileExtensions.length; i++) {
+        if (files[0].name.includes(this.imageFileExtensions[i])) {
+          this.startHttpMethodToUpdatePhoto(formData);
+          return;
+        }
+        this.hasSubmitButtonBeenClicked = false;
+      }
+    }, 200);
   }
 
   public handleClickEvent(fileInput: any): void {

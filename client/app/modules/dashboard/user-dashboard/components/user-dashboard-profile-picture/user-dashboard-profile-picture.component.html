@@ -1,10 +1,22 @@
-<div class="col-sm-12">
-  <div class="card image-uploader" (dragover)="handleDragoverEvent($event)" (dragleave)="handleDragLeave($event)" (drop)="handleDragDrop($event)" (click)="handleClickEvent($event)">
-    <div class="card-block text-center">
-      <input hidden type="file" #fileInput (change)="toggleUploadImage()" placeholder="Upload file..." />
-      <h2>Drag Image Here (or click)</h2>
+<div class="row h-100">
+  <div id="main-card" class="card col-sm-12">
+    <div class="row">
+      <div class="offset-sm-2 col-sm-8">
+        <div id="image-uploader" class="card my-auto" (dragover)="handleDragoverEvent($event)" (dragleave)="handleDragLeave($event)"
+          (drop)="handleDragDrop($event)" (click)="handleClickEvent($event)">
+          <div class="card-block d-flex justify-content-center">
+            <input hidden type="file" #fileInput (change)="toggleUploadImage()" placeholder="Upload file..." />
+            <h2 *ngIf="!hasSubmitButtonBeenClicked">Drag Image Here (or click)</h2>
+            <i *ngIf="hasSubmitButtonBeenClicked" class="fa fa-spinner fa-spin fa-3x" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <app-error-modal [body]="modalBody"></app-error-modal>
+<!-- <div class="card-block d-flex">
+      <div class="card-body align-items-center d-flex">
+      </div>
+    </div> -->

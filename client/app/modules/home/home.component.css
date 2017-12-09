@@ -1,3 +1,12 @@
+.tech-logo-placeholder {
+    position: relative;
+    left: 5px;
+}
+
+.tech-logo-images {
+    margin-left: 5px;
+}
+
 #for-science-icon {
     position: relative;
     font-size: 3.75em;
@@ -64,13 +73,14 @@
 
 
 
-
-@media screen and (max-width: 320px) {
-    #for-science-icon {
-        position: relative;
-        font-size: 3.50em;
-        top: -30px;
-        left: 80px;
+@media screen and (max-width: 1220px){
+    .tech-logo-placeholder {
+        left: 75px;
+    }
+    
+    .tech-logo-images {
+        height: 125px;
+        width: 125px;
     }
 }
 
@@ -79,7 +89,7 @@
         position: relative;
         left: 140px;
     }
-
+    
     #github-icon {
         left: 250px;
     }
@@ -90,7 +100,7 @@
         position: relative;
         left: 60px;
     }
-
+    
     #github-icon {
         left: 170px;
     }
@@ -99,6 +109,10 @@
 @media screen and (max-width: 780px) {
     #for-science-icon {
         visibility: hidden;
+    }
+
+    .tech-logo-placeholder {
+        left: 35px;
     }
 }
 
@@ -113,5 +127,50 @@
     #github-icon {
         position: relative;
         left: 75px;
+    }
+}
+    
+@media screen and (max-width: 320px) {
+    #for-science-icon {
+        position: relative;
+        font-size: 3.50em;
+        top: -30px;
+        left: 80px;
+    }
+}
+
+@media screen and (max-width: 270px) {
+    #for-science-icon {
+        position: relative;
+        font-size: 3.50em;
+        top: -30px;
+        left: 80px;
+    }
+
+    .tech-logo-placeholder {
+        left: 25px;
+    }
+    
+    .tech-logo-images {
+        height: 125px;
+        width: 125px;
+        margin-bottom: 10px;
+    }
+
+    #register-button {
+        position: relative;
+        left: 30px;
+    }
+
+    #login-button {
+        position: relative;
+        top: 5px;
+        width: 110px;
+        left: -35px;
+    }
+
+    #github-icon {
+        position: relative;
+        left: 60px;
     }
 }

@@ -1,16 +1,15 @@
-.image-uploader {
+#image-uploader {
+    position: relative;
+    top: 150px;
     cursor: pointer;
     border: 5px dashed #000;
     transition: 0.5s;
-    height: 225px;
-    width: 100%;
-    text-align: center;
 }
 
-.image-uploader:hover {
+#image-uploader:hover {
     background-color: #440096;
-    border-color: #f0f0f0;
-    color: #f0f0f0;
+    border-color: rgb(0, 128, 0);
+     color: rgb(0, 128, 0);
     transition: 0.5s;
 }
 
@@ -19,4 +18,16 @@
     border-color: #f0f0f0;
     color: #f0f0f0;
     transition: 0.5s;
+}
+
+@media screen and (max-width: 591px) {
+    #main-card {
+        margin-top: 10px;
+        border: 0px;
+    }
+
+    #image-uploader {
+        visibility: visible;
+        top: 0px;
+    }
 }

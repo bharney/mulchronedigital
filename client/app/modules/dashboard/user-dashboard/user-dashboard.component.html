@@ -8,10 +8,7 @@
     <div class="card text-center">
       <img *ngIf="profileImage" id="profile-picture" class="card-img-top img-responsive" src="{{profileImage}}" alt="User picture placeholder">
       <i *ngIf="!profileImage" id="user-image-placeholder" class="fa fa-user" aria-hidden="true"></i>
-      <h4 class="card-title">Welcome back,
-        <br>{{username}}!
-      </h4>
-      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      <h4 class="card-title">Welcome back,<br/>{{username}}</h4>
       <app-user-dashboard-navigation></app-user-dashboard-navigation>
     </div>
   </div>

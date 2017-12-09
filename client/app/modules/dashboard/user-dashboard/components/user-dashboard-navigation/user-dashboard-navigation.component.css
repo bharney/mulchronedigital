@@ -1,3 +1,7 @@
+.list-group-item {
+  background-color: #f0f0f0;
+}
+
 .btn-user-dashboard-navigation {
   margin-right: 5px;
   cursor: pointer;
@@ -7,3 +11,20 @@
   margin-bottom: 5px;
 }
 
+@media screen and (max-width: 1205px) {
+  .btn-user-dashboard-navigation {
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 995px) {
+  .btn-user-dashboard-navigation {
+    font-size: 9px;
+  }
+}
+
+@media screen and (max-width: 590px) { 
+  .btn-user-dashboard-navigation {
+    font-size: 13px;
+  }
+}

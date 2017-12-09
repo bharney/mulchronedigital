@@ -5,3 +5,9 @@
         font-size: 1.25em;
     }
 }
+
+@media screen and (max-width: 270px) {
+    #name-header {
+        font-size: 1em;
+    }
+}
