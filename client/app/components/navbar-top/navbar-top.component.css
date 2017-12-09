@@ -1,5 +1,10 @@
-#navbar-href {
+#navbar-href  {
     cursor: pointer;
+}
+
+#navbar-href:hover h4 {
+    transition: 0.75s;
+    color: #440096;
 }
 
 @media screen and (max-width: 320px) {
