@@ -3,9 +3,9 @@ import * as cloudinary from "cloudinary";
 export class Cloudinary {
     constructor() {
         cloudinary.config({
-            cloud_name: "dqukwohgi",
-            api_key: "726712423623842",
-            api_secret: "NLPoIfTZykRrw0ZC55TQaWFdu8s"
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            api_secret: process.env.CLOUDINARY_API_SECRET
         });
     }
 
@@ -20,7 +20,6 @@ export class Cloudinary {
 
     public async uploadCloudinaryImage(fileBuffer: Buffer): Promise<object> {
         return new Promise((resolve, reject) => {
-            console.log(fileBuffer);
             cloudinary.v2.uploader.upload_stream({ resource_type: "image" }, (error, result) => {
                 if (error) {
                     reject(false);
