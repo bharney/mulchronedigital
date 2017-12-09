@@ -29,14 +29,14 @@ export class ResponseMessages {
   public usernameIsTaken(username: string): object {
     return {
       "status": false,
-      "message": `Sorry, but the username ${username} is already in use by one of our users`
+      "message": `The username ${username} is already taken`
     };
   }
 
   public emailIsTaken(email: string): object {
     return {
       "status": false,
-      "message": `Sorry, but the email ${email} is already in use by by one of our users`
+      "message": `The email ${email} is already associated with an account.`
     };
   }
 
@@ -51,14 +51,14 @@ export class ResponseMessages {
   public generalError(): object {
     return {
       "status": false,
-      "message": "Something went wrong on our end, please give a moment and try again"
+      "message": "Something went wrong on our end, please give a moment and try again."
     };
   }
 
   public noUserFound(): object {
     return {
       "status": false,
-      "message": "Sorry, we did not find any users with that email address",
+      "message": "Sorry, we did not find any users with that email address.",
       "relogin": true
     };
   }
@@ -66,7 +66,7 @@ export class ResponseMessages {
   public passwordsDoNotMatch(): object {
     return {
       "status": false,
-      "message": "Sorry the password you entered does not match the one stored"
+      "message": "Sorry the password you entered does not match the one stored."
     };
   }
 
@@ -81,7 +81,7 @@ export class ResponseMessages {
   public jsonWebTokenExpired(): object {
     return {
       "status": false,
-      "message": "Please verify your login information again please",
+      "message": "Please verify your login information again please.",
       "relogin": true
     };
   }
