@@ -19,6 +19,14 @@ export class ResponseMessages {
     };
   }
 
+  public userIsNotActive(): object {
+    return {
+      "status": false,
+      "message": `Your user account is not activate, if you have previously activated this account your access may have been revoked.`,
+      "relogin": true,
+    };
+  }
+
   public emailIsNotValid(): object {
     return {
       "status": false,

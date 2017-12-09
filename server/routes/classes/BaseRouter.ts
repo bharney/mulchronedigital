@@ -29,12 +29,17 @@ export abstract class BaseRouter {
       }
       const databaseUsers: User[] = await UsersCollection.find(
         { "_id": new ObjectId(res.locals.token.id) },
-        { "jsonToken": 1 }
+        { "jsonToken": 1, "isActive": 1 }
       ).toArray();
       if (databaseUsers.length <= 0) {
         // send user message and redirect them client side to login screen or whatever.
         const responseMessages = new ResponseMessages();
         return res.status(503).json(responseMessages.generalError());
+      }
+      const isUserActive = databaseUsers[0].isActive;
+      if (isUserActive === undefined || !isUserActive) {
+        const responseMessages = new ResponseMessages();
+        return res.status(503).json(responseMessages.userIsNotActive());
       }
       if (!await JsonWebTokenWorkers.verifiyJsonWebToken(databaseUsers[0].jsonToken)) {
         const responseMessages = new ResponseMessages();
