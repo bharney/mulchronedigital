@@ -1,3 +1,4 @@
+import { UserActionHelper } from '../../helpers/UserActionHelper';
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
 import { User } from "../../models/user";
@@ -8,7 +9,7 @@ import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { ObjectId } from "mongodb";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
-import * as multer from "multer";
+import * as multer from 'multer';
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
 import { Cloudinary } from "../../apis/Cloudinary";
@@ -84,7 +85,11 @@ export class UserDashboardRouter extends BaseRouter {
       const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
       const updatePasswordResult = await userdashboardDataAccess.updateUserPassword(databaseUsers[0]._id, user);
       if (updatePasswordResult.modifiedCount === 1) {
-        return res.status(200).json(responseMessages.userChangedPasswordSuccessfully());
+         res.status(200).json(responseMessages.userChangedPasswordSuccessfully());
+         const httpHelpers = new HttpHelpers();
+         const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+         const userActions = new UserActionHelper();
+         await userActions.userChangedPassword(new ObjectId(databaseUsers[0]._id), ip, databaseUsers[0].password);
       } else {
         throw new Error("There was nothing updated when attemtping to update the users password");
       }
