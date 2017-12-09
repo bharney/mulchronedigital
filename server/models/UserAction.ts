@@ -6,6 +6,7 @@ export class UserAction {
     public actionType: string;
     public happenedAt: string;
     public oldPassword?: string;
+    public oldUsername?: string;
 
     constructor(userId: ObjectId, ip: string, actionType: string) {
         this.userId = userId;
@@ -23,10 +24,17 @@ export class UserLoggedIn extends UserAction {
 }
 
 export class UserChangedPassword extends UserAction {
-    public oldPassword: string;
 
     constructor(userId: ObjectId, ip: string, actionType: string, oldPassword: string) {
         super(userId, ip, actionType);
         this.oldPassword = oldPassword;
+    }
+}
+
+export class UserChangedUsername extends UserAction {
+
+    constructor(userId: ObjectId, ip: string, actionType: string, oldUsername: string) {
+        super(userId, ip, actionType);
+        this.oldUsername = oldUsername;
     }
 }

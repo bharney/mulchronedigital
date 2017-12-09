@@ -85,11 +85,11 @@ export class UserDashboardRouter extends BaseRouter {
       const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
       const updatePasswordResult = await userdashboardDataAccess.updateUserPassword(databaseUsers[0]._id, user);
       if (updatePasswordResult.modifiedCount === 1) {
-         res.status(200).json(responseMessages.userChangedPasswordSuccessfully());
-         const httpHelpers = new HttpHelpers();
-         const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-         const userActions = new UserActionHelper();
-         await userActions.userChangedPassword(new ObjectId(databaseUsers[0]._id), ip, databaseUsers[0].password);
+        res.status(200).json(responseMessages.userChangedPasswordSuccessfully());
+        const httpHelpers = new HttpHelpers();
+        const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+        const userActions = new UserActionHelper();
+        await userActions.userChangedPassword(new ObjectId(databaseUsers[0]._id), ip, databaseUsers[0].password);
       } else {
         throw new Error("There was nothing updated when attemtping to update the users password");
       }
@@ -116,14 +116,15 @@ export class UserDashboardRouter extends BaseRouter {
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
       const existingUsers: User[] = await UsersCollection.find(
         { username: req.body.newUsername },
-        { _id: 1 }
+        { "_id": 1 }
       ).toArray();
       if (existingUsers.length > 0) {
         return res.status(409).json(responseMessages.usernameIsTaken(req.body.newUsername));
       }
+      const userId = new ObjectId(res.locals.token.id);
       const databaseUsers: User[] = await UsersCollection.find(
-        { _id: new ObjectId(res.locals.token.id) },
-        { password: 1, _id: 1 }
+        { _id: userId },
+        { password: 1, _id: 0, username: 1 }
       ).toArray();
       if (databaseUsers.length <= 0) {
         return res.status(422).json(responseMessages.noUserFound());
@@ -131,14 +132,18 @@ export class UserDashboardRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.password, databaseUsers[0].password)) {
         return res.status(401).json(responseMessages.passwordsDoNotMatch());
       }
+      const oldUsername = databaseUsers[0].username;
       const user = new User(req.body.newUsername);
       const updateResult = await UsersCollection.updateOne(
-        { _id: new ObjectId(databaseUsers[0]._id) },
+        { _id: userId },
         { $set: { username: user.username, modifiedAt: user.modifiedAt } }
       );
       if (updateResult.modifiedCount === 1) {
-        return res.status(200)
-          .json(responseMessages.usernameChangeSuccessful(user.username));
+        res.status(200).json(responseMessages.usernameChangeSuccessful(user.username));
+        const httpHelpers = new HttpHelpers();
+        const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+        const actionHelpers = new UserActionHelper();
+        await actionHelpers.userChangedUsername(userId, ip, oldUsername);
       } else {
         throw new Error("Nothing was modified");
       }
@@ -225,8 +230,9 @@ export class UserDashboardRouter extends BaseRouter {
       }
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      const userId = new ObjectId(res.locals.token.id);
       const updatedProfile = await UsersCollection.findOneAndUpdate(
-        { _id: new ObjectId(res.locals.token.id), "ipAddresses": { $elemMatch: { "ipAddress": ip } } },
+        { _id: userId, "ipAddresses": { $elemMatch: { "ipAddress": ip } } },
         { $set: { "ipAddresses.$.latitude": req.body.latitude, "ipAddresses.$.longitude": req.body.longitude } }
       );
       if (updatedProfile.lastErrorObject.n === 1) {

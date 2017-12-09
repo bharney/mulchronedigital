@@ -1,10 +1,11 @@
-import { UserAction, UserLoggedIn, UserChangedPassword } from "../models/UserAction";
+import { UserAction, UserChangedPassword, UserChangedUsername, UserLoggedIn } from '../models/UserAction';
 import { UserActionsCollection } from "../cluster/master"; 
 import { ObjectId } from "mongodb";
 
 export class UserActionHelper {
     private userLoggedInActionType: string = "user_logged_in";
     private userChangedPasswordActionType: string = "user_changed_password";
+    private userChangedUsernameAction: string = "user_changed_username";
     constructor() {
 
     }
@@ -27,9 +28,17 @@ export class UserActionHelper {
         }
     }
 
+    public async userChangedUsername(userId: ObjectId, ip: string, oldUsername: string) {
+        try {
+            const userAction = new UserChangedUsername(userId, ip, this.userChangedUsernameAction, oldUsername);
+            await this.insertUserAction(userAction);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     private async insertUserAction(action: UserAction): Promise<any> {
         try {
-            console.log(action);
             await UserActionsCollection.insertOne(action);
         } catch (error) {
             console.log(error);
