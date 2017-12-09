@@ -1,3 +1,7 @@
+#navbar-href {
+    cursor: pointer;
+}
+
 @media screen and (max-width: 320px) {
     #name-header {
         position: relative;
