@@ -34,7 +34,7 @@ export class NavbarTopComponent implements OnInit {
   public toggleNavigateToUserDashboardClick(): void {
     const token: JsonWebToken = this.authControl.getDecodedToken();
     if (token !== null) {
-      this.router.navigate(["../../dashboard/user", { id: token.id }, { outlets: { dashboard: ["home"] } }]);
+      this.router.navigate(["../../user-dashboard/user", { id: token.id }, { outlets: { dashboard: ["home"] } }]);
     }
   }
 

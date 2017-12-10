@@ -7,7 +7,7 @@ const appRoutes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
   { path: "home", loadChildren: "./modules/home/home.module#HomeLazyModule" },
   { path: "users", loadChildren: "./modules/users/users.module#UsersLazyModule" },
-  { path: "dashboard", loadChildren: "./modules/dashboard/dashboard.module#DashboardLazyModule" },
+  { path: "user-dashboard", loadChildren: "./modules/dashboard/user-dashboard/user-dashboard.module#UserDashboardLazyModule" },
   { path: "notfound", loadChildren: "./modules/four-oh-four/four-oh-four.module#FourOhFourLazyModule" },
   { path: "**", redirectTo: "notfound"}
 ];

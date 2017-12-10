@@ -92,16 +92,16 @@ export class UserDashboardComponent implements OnInit {
   public navigateDashboad(event) {
     switch (event.target.id) {
       case "change-password-navlink":
-        this.router.navigate([`../../dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changepassword"] } }]);
+        this.router.navigate([`../../user-dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changepassword"] } }]);
         break;
       case "change-username-navlink":
-        this.router.navigate([`../../dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changeusername"] } }]);
+        this.router.navigate([`../../user-dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changeusername"] } }]);
         break;
       case "change-profile-picture-navlink":
-        this.router.navigate(["../../dashboard/user", { id: this.id }, { outlets: { "dashboard": ["profilepicture"] } }]);
+        this.router.navigate(["../../user-dashboard/user", { id: this.id }, { outlets: { "dashboard": ["profilepicture"] } }]);
         break;
       case "dashboard-home-navlink":
-        this.router.navigate(["../../dashboard/user", { id: this.id }, { outlets: { "dashboard": ["home"] } }]);
+        this.router.navigate(["../../user-dashboard/user", { id: this.id }, { outlets: { "dashboard": ["home"] } }]);
         break;
       default:
         break;
