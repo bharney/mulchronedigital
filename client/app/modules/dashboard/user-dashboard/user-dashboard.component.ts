@@ -47,20 +47,8 @@ export class UserDashboardComponent implements OnInit {
 
   private isUserAuthorizedToBeHere(): void {
     this.parentRouter = this.router;
-    this.route.params.subscribe(params => {
-      if (params["id"] === undefined) {
-        this.router.navigate(["../../users/login"]);
-        return;
-      }
-      const userIdParam: string = params["id"];
-      const token: JsonWebToken = this.authControl.getDecodedToken();
-      if (token === null) {
-        this.router.navigate(["/../../users/login"]);
-        return;
-      }
-      this.id = token.id;
-      this.getUserDashboardInformation();
-    });
+    this.authControl.dashboardInitCompareParamIdWithTokenId(this.route, this.router);
+    this.getUserDashboardInformation();
   }
 
   private subscribeToUpdateUserInformationEmitter(): void {

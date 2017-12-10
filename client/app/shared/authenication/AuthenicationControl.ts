@@ -1,3 +1,4 @@
+import { ActivatedRoute, Router } from "@angular/router";
 import { Injectable } from "@angular/core";
 import { Headers, RequestOptions } from "@angular/http";
 import { JsonWebToken } from "../../../../shared/interfaces/IJsonWebToken";
@@ -43,5 +44,23 @@ export class AuthenicationControl {
     const decodedToken = jwt.decode(storageToken);
     const token = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"]);
     return token;
+  }
+
+  public dashboardInitCompareParamIdWithTokenId(acivatedRoute: ActivatedRoute, router: Router): void {
+    acivatedRoute.params.subscribe(params => {
+      if (params["id"] === undefined) {
+        router.navigate(["../../users/login"]);
+        return;
+      }
+      const token: JsonWebToken = this.getDecodedToken();
+      if (token === null) {
+        router.navigate(["/../../users/login"]);
+        return;
+      }
+      if (params["id"] !== token.id) {
+        router.navigate(["/../../users/login"]);
+        return;
+      }
+    });
   }
 }

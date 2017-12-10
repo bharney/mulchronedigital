@@ -1,3 +1,6 @@
+import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
+import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
 
 @Component({
@@ -7,8 +10,20 @@ import { Component, OnInit } from "@angular/core";
 })
 
 export class AdminDashboardComponent implements OnInit {
+  private parentRouter: Router;
 
-  constructor() { }
+  constructor(
+    private authControl: AuthenicationControl,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    this.isTheUserAuthorizedToBeHere();
+  }
+
+  private isTheUserAuthorizedToBeHere() {
+    this.parentRouter = this.router;
+    this.authControl.dashboardInitCompareParamIdWithTokenId(this.route, this.router);
+  }
 }
