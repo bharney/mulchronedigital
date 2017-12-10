@@ -18,6 +18,11 @@
           <strong>Login</strong>
         </a>
       </li>
+      <li *ngIf="authControl.isUserAdmin()" class="nav-item">
+          <a class="nav-link" (click)="toggleNavigateToAdminDashboardClick()">
+            <strong>Admin</strong>
+          </a>
+        </li>
       <li *ngSwitchCase="true" class="nav-item">
         <a class="nav-link" (click)="toggleNavigateToUserDashboardClick()">
           <strong>Dashboad</strong>

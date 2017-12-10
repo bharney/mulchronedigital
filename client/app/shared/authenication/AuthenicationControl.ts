@@ -27,6 +27,14 @@ export class AuthenicationControl {
     }
   }
 
+  public isUserAdmin(): boolean {
+    const token = this.getDecodedToken();
+    if (token === null || !token.isAdmin) {
+      return false;
+    }
+    return true;
+  }
+
   public getDecodedToken() {
     const storageToken = this.getJsonWebTokenFromLocalStorage();
     if (storageToken === null) {

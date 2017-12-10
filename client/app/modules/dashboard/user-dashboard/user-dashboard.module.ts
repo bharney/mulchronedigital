@@ -8,7 +8,6 @@ import { UserDashboardChangeUsernameComponent } from "./components/user-dashboar
 import { UserDashboardChangePasswordComponent } from "./components/user-dashboard-change-password/user-dashboard-change-password.component";
 import { UserDashboardHomeComponent } from "./components/user-dashboard-home/user-dashboard-home.component";
 import { UserDashboardComponent } from "./user-dashboard.component";
-import { AdminDashboardComponent } from "../admin-dashboard/admin-dashboard.component";
 import { SharedModule } from "../../../shared/modules/shared.module";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -24,7 +23,6 @@ import { UserDashboardRouting } from "./user-dashboard.routing";
         SharedModule
     ],
     declarations: [
-        AdminDashboardComponent,
         UserDashboardComponent,
         UserDashboardHomeComponent,
         UserDashboardChangePasswordComponent,

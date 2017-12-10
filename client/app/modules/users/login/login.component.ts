@@ -93,7 +93,7 @@ export class LoginComponent implements OnInit {
       // TODO: route to admin dashboard
     } else {
       this.router.navigate([
-        `../../dashboard/user`,
+        `../../user-dashboard/user`,
         { id: token.id },
         { outlets: { dashboard: ["home"] } }
       ]);
