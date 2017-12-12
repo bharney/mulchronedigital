@@ -47,7 +47,9 @@ export class UserDashboardComponent implements OnInit {
 
   private isUserAuthorizedToBeHere(): void {
     this.parentRouter = this.router;
-    this.authControl.dashboardInitCompareParamIdWithTokenId(this.route, this.router);
+    const token: JsonWebToken = this.authControl.getDecodedToken();
+    this.authControl.dashboardInitCompareParamIdWithTokenId(this.route, this.router, token);
+    this.id = token.id;
     this.getUserDashboardInformation();
   }
 
@@ -80,8 +82,8 @@ export class UserDashboardComponent implements OnInit {
   public navigateDashboad(event) {
     switch (event.target.id) {
       case "change-password-navlink":
-        this.router.navigate([`../../user-dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changepassword"] } }]);
-        break;
+      this.router.navigate([`../../user-dashboard/user`, { id: this.id }, { outlets: { dashboard: ["changepassword"] } }]);      
+      break;
       case "change-username-navlink":
         this.router.navigate([`../../user-dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changeusername"] } }]);
         break;

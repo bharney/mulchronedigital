@@ -1,4 +1,4 @@
-import { UserAction, UserChangedPassword, UserChangedUsername, UserLoggedIn } from '../models/UserAction';
+import { UserAction, UserChangedPassword, UserChangedUsername, UserLoggedIn } from "../models/UserAction";
 import { UserActionsCollection } from "../cluster/master"; 
 import { ObjectId } from "mongodb";
 

@@ -46,13 +46,12 @@ export class AuthenicationControl {
     return token;
   }
 
-  public dashboardInitCompareParamIdWithTokenId(acivatedRoute: ActivatedRoute, router: Router): void {
+  public dashboardInitCompareParamIdWithTokenId(acivatedRoute: ActivatedRoute, router: Router, token: any): void {
     acivatedRoute.params.subscribe(params => {
       if (params["id"] === undefined) {
         router.navigate(["../../users/login"]);
         return;
       }
-      const token: JsonWebToken = this.getDecodedToken();
       if (token === null) {
         router.navigate(["/../../users/login"]);
         return;
