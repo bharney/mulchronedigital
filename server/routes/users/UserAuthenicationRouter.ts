@@ -226,6 +226,10 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       const userId = new ObjectId(databaseUsers[0]._id);
       // TODO: check if the user has recently requested a password reset within the last 24 days.
+      const resetPasswordTokens: ForgotPasswordToken[] = await userAuthDataAccess.checkForRecentForgotPasswordTokens(userId);
+      if (resetPasswordTokens.length > 0) {
+        return res.status(429).json(responseMessages.tooManyForgotPasswordRequests());
+      }
       const forgotPasswordToken = new ForgotPasswordToken(userId);
       const tokenId = await userAuthDataAccess.insertForgotPasswordToken(forgotPasswordToken);
       if (tokenId.length === 0) {

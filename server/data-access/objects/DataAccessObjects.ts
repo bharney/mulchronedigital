@@ -43,7 +43,7 @@ export class DataAccessObjects {
     });
   }
 
-  public updateUserPasswordProjection(password: string, modifiedAt: string) {
+  public updateUserPasswordProjection(password: string, modifiedAt: Date) {
     return new Promise((resolve, reject) => {
       if (password === undefined) {
         reject(new Error("No user modal was provided at updateUserPasswordProjection(user: User"));
@@ -53,6 +53,24 @@ export class DataAccessObjects {
       }
       const projection = { $set: { password: password, modifiedAt: modifiedAt } };
       console.log("projection:" + projection);
+      resolve(projection);
+    });
+  }
+
+  public findRecentForgotPasswordTokenById(userId: ObjectId): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if (userId === undefined) {
+        reject(new Error("No userId was provided at findRecentForgotPasswordTokenById(userId: ObjectId"));
+      }
+      const date = new Date();
+      const query = { "userId": userId, "validUntil": {$gte: date} };
+      resolve(query);
+    });
+  }
+
+  public forgotPasswordTokenIdProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { _id: 1 };
       resolve(projection);
     });
   }

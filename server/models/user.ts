@@ -10,7 +10,7 @@ export class User {
   public password: string;
   public isAdmin: boolean;
   public createdAt: string;
-  public modifiedAt: string;
+  public modifiedAt: Date;
   public profileImage: ProfileImage;
   public jsonToken: string;
   public ipAddresses: UserIpAddress[];
@@ -23,7 +23,7 @@ export class User {
     this.password = password;
     this.isAdmin = false;
     this.profileImage = new ProfileImage();
-    this.modifiedAt = new Date().toLocaleString();
+    this.modifiedAt = new Date();
     this.ipAddresses = [];
     if (ipAddress) {
       this.ipAddresses.push(ipAddress);
@@ -45,7 +45,7 @@ export class User {
   public async updateUserPassword(): Promise<boolean> {
     try {
       this.password = await this.HashPassword();
-      this.modifiedAt = new Date().toLocaleString();
+      this.modifiedAt = new Date();
       return true;
     } catch (error) {
       // TODO: error handling? Logging?

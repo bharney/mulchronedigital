@@ -187,4 +187,11 @@ export class ResponseMessages {
       "message": `We have sent an email to ${email}, with instructions on how to restart your password`
     };
   }
+
+  public tooManyForgotPasswordRequests(): object {
+    return {
+      "status": false,
+      "message": "We have recently sent you a forgot password token, you are only allowed one a day"
+    };
+  }
 }
