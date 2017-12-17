@@ -42,11 +42,11 @@ export class EmailQueue {
     await this.sendMessageToEmailQueue(userDetails);
   }
 
-  public async sendUserForgotPasswordToQueue(email: string, userId: string, tokenId: string): Promise<boolean> {
+  public async sendUserForgotPasswordToQueue(email: string, userId: string, tokenId: string, newPassword: string): Promise<boolean> {
     
     try {
       const messages = new QueueMessages();
-      const userForgotPassword = await messages.userForgotPasswordMessage(email, userId, tokenId);
+      const userForgotPassword = await messages.userForgotPasswordMessage(email, userId, tokenId, newPassword);
       if (await this.sendMessageToEmailQueue(userForgotPassword)) {
         return true;
       }

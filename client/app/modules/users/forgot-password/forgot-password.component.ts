@@ -42,7 +42,7 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   public toggleForgotPasswordSubmit(): void {
-    if (!this.forgotPasswordForm.valid) {
+    if (!this.forgotPasswordForm.valid || this.hasTheFormBeenSubmitted) {
       return;
     }
     this.hasTheFormBeenSubmitted = true;

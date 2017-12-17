@@ -2,7 +2,7 @@ import { User } from "../models/user";
 
 export class QueueMessages {
 
-    public  userActivationDetailsMessage(user: User): object {
+    public userActivationDetailsMessage(user: User): object {
         return new Promise(resolve => {
             const message = {
                 "type": "activate_user",
@@ -14,12 +14,13 @@ export class QueueMessages {
         });
     }
 
-    public userForgotPasswordMessage(email: string, userId: string, tokenId: string): object {
+    public userForgotPasswordMessage(email: string, userId: string, tokenId: string, newPassword: string): object {
         return new Promise(resolve => {
             const message = {
                 "type": "user_forgot_password",
                 "email": email,
-                "token_id": tokenId
+                "tokenId": tokenId,
+                "newPassword": newPassword
             };
             resolve(message);
         });

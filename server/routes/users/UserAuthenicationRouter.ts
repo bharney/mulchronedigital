@@ -225,17 +225,18 @@ export class UserAuthenicationRouter extends BaseRouter {
         return res.status(401).json(responseMessages.noUserFoundThatIsActive());
       }
       const userId = new ObjectId(databaseUsers[0]._id);
-      // TODO: check if the user has recently requested a password reset within the last 24 days.
       const resetPasswordTokens: ForgotPasswordToken[] = await userAuthDataAccess.checkForRecentForgotPasswordTokens(userId);
       if (resetPasswordTokens.length > 0) {
         return res.status(429).json(responseMessages.tooManyForgotPasswordRequests());
       }
       const forgotPasswordToken = new ForgotPasswordToken(userId);
+      const newPassword = Math.random().toString(36).slice(-12);
+      await forgotPasswordToken.securePassword(newPassword);
       const tokenId = await userAuthDataAccess.insertForgotPasswordToken(forgotPasswordToken);
       if (tokenId.length === 0) {
         return res.status(503).json(responseMessages.generalError());
       }
-      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(req.body.email, databaseUsers[0]._id, tokenId)) {
+      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(req.body.email, databaseUsers[0]._id, tokenId, newPassword)) {
         return res.status(503).json(responseMessages.generalError());
       }
       res.status(200).json(responseMessages.forgotPasswordSuccess(req.body.email));

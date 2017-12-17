@@ -53,6 +53,7 @@ export class User {
     }
   }
 
+  // TODO: through this in a helper class or something
   private HashPassword(): Promise<string> {
     return new Promise((resolve, reject) => {
       bcrypt.genSalt(10)
