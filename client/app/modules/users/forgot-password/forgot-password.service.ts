@@ -14,7 +14,10 @@ export class ForgotPasswordService {
         private apiRequests: ApiRequests,
     ) { }
 
-    // public resetUserPassword(resetPasswordObject: any): Observable<any> {
-    //     return this.http.patch
-    // }
+    public resetUserPassword(resetPasswordObject: any): Observable<any> {
+        const options = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
+        return this.http.patch("/api/userauth/forgotpassword", resetPasswordObject, options)
+        .map(this.apiRequests.parseResponse)
+        .catch(this.apiRequests.errorCatcher);
+    }
 }

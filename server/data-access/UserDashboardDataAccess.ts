@@ -1,11 +1,9 @@
+import { DataAccess } from "./classes/DataAccess";
 import { DataAccessObjects } from "./objects/DataAccessObjects";
 import { UsersCollection } from "../cluster/master";
 import { User } from "../models/user";
 
-export class UserDashboardDataAccess {
-  private dataAccessObjects = new DataAccessObjects();
-  private usersArray: User[] = [];
-
+export class UserDashboardDataAccess extends DataAccess {
   public async getUserDashboardInformation(userId: string): Promise<User[]> {
     try {
       const query = await this.dataAccessObjects.findUserByIdQuery(userId);

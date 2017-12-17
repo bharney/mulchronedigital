@@ -39,6 +39,31 @@ export class EmailQueue {
   public async sendUserActivationEmailToQueue(user: User): Promise<void> {
     const messages = new QueueMessages();
     const userDetails = await messages.userActivationDetailsMessage(user);
-    this.channel.sendToQueue(this.emailQueueChannel, new Buffer(JSON.stringify(userDetails)), {persistent: true});
+    await this.sendMessageToEmailQueue(userDetails);
+  }
+
+  public async sendUserForgotPasswordToQueue(email: string, userId: string, tokenId: string): Promise<boolean> {
+    
+    try {
+      const messages = new QueueMessages();
+      const userForgotPassword = await messages.userForgotPasswordMessage(email, userId, tokenId);
+      if (await this.sendMessageToEmailQueue(userForgotPassword)) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+  
+  private async sendMessageToEmailQueue(message: any): Promise<boolean> {
+    try {
+      this.channel.sendToQueue(this.emailQueueChannel, new Buffer(JSON.stringify(message)), {persistent: true});
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   }
 }

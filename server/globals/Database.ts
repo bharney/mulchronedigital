@@ -2,6 +2,7 @@ import { UserAction } from "../models/UserAction";
 import { Resolve } from "@angular/router";
 import { MongoClient, Db, Collection } from "mongodb";
 import { User } from "../models/user";
+import { ForgotPasswordToken } from "../models/ForgotPasswordToken";
 
 export class Database {
   public CreateDatabaseConnection(): Promise<Db> {
@@ -45,15 +46,19 @@ export class Database {
         throw new Error("user collection index creation failed");
       }
 
+      if (!await this.CreateUserObjects(usersCollection)) {
+        throw new Error("user objects usersCollection");
+      }
+
       const userActionsCollection: Collection<UserAction> = await db.createCollection<UserAction>("UserActions");
       if (!await this.createUserActionCollectionIndexes(userActionsCollection)) {
         throw new Error("user action collection index creation failed");
       }
 
-      if (!await this.CreateUserObjects(usersCollection)) {
-        throw new Error("user objects usersCollection");
+      const userForgotPasswordTokens: Collection<ForgotPasswordToken> = await db.createCollection<ForgotPasswordToken>("UserForgotPasswordTokens");
+      if (!await this.createUserForgotPasswordTokensIndexes(userForgotPasswordTokens)) {
+        throw new Error("user forgot password tokens index creation failed");
       }
-
       return true;
     } catch (error) {
       console.log(error);
@@ -113,6 +118,33 @@ export class Database {
             email: 1
           },
           "name": "email",
+          unique: true,
+          background: true
+        }
+      ];
+      await collection.createIndexes(indexes);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  private async createUserForgotPasswordTokensIndexes(collection: Collection<ForgotPasswordToken>): Promise<boolean> {
+    try {
+      const indexes: object[] = [
+        {
+          "key": {
+            validUntil: 1
+          },
+          "name": "validUntil",
+          unique: true,
+          background: true
+        },
+        {
+          "key": {
+            userId: 1
+          },
+          "name": "userId",
           unique: true,
           background: true
         }

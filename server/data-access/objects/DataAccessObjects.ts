@@ -12,9 +12,26 @@ export class DataAccessObjects {
     });
   }
 
+  public findUserByEmailQuery(email: string): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if (email === undefined) {
+        reject(new Error("No user email was proviarted at findUserByEmailQuery(email: string)"))
+      }
+      const query = { email: email };
+      resolve(query);
+    });
+  }
+
   public usernameAndProfileImageProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { username: 1, "profileImage.secure_url": 1, _id: 0 };
+      resolve(projection);
+    });
+  }
+
+  public userObjectIdProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { _id: 1 };
       resolve(projection);
     });
   }

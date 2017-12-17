@@ -13,4 +13,15 @@ export class QueueMessages {
             resolve(message);
         });
     }
+
+    public userForgotPasswordMessage(email: string, userId: string, tokenId: string): object {
+        return new Promise(resolve => {
+            const message = {
+                "type": "user_forgot_password",
+                "email": email,
+                "token_id": tokenId
+            };
+            resolve(message);
+        });
+    }
 }

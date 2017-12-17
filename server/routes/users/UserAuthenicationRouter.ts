@@ -1,4 +1,4 @@
-import { UserActionHelper } from '../../helpers/UserActionHelper';
+import { UserActionHelper } from "../../helpers/UserActionHelper";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import { Router, Request, NextFunction, Response } from "express";
 import { BaseRouter } from "../classes/BaseRouter";
@@ -12,6 +12,8 @@ import { ObjectId } from "mongodb";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { IJsonWebToken, JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { EmailQueueExport } from "../../cluster/master";
+import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
+import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 
 
 export class UserAuthenicationRouter extends BaseRouter {
@@ -36,6 +38,9 @@ export class UserAuthenicationRouter extends BaseRouter {
     this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
 
     this.router.patch("/activateuser", this.validateActivateUser);
+
+    // Forgot password
+    this.router.patch("/forgotpassword", this.validateUserForgotPassword);
   }
 
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
@@ -206,5 +211,37 @@ export class UserAuthenicationRouter extends BaseRouter {
       return res.status(503).json(responseMessages.generalError());
     }
     console.log(req.body);
+  }
+
+  private async validateUserForgotPassword(req: Request, res: Response) {
+    const responseMessages = new ResponseMessages();
+    try {
+      if (!await UserAuthenicationValidator.isEmailValid(req.body.email)) {
+        return res.status(422).json(responseMessages.emailIsNotValid());
+      }
+      const userAuthDataAccess = new UserAuthenicationDataAccess();
+      const databaseUsers: User[] = await userAuthDataAccess.userForgotPasswordFindUserByEmail(req.body.email);
+      if (databaseUsers.length <= 0) {
+        return res.status(401).json(responseMessages.noUserFound());
+      }
+      const userId = new ObjectId(databaseUsers[0]._id);
+      // TODO: check if the user has recently requested a password reset within the last 24 days.
+      const forgotPasswordToken = new ForgotPasswordToken(userId);
+      const tokenId = await userAuthDataAccess.insertForgotPasswordToken(forgotPasswordToken);
+      if (tokenId.length === 0) {
+        return res.status(503).json(responseMessages.generalError());
+      }
+      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(req.body.email, databaseUsers[0]._id, tokenId)) {
+        return res.status(503).json(responseMessages.generalError());
+      }
+      res.status(200).json(responseMessages.forgotPasswordSuccess(req.body.email));
+      const httpHelpers = new HttpHelpers();
+      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      const userActions = new UserActionHelper();
+      await userActions.userForgotPassword(userId, ip, new ObjectId(tokenId));
+    } catch (error) {
+      console.log(error);
+      return res.status(503).json(responseMessages.generalError());
+    }
   }
 }

@@ -180,4 +180,11 @@ export class ResponseMessages {
       "message": `Thanks for activating your account`
     };
   }
+
+  public forgotPasswordSuccess(email: string): object {
+    return {
+      "status": true,
+      "message": `We have sent an email to ${email}, with instructions on how to restart your password`
+    };
+  }
 }
