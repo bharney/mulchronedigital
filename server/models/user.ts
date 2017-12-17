@@ -9,7 +9,7 @@ export class User {
   public email: string;
   public password: string;
   public isAdmin: boolean;
-  public createdAt: string;
+  public createdAt: Date;
   public modifiedAt: Date;
   public profileImage: ProfileImage;
   public jsonToken: string;
@@ -32,7 +32,7 @@ export class User {
   
   public async SetupNewUser(): Promise<boolean> {
     try {
-      this.createdAt = new Date().toLocaleString();
+      this.createdAt = new Date();
       this.password = await this.HashPassword();
       const result = true;
       return result;
