@@ -24,6 +24,7 @@ export class AdminDashboardComponent implements OnInit {
 
   private isTheUserAuthorizedToBeHere() {
     this.parentRouter = this.router;
-    this.authControl.dashboardInitCompareParamIdWithTokenId(this.route, this.router);
+    const token: JsonWebToken = this.authControl.getDecodedToken();
+    this.authControl.dashboardInitCompareParamIdWithTokenId(this.route, this.router, token);
   }
 }

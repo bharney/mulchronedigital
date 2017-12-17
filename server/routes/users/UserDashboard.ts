@@ -1,4 +1,4 @@
-import { UserActionHelper } from '../../helpers/UserActionHelper';
+import { UserActionHelper } from "../../helpers/UserActionHelper";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
 import { User } from "../../models/user";
@@ -9,7 +9,7 @@ import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { ObjectId } from "mongodb";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
-import * as multer from 'multer';
+import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
 import { Cloudinary } from "../../apis/Cloudinary";
@@ -103,14 +103,10 @@ export class UserDashboardRouter extends BaseRouter {
   private async validateUserChangeUsername(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      if (
-        !await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)
-      ) {
+      if (!await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)) {
         return res.status(422).json(responseMessages.userNameIsNotValid());
       }
-      if (
-        !await UserAuthenicationValidator.isPasswordValid(req.body.password)
-      ) {
+      if (!await UserAuthenicationValidator.isPasswordValid(req.body.password)) {
         return res.status(422).json(responseMessages.passwordIsNotValid());
       }
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
