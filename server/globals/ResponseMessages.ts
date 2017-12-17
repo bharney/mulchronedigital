@@ -71,6 +71,14 @@ export class ResponseMessages {
     };
   }
 
+  public noUserFoundThatIsActive(): object {
+    return {
+      "status": false,
+      "message": "Sorry, we did not find any users with that email address that are currently active.",
+      "relogin": true
+    };
+  }
+
   public passwordsDoNotMatch(): object {
     return {
       "status": false,

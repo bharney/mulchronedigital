@@ -12,7 +12,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
 
     public async userForgotPasswordFindUserByEmail(email: string): Promise<User[]> {
         try {
-            const query = await this.dataAccessObjects.findUserByEmailQuery(email);
+            const query = await this.dataAccessObjects.findUserByEmailAndIsActiveQuery(email);
             const projection = await this.dataAccessObjects.userObjectIdProjection();
             this.usersArray = await UsersCollection.find(query, projection).toArray();
             return this.usersArray;

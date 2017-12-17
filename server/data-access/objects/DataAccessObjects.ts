@@ -12,12 +12,12 @@ export class DataAccessObjects {
     });
   }
 
-  public findUserByEmailQuery(email: string): Promise<object> {
+  public findUserByEmailAndIsActiveQuery(email: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (email === undefined) {
-        reject(new Error("No user email was proviarted at findUserByEmailQuery(email: string)"))
+        reject(new Error("No user email was proviarted at findUserByEmailQuery(email: string)"));
       }
-      const query = { email: email };
+      const query = { email: email, isActive: true };
       resolve(query);
     });
   }

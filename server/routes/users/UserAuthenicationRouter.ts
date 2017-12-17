@@ -222,7 +222,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       const userAuthDataAccess = new UserAuthenicationDataAccess();
       const databaseUsers: User[] = await userAuthDataAccess.userForgotPasswordFindUserByEmail(req.body.email);
       if (databaseUsers.length <= 0) {
-        return res.status(401).json(responseMessages.noUserFound());
+        return res.status(401).json(responseMessages.noUserFoundThatIsActive());
       }
       const userId = new ObjectId(databaseUsers[0]._id);
       // TODO: check if the user has recently requested a password reset within the last 24 days.
