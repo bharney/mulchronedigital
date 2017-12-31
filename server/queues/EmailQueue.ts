@@ -7,12 +7,13 @@ export class EmailQueue {
   private connectionString;
   private badConnectionAttempts = null;
   private channel;
+
   constructor() {
     this.createChannelForEmailQueue();
   }
 
   private createChannelForEmailQueue(): void {
-    this.connectionString = (!process.env.RABBITMQ_BIGWIG_URL) ? "amqp://localhost" : process.env.RABBITMQ_BIGWIG_URL;
+    this.connectionString = (!process.env.RABBITMQ_URL) ? "amqp://localhost" : process.env.RABBITMQ_URL;
     open.connect(this.connectionString)
       .then(connection => {
         return connection.createChannel();

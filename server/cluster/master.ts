@@ -101,7 +101,7 @@ async function createEmailQueueConnection(): Promise<boolean> {
     EmailQueueExport = queue;
     return true;
   } catch (error) {
-
+    return false;
   }
 }
 
