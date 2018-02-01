@@ -1,5 +1,7 @@
 import bcrypt = require("bcryptjs");
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
+import { UniqueIdentifier } from "../../shared/UniqueIdentifer";
+const exec = require("child_process").exec;
 
 export class User {
   public _id?: string;
@@ -14,6 +16,8 @@ export class User {
   public profileImage: ProfileImage;
   public jsonToken: string;
   public ipAddresses: UserIpAddress[];
+  public privateKey: string;
+  public publicKey: string;
 
   constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress, rememberMe?: boolean) {
     this.isActive = false;
@@ -29,17 +33,77 @@ export class User {
       this.ipAddresses.push(ipAddress);
     }
   }
-  
+
   public async SetupNewUser(): Promise<boolean> {
     try {
       this.createdAt = new Date();
       this.password = await this.HashPassword();
+      const privateKeyResult: RSA2048PrivateKeyCreationResult = await this.createRSA2048PrivateKey();
+      const publicKeyResult: RSA2048PublicKeyCreationResult = await this.createRSA2048PublicKey(privateKeyResult.fileName, privateKeyResult.guid);
+      console.log(publicKeyResult);
+      await this.deleteKeysFromFileSystem(privateKeyResult.fileName, publicKeyResult.fileName);
+      this.privateKey = privateKeyResult.key;
+      this.publicKey = publicKeyResult.key;
       const result = true;
       return result;
     } catch (error) {
+      console.log(error);
       const result = false;
       return result;
     }
+  }
+
+  createRSA2048PrivateKey(): Promise<RSA2048PrivateKeyCreationResult> {
+    return new Promise((resolve, reject) => {
+      UniqueIdentifier.createGuid()
+        .then(guid => {
+          const fileName = `rsa_2048_private_${guid}.pem`;
+          const cmd = `openssl genrsa -out ${fileName} 2048} && cat ${fileName}`;
+          exec(cmd, (err, stdout, stderr) => {
+            if (err) {
+              reject(err);
+            }
+            resolve(new RSA2048PrivateKeyCreationResult(guid, fileName, stdout));
+          });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+  createRSA2048PublicKey(fileName: string, guid: string): Promise<RSA2048PublicKeyCreationResult> {
+    return new Promise((resolve, reject) => {
+      const publicKeyFileName = `rsa_2048_${guid}_pub.pem`;
+      const cmd = `openssl rsa -pubout -in ${fileName} -out ${publicKeyFileName} && cat ${publicKeyFileName}`;
+      exec(cmd, (err, stdout, stderr) => {
+        if (err) {
+          reject(err);
+        }
+        console.log(stdout);
+        resolve(new RSA2048PublicKeyCreationResult(stdout, publicKeyFileName));
+      });
+    });
+  }
+
+  deleteKeysFromFileSystem(fileNameOne: string, fileNameTwo: string) {
+    return new Promise((resolve, reject) => {
+      const cmdOne = `rm -f ${fileNameOne}`;
+      const cmdTwo = `rm -f ${fileNameTwo}`;
+      exec(cmdOne, (err, stdout, stderr) => {
+        if (!err) {
+          exec(cmdTwo, (err, stdout, stderr) => {
+            if (!err) {
+              resolve(true);
+            } else {
+              reject(false);
+            }
+          });
+        } else {
+          reject(false);
+        }
+      });
+    });
   }
 
   public async updateUserPassword(): Promise<boolean> {
@@ -53,7 +117,7 @@ export class User {
     }
   }
 
-  // TODO: through this in a helper class or something
+  // TODO: throw this in a helper class or something
   private HashPassword(): Promise<string> {
     return new Promise((resolve, reject) => {
       bcrypt.genSalt(10)
@@ -87,4 +151,26 @@ class ProfileImage {
   public url: string;
   public secure_url: string;
   public original_filename: string;
+}
+
+class RSA2048PrivateKeyCreationResult {
+  public guid: string;
+  public fileName: string;
+  public key: string;
+
+  constructor(guid: string, fileName: string, key: string) {
+    this.guid = guid;
+    this.fileName = fileName;
+    this.key = key;
+  }
+}
+
+class RSA2048PublicKeyCreationResult {
+  public key: string;
+  public fileName: string;
+
+  constructor(key: string, publicKeyFileName: string) {
+    this.key = key;
+    this.fileName = publicKeyFileName;
+  }
 }
