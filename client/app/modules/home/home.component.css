@@ -11,15 +11,6 @@
     margin-top: 20px;
 }
 
-#for-science-icon {
-    position: relative;
-    font-size: 3.75em;
-    margin: 0 auto;
-    top: -50px;
-    left: 200px;
-    animation: for-science 3000ms linear infinite;
-}
-
 #github-icon {
     position: relative;
     font-size: 3.75em;
