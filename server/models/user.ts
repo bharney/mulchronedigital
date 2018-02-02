@@ -16,8 +16,10 @@ export class User {
   public profileImage: ProfileImage;
   public jsonToken: string;
   public ipAddresses: UserIpAddress[];
-  public privateKey: string;
-  public publicKey: string;
+  public privateKeyPairOne: string;
+  public publicKeyPairOne: string;
+  public privateKeyPairTwo: string;
+  public publicKeyPairTwo: string;
 
   constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress, rememberMe?: boolean) {
     this.isActive = false;
@@ -38,12 +40,16 @@ export class User {
     try {
       this.createdAt = new Date();
       this.password = await this.HashPassword();
-      const privateKeyResult: RSA2048PrivateKeyCreationResult = await this.createRSA2048PrivateKey();
-      const publicKeyResult: RSA2048PublicKeyCreationResult = await this.createRSA2048PublicKey(privateKeyResult.fileName, privateKeyResult.guid);
-      console.log(publicKeyResult);
-      await this.deleteKeysFromFileSystem(privateKeyResult.fileName, publicKeyResult.fileName);
-      this.privateKey = privateKeyResult.key;
-      this.publicKey = publicKeyResult.key;
+      const privateKeyResultPairOne: RSA2048PrivateKeyCreationResult = await this.createRSA2048PrivateKey();
+      const publicKeyResultPairOne: RSA2048PublicKeyCreationResult = await this.createRSA2048PublicKey(privateKeyResultPairOne.fileName, privateKeyResultPairOne.guid);
+      await this.deleteKeysFromFileSystem(privateKeyResultPairOne.fileName, publicKeyResultPairOne.fileName);
+      this.privateKeyPairOne = privateKeyResultPairOne.key;
+      this.publicKeyPairOne = publicKeyResultPairOne.key;
+      const privateKeyResultPairTwo: RSA2048PrivateKeyCreationResult = await this.createRSA2048PrivateKey();
+      const publicKeyResultPairTwo: RSA2048PublicKeyCreationResult = await this.createRSA2048PublicKey(privateKeyResultPairTwo.fileName, privateKeyResultPairTwo.guid);
+      await this.deleteKeysFromFileSystem(privateKeyResultPairTwo.fileName, publicKeyResultPairTwo.fileName);
+      this.privateKeyPairTwo = privateKeyResultPairTwo.key;
+      this.publicKeyPairTwo = publicKeyResultPairTwo.key;
       const result = true;
       return result;
     } catch (error) {
@@ -80,7 +86,6 @@ export class User {
         if (err) {
           reject(err);
         }
-        console.log(stdout);
         resolve(new RSA2048PublicKeyCreationResult(stdout, publicKeyFileName));
       });
     });
