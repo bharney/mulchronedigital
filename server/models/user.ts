@@ -63,8 +63,8 @@ export class User {
     return new Promise((resolve, reject) => {
       UniqueIdentifier.createGuid()
         .then(guid => {
-          const fileName = `rsa_2048_private_${guid}.pem`;
-          const cmd = `openssl genrsa -out ${fileName} 2048} && cat ${fileName}`;
+          const fileName = `rsa_4096_private_${guid}.pem`;
+          const cmd = `openssl genrsa -out ${fileName} 4096} && cat ${fileName}`;
           exec(cmd, (err, stdout, stderr) => {
             if (err) {
               reject(err);
@@ -80,7 +80,7 @@ export class User {
 
   createRSA2048PublicKey(fileName: string, guid: string): Promise<RSA2048PublicKeyCreationResult> {
     return new Promise((resolve, reject) => {
-      const publicKeyFileName = `rsa_2048_${guid}_pub.pem`;
+      const publicKeyFileName = `rsa_4096_${guid}_pub.pem`;
       const cmd = `openssl rsa -pubout -in ${fileName} -out ${publicKeyFileName} && cat ${publicKeyFileName}`;
       exec(cmd, (err, stdout, stderr) => {
         if (err) {
