@@ -10,7 +10,7 @@ declare const $: any;
 export class HomeComponent implements OnInit {
 
   constructor(
-    private authControl: AuthenicationControl
+    public authControl: AuthenicationControl
   ) { }
 
   ngOnInit() {
