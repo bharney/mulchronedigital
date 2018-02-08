@@ -53,7 +53,7 @@ export class JsonWebTokenWorkers {
   public static async getDecodedJsonWebToken(token): Promise<any> {
     try {
       const decodedToken = jwt.decode(token);
-      const tokenObject: JsonWebToken = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"]);
+      const tokenObject: JsonWebToken = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"], decodedToken["publicKeyPairOne"], decodedToken["privateKeyPairTwo"]);
       return tokenObject;
     } catch (error) {
       return null;
