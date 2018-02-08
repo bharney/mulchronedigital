@@ -112,7 +112,7 @@ export class ResponseMessages {
 
   public async successfulUserLogin(databaseUser: User): Promise<object> {
     try {
-      const token = await JsonWebTokenWorkers.signSignWebToken(databaseUser._id, databaseUser.isAdmin);
+      const token = await JsonWebTokenWorkers.signSignWebToken(databaseUser._id, databaseUser.isAdmin, databaseUser.publicKeyPairOne, databaseUser.privateKeyPairTwo);
       const updatedProfile = await UsersCollection.findOneAndUpdate(
         { _id: new ObjectId(databaseUser._id) },
         { $set: { "jsonToken": token } }

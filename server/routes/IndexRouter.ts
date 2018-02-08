@@ -1,5 +1,4 @@
 import { Router, Request, Response } from "express";
-import { HtmlRouter } from "./html/HtmlRouter";
 import { UserAuthenicationRouter } from "./users/UserAuthenicationRouter";
 import { UserDashboardRouter } from "./users/UserDashboard";
 
@@ -16,7 +15,6 @@ export class IndexRouter {
   }
 
   private createSubRouters() {
-    this.htmlRouter = new HtmlRouter().router;
     this.userAuthenicationRouter = new UserAuthenicationRouter().router;
     this.userDashboardRouter = new UserDashboardRouter().router;
   }
@@ -24,6 +22,5 @@ export class IndexRouter {
   private configureRoutes() {
     this.router.use("/api/userauth", this.userAuthenicationRouter);
     this.router.use("/api/userdashboard", this.userDashboardRouter);
-    this.router.use("/", this.htmlRouter);
   }
 }

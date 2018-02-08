@@ -42,7 +42,7 @@ export class AuthenicationControl {
       return null;
     }
     const decodedToken = jwt.decode(storageToken);
-    const token = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"]);
+    const token = new JsonWebToken(decodedToken["id"], decodedToken["isAdmin"], decodedToken["iat"], decodedToken["exp"], decodedToken["publicKeyPairOne"], decodedToken["privateKeyPairTwo"]);
     return token;
   }
 
