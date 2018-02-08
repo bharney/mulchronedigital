@@ -3,13 +3,13 @@ const fs = promise.promisifyAll(require("fs"));
 import path = require("path");
 import jwt = require("jsonwebtoken");
 import { JsonWebToken, IJsonWebToken } from "../../shared/interfaces/IJsonWebToken";
-import { UsersCollection} from "../cluster/master";
+import { UsersCollection } from "../cluster/master";
 
 export class JsonWebTokenWorkers {
 
-  public static async signSignWebToken(id: string, isAdmin: boolean): Promise<string> {
+  public static async signSignWebToken(id: string, isAdmin: boolean, publicKeyPairOne: string, privateKeyPairTwo: string): Promise<string> {
     try {
-      const userObject = this.createSignWebTokenUserObject(id, isAdmin);
+      const userObject = this.createSignWebTokenUserObject(id, isAdmin, publicKeyPairOne, privateKeyPairTwo);
       const privateKey = await this.getPrivateKey();
       const token = await jwt.sign(userObject, privateKey, { algorithm: "RS256", expiresIn: 86400 });
       return token;
@@ -18,10 +18,12 @@ export class JsonWebTokenWorkers {
     }
   }
 
-  public static createSignWebTokenUserObject(id: string, isAdmin: boolean): object {
+  public static createSignWebTokenUserObject(id: string, isAdmin: boolean, publicKeyPairOne: string, privateKeyPairTwo: string): object {
     return {
       "id": id,
-      "isAdmin": isAdmin
+      "isAdmin": isAdmin,
+      "publicKeyPairOne": publicKeyPairOne,
+      "privateKeyPairTwo": privateKeyPairTwo
     };
   }
 
@@ -76,12 +78,12 @@ export class JsonWebTokenWorkers {
 
   public static comparedHeaderTokenWithDbToken(headerToken: IJsonWebToken, dbToken: IJsonWebToken): Promise<boolean> {
     return new Promise((resolve, reject) => {
-        for (const key in headerToken) {
-          if (headerToken[key] !== dbToken[key]) {
-            reject(false);
-          }
+      for (const key in headerToken) {
+        if (headerToken[key] !== dbToken[key]) {
+          reject(false);
         }
-        resolve(true);
+      }
+      resolve(true);
     });
   }
 }

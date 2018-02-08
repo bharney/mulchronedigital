@@ -124,7 +124,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       const databaseUsers: User[] = await UsersCollection.find(
         { "email": req.params.email },
-        { "_id": 1, "password": 1, "username": 1, "isAdmin": 1, "isActive": 1 }
+        { "_id": 1, "password": 1, "username": 1, "isAdmin": 1, "isActive": 1, "publicKeyPairOne": 1, "privateKeyPairTwo": 1 }
       ).toArray();
       // should only be one user with this email
       if (databaseUsers.length === 1) {
@@ -133,7 +133,8 @@ export class UserAuthenicationRouter extends BaseRouter {
         } else if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
           return res.status(401).json(responseMessages.passwordsDoNotMatch());
         } else {
-          res.status(200).json(await responseMessages.successfulUserLogin(databaseUsers[0]));
+          const testing = await responseMessages.successfulUserLogin(databaseUsers[0]);
+          res.status(200).json(testing);
           // TODO: MAKE A FUNCTION!!!!
           const httpHelpers = new HttpHelpers();
           const userId = new ObjectId(databaseUsers[0]._id);
