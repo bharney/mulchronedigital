@@ -16,7 +16,6 @@ import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenication
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";
 
-
 export class UserAuthenicationRouter extends BaseRouter {
   public router: Router;
 
@@ -28,6 +27,7 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private configureRouter(): void {
     // Register user
+    this.router.use("/registeruser", this.decryptRequestBody);
     this.router.use("/registeruser", this.validateRegisterUserRequest);
     this.router.use("/registeruser", this.doesUsernameOrEmailExistAlready);
     this.router.post("/registeruser", this.insertNewUser);

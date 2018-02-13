@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { RegisterService } from "../../../shared/services/user-authenication.service";
 import { RegisterUser, IUserRegisterResponse } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
+import { AESEncryptionResult, Encryption } from '../../../../../shared/Encryption';
 declare const $: any;
 
 @Component({
@@ -62,28 +63,28 @@ export class RegisterComponent implements OnInit {
 
   public toggleRegisterUser(): void {
     this.hasSubmitButtonBeenClicked = true;
-    setTimeout(() => {
+    setTimeout(async () => {
       this.hasTheFormBeenSubmitted = true;
       if (!this.userRegistrationForm.valid) {
         this.hasSubmitButtonBeenClicked = false;
         return;
       }
       const newUser = this.createRegisterUserObject();
-      this.registerService.registerNewUser(newUser).subscribe(
-        (res: IUserRegisterResponse) => {
-          if (res.status) {
-            this.hasSubmitButtonBeenClicked = false;
-            this.userRegistrationForm.reset();
-            this.registrationSuccessfulTextConfig();
-            this.toggleModal(res.message);
-            this.hasTheFormBeenSubmitted = false;
-          }
-        },
-        (error: IUserRegisterResponse) => {
-          this.registrationUnSuccessfulTextConfig();
-          this.toggleModal(error.message);
+      const stringData = JSON.stringify(newUser);
+      const encryptedNewUserObject: AESEncryptionResult = await Encryption.AESEncrypt(stringData);
+      this.registerService.registerNewUser(encryptedNewUserObject).subscribe((res: IUserRegisterResponse) => {
+        if (res.status) {
           this.hasSubmitButtonBeenClicked = false;
+          this.userRegistrationForm.reset();
+          this.registrationSuccessfulTextConfig();
+          this.toggleModal(res.message);
+          this.hasTheFormBeenSubmitted = false;
         }
+      }, (error: IUserRegisterResponse) => {
+        this.registrationUnSuccessfulTextConfig();
+        this.toggleModal(error.message);
+        this.hasSubmitButtonBeenClicked = false;
+      }
       );
     }, 200);
   }

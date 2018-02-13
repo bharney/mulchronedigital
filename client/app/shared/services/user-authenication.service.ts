@@ -36,9 +36,9 @@ export class RegisterService {
     private authenicationControl: AuthenicationControl
   ) { }
 
-  public registerNewUser(user: RegisterUser): Observable<IUserRegisterResponse> {
+  public registerNewUser(encryptedNewUserObject: AESEncryptionResult): Observable<IUserRegisterResponse> {
     const options = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
-    return this.http.post("/api/userauth/registeruser", user, options)
+    return this.http.post("/api/userauth/registeruser", encryptedNewUserObject, options)
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }
