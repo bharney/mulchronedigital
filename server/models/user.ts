@@ -69,7 +69,7 @@ export class User {
             if (err) {
               reject(err);
             }
-            resolve(new RSA2048PrivateKeyCreationResult(guid, fileName, stdout));
+            resolve(new RSA2048PrivateKeyCreationResult(guid, fileName, stdout.toString("base64")));
           });
         })
         .catch(error => {
@@ -86,7 +86,7 @@ export class User {
         if (err) {
           reject(err);
         }
-        resolve(new RSA2048PublicKeyCreationResult(stdout, publicKeyFileName));
+        resolve(new RSA2048PublicKeyCreationResult(stdout.toString("base64"), publicKeyFileName));
       });
     });
   }
