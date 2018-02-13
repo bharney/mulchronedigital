@@ -14,6 +14,7 @@ import { IJsonWebToken, JsonWebToken } from "../../../shared/interfaces/IJsonWeb
 import { EmailQueueExport } from "../../cluster/master";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
+import { Encryption } from "../../../shared/Encryption";
 
 
 export class UserAuthenicationRouter extends BaseRouter {
@@ -32,7 +33,8 @@ export class UserAuthenicationRouter extends BaseRouter {
     this.router.post("/registeruser", this.insertNewUser);
 
     // Login User
-    this.router.get("/loginuser/:email/:password", this.validateLoginUserRequest);
+    this.router.use("/loginuser/:encryptedinfo/:key", this.decryptLoginUrl);
+    this.router.get("/loginuser/:encryptedinfo/:key", this.validateLoginUserRequest);
 
     // RefreshJsonWebToken
     this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
@@ -112,29 +114,49 @@ export class UserAuthenicationRouter extends BaseRouter {
     }
   }
 
+  public async decryptLoginUrl(req: Request, res: Response, next: NextFunction) {
+    try {
+      const encryptedUserLogin = req.params.encryptedinfo.replace(/-/, "\/");
+      if (await !Encryption.verifiyUniqueSymmetricKey(req.params.key)) {
+        const responseMessages = new ResponseMessages();
+        return res.status(503).json(responseMessages.generalError());
+      }
+      const decryptedUrlInfo = JSON.parse(await Encryption.AESDecrypt(encryptedUserLogin, req.params.key));
+      res.locals.email = decryptedUrlInfo.email;
+      res.locals.password = decryptedUrlInfo.password;
+      next();
+    } catch (error) {
+      // TODO: log decryption error.
+      console.log(error);
+      const responseMessages = new ResponseMessages();
+      return res.status(503).json(responseMessages.generalError());
+    }
+  }
+
   private async validateLoginUserRequest(req: Request, res: Response, next: NextFunction) {
     try {
       const responseMessages = new ResponseMessages();
-      if (!await UserAuthenicationValidator.isEmailValid(req.params.email)) {
+      const userEmail = res.locals.email;
+      const userPassword = res.locals.password;
+      if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
         return res.status(401).json(responseMessages.emailIsNotValid());
       }
 
-      if (!await UserAuthenicationValidator.isPasswordValid(req.params.password)) {
+      if (!await UserAuthenicationValidator.isPasswordValid(userPassword)) {
         return res.status(401).json(responseMessages.passwordIsNotValid());
       }
       const databaseUsers: User[] = await UsersCollection.find(
-        { "email": req.params.email },
+        { "email": userEmail },
         { "_id": 1, "password": 1, "username": 1, "isAdmin": 1, "isActive": 1, "publicKeyPairOne": 1, "privateKeyPairTwo": 1 }
       ).toArray();
       // should only be one user with this email
       if (databaseUsers.length === 1) {
         if (!databaseUsers[0].isActive) {
           return res.status(401).json(responseMessages.userAccountNotActive(databaseUsers[0].username));
-        } else if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.params.password, databaseUsers[0].password)) {
+        } else if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(userPassword, databaseUsers[0].password)) {
           return res.status(401).json(responseMessages.passwordsDoNotMatch());
         } else {
-          const testing = await responseMessages.successfulUserLogin(databaseUsers[0]);
-          res.status(200).json(testing);
+          res.status(200).json(await responseMessages.successfulUserLogin(databaseUsers[0]));
           // TODO: MAKE A FUNCTION!!!!
           const httpHelpers = new HttpHelpers();
           const userId = new ObjectId(databaseUsers[0]._id);
@@ -211,7 +233,6 @@ export class UserAuthenicationRouter extends BaseRouter {
       console.log(error);
       return res.status(503).json(responseMessages.generalError());
     }
-    console.log(req.body);
   }
 
   private async validateUserForgotPassword(req: Request, res: Response) {

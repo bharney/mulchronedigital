@@ -7,6 +7,7 @@ import "rxjs/add/operator/catch";
 import { LoginUser, RegisterUser, IUserRegisterResponse, ILoginUserResponse } from "../models/user-authenication.model";
 import { ApiRequests } from "../http/ApiRequests";
 import { AuthenicationControl } from "../authenication/AuthenicationControl";
+import { AESEncryptionResult } from "../../../../shared/Encryption";
 
 @Injectable()
 export class LoginService {
@@ -17,8 +18,10 @@ export class LoginService {
     private authenicationControl: AuthenicationControl
   ) { }
 
-  public loginUser(user: LoginUser): Observable<ILoginUserResponse> {
-    return this.http.get(`/api/userauth/loginuser/${user.email}/${user.password}`)
+  public loginUser(encryptedLoginInfo: AESEncryptionResult): Observable<ILoginUserResponse> {
+    // replace forward slashes with hyphens for the purposes of getting the correct information on the server by replace hyphens with forward slashes.
+    const encryptedText = encryptedLoginInfo.encryptedText.replace(/\//g, "-");
+    return this.http.get(`/api/userauth/loginuser/${encryptedText}/${encryptedLoginInfo.key}`)
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }

@@ -6,6 +6,7 @@ import { LoginService } from "../../../shared/services/user-authenication.servic
 import { ILoginUserResponse, IUserRegisterResponse, LoginUser } from "../../../shared/models/user-authenication.model";
 import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
+import { Encryption, AESEncryptionResult } from "../../../../../shared/Encryption";
 declare const $: any;
 
 @Component({
@@ -53,14 +54,16 @@ export class LoginComponent implements OnInit {
 
   public toggleLoginUser() {
     this.hasSubmitButtonBeenClicked = true;
-    setTimeout(() => {
+    setTimeout(async () => {
       this.hasTheFormBeenSubmitted = true;
       if (!this.userLoginForm.valid) {
         this.hasSubmitButtonBeenClicked = false;
         return;
       }
       const loginUser = this.createLoginUser();
-      this.loginService.loginUser(loginUser).subscribe(
+      const stringData = JSON.stringify(loginUser);
+      const encryptedLoginInfo: AESEncryptionResult = await Encryption.AESEncrypt(stringData);
+      this.loginService.loginUser(encryptedLoginInfo).subscribe(
         (res: ILoginUserResponse) => {
           if (res.status) {
             this.authControl.storeJsonWebToken(res.token);
