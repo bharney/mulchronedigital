@@ -33,10 +33,12 @@ export class UserDashboardRouter extends BaseRouter {
 
     // change user password
     this.router.use("/changepassword", this.checkForUserJsonWebToken);
+    this.router.use("/changepassword", this.decryptRequestBody);
     this.router.patch("/changepassword", this.validateUserChangePassword);
 
     // change username
     this.router.use("/changeusername", this.checkForUserJsonWebToken);
+    this.router.use("/changeusername", this.decryptRequestBody);
     this.router.patch("/changeusername", this.validateUserChangeUsername);
 
     // upload profile image
@@ -99,10 +101,11 @@ export class UserDashboardRouter extends BaseRouter {
       return res.status(503).json(responseMessages.generalError());
     }
   }
-
+  
   private async validateUserChangeUsername(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
+      console.log(req.body);
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)) {
         return res.status(422).json(responseMessages.userNameIsNotValid());
       }
@@ -110,10 +113,7 @@ export class UserDashboardRouter extends BaseRouter {
         return res.status(422).json(responseMessages.passwordIsNotValid());
       }
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
-      const existingUsers: User[] = await UsersCollection.find(
-        { username: req.body.newUsername },
-        { "_id": 1 }
-      ).toArray();
+      const existingUsers: User[] = await UsersCollection.find({ username: req.body.newUsername }, { "_id": 1 }).toArray();
       if (existingUsers.length > 0) {
         return res.status(409).json(responseMessages.usernameIsTaken(req.body.newUsername));
       }
@@ -153,7 +153,7 @@ export class UserDashboardRouter extends BaseRouter {
     try {
       parseFile(req, res, err => {
         if (err) {
-          // file size too large. The client side validation SHOULD keep this route clean of any files that are not image.
+          // file size too large. The client side validation SHOULD keep this route clean of any files that are not an image.
           const responseMessages = new ResponseMessages();
           return res.status(413).json(responseMessages.generalError());
         }

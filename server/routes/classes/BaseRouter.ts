@@ -6,6 +6,7 @@ import { UsersCollection } from "../../cluster/master";
 import { ObjectId } from "mongodb";
 import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { User } from "../../models/user";
+import { Encryption } from "../../../shared/Encryption";
 
 export abstract class BaseRouter {
   public async checkForUserJsonWebToken(req: Request, res: Response, next: NextFunction) {
@@ -16,12 +17,10 @@ export abstract class BaseRouter {
         const responseMessages = new ResponseMessages();
         return res.status(401).json(responseMessages.noJsonWebTokenInHeader());
       }
-
       if (!await JsonWebTokenWorkers.verifiyJsonWebToken(headerToken)) {
         const responseMessages = new ResponseMessages();
         return res.status(409).json(responseMessages.jsonWebTokenExpired());
       }
-
       res.locals.token = await JsonWebTokenWorkers.getDecodedJsonWebToken(headerToken);
       if (!res.locals.token) {
         const responseMessages = new ResponseMessages();
@@ -55,6 +54,22 @@ export abstract class BaseRouter {
       // TODO: error handler
       const responseMessages = new ResponseMessages();
       console.log(error);
+      return res.status(503).json(responseMessages.generalError());
+    }
+  }
+
+  public async decryptRequestBody(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (await !Encryption.verifiyUniqueSymmetricKey(req.body.key)) {
+        const responseMessages = new ResponseMessages();
+        return res.status(503).json(responseMessages.generalError());
+      }
+      const newRequestBody = await Encryption.AESDecrypt(req.body.encryptedText, req.body.key);
+      req.body = JSON.parse(newRequestBody);
+      next();
+    } catch (error) {
+      // TODO: log decryption error.
+      const responseMessages = new ResponseMessages();
       return res.status(503).json(responseMessages.generalError());
     }
   }

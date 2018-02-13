@@ -7,6 +7,7 @@ import { UserLocation } from "../../../../shared/interfaces/IUserLocation";
 import { AuthenicationControl } from "../authenication/AuthenicationControl";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
+import { AESEncryptionResult } from "../../../../shared/Encryption";
 
 
 // TODO: Make all of these calls into seperate injectables.
@@ -43,9 +44,9 @@ export class ChangeUserPasswordService {
   ) { }
 
   // TODO: create observable type
-  public changeUserPassword(changePasswordObj: UserChangePassword): Observable<any> {
+  public changeUserPassword(encryptedChangePasswordObj: AESEncryptionResult): Observable<any> {
     const options: RequestOptions = this.apiRequests.createAuthorizationHeader();
-    return this.http.patch("/api/userdashboard/changepassword", changePasswordObj, options)
+    return this.http.patch("/api/userdashboard/changepassword", encryptedChangePasswordObj, options)
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }
@@ -60,9 +61,9 @@ export class ChangeUsernameService {
   ) { }
 
   // TODO: create observable type
-  public changeUsername(changeUsernameObj: UserChangeUsername): Observable<any> {
+  public changeUsername(encryptedUserObject: AESEncryptionResult): Observable<any> {
     const options: RequestOptions = this.apiRequests.createAuthorizationHeader();
-    return this.http.patch("/api/userdashboard/changeusername", changeUsernameObj, options)
+    return this.http.patch("/api/userdashboard/changeusername", encryptedUserObject, options)
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }

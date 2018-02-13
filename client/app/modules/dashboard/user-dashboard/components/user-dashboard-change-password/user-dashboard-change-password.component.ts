@@ -3,6 +3,7 @@ import { FormGroup, Validators, FormBuilder } from "@angular/forms";
 import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
 import { UserChangePassword, IUserChangePasswordResponse } from "../../../../../shared/models/dashboard.model";
 import { ChangeUserPasswordService } from "../../../../../shared/services/user-dashboard.service";
+import { Encryption, AESEncryptionResult } from '../../../../../../../shared/Encryption';
 declare const $: any;
 
 @Component({
@@ -20,7 +21,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private changeUserPasswordService: ChangeUserPasswordService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.configureUserChangePasswordForm();
@@ -54,7 +55,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
 
   public toggleSubmitNewUserPassword(): void {
     this.hasSubmitButtonBeenClicked = true;
-    setTimeout(() => {
+    setTimeout(async () => {
       if (!this.hasTheFormBeenSubmitted) {
         this.hasTheFormBeenSubmitted = true;
         this.hasSubmitButtonBeenClicked = false;
@@ -64,7 +65,9 @@ export class UserDashboardChangePasswordComponent implements OnInit {
         return;
       }
       const changePasswordObj: UserChangePassword = this.createUserChangePasswordWord();
-      this.subcribeToChangePasswordService(changePasswordObj);
+      const stringData = JSON.stringify(changePasswordObj);
+      const encryptedChangePasswordObject: AESEncryptionResult = await Encryption.AESEncrypt(stringData);
+      this.subcribeToChangePasswordService(encryptedChangePasswordObject);
     }, 200);
   }
 
@@ -75,28 +78,24 @@ export class UserDashboardChangePasswordComponent implements OnInit {
     );
   }
 
-  private subcribeToChangePasswordService(
-    changePasswordObj: UserChangePassword
-  ): void {
-    this.changeUserPasswordService
-      .changeUserPassword(changePasswordObj)
-      .subscribe(
-        (res: IUserChangePasswordResponse) => {
-          if (res.status) {
-            this.modalBody = res.message;
-            this.hasTheFormBeenSubmitted = false;
-            this.userChangePasswordForm.reset();
-            $("#error-modal").modal();
-            this.hasSubmitButtonBeenClicked = false;
-            // TODO: clear the inputs.
-          }
-        },
-        (error: IUserChangePasswordResponse) => {
-          this.modalTitle = "There was a problem changing your password";
-          this.modalBody = error.message;
+  private subcribeToChangePasswordService(encryptedChangePasswordObject: AESEncryptionResult): void {
+    this.changeUserPasswordService.changeUserPassword(encryptedChangePasswordObject).subscribe(
+      (res: IUserChangePasswordResponse) => {
+        if (res.status) {
+          this.modalBody = res.message;
+          this.hasTheFormBeenSubmitted = false;
+          this.userChangePasswordForm.reset();
           $("#error-modal").modal();
           this.hasSubmitButtonBeenClicked = false;
+          // TODO: clear the inputs.
         }
-      );
+      },
+      (error: IUserChangePasswordResponse) => {
+        this.modalTitle = "There was a problem changing your password";
+        this.modalBody = error.message;
+        $("#error-modal").modal();
+        this.hasSubmitButtonBeenClicked = false;
+      }
+    );
   }
 }

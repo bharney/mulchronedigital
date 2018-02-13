@@ -4,6 +4,7 @@ import { ChangeUsernameService } from "../../../../../shared/services/user-dashb
 import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
 import { UserChangeUsername } from "../../../../../shared/models/dashboard.model";
 import { UserDashboardEmitter } from "../../../../../shared/services/emitters/user-dashboard-emitter.service";
+import { Encryption, AESEncryptionResult } from "../../../../../../../shared/Encryption";
 declare const $: any;
 
 @Component({
@@ -21,7 +22,7 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
     private formBuilder: FormBuilder,
     private changeUsernameService: ChangeUsernameService,
     private userDashboardEmitter: UserDashboardEmitter
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.configureUserChangeUsernameForm();
@@ -48,14 +49,16 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
 
   public toggleSubmitUsernameChange(): void {
     this.hasSubmitButtonBeenClicked = true;
-    setTimeout(() => {
+    setTimeout(async () => {
       this.hasTheFormBeenSubmitted = true;
       if (!this.userChangeUsernameForm.valid) {
         this.hasSubmitButtonBeenClicked = false;
         return;
       }
       const changeUsernameObj: UserChangeUsername = this.createChangeUsernameObject();
-      this.toggleChangeUsernameService(changeUsernameObj);
+      const stringData = JSON.stringify(changeUsernameObj);
+      const encryptedUserObject: AESEncryptionResult = await Encryption.AESEncrypt(stringData);
+      this.toggleChangeUsernameService(encryptedUserObject);
     }, 200);
   }
 
@@ -66,23 +69,20 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
     );
   }
 
-  private toggleChangeUsernameService(
-    changeUsernameObj: UserChangeUsername
-  ): void {
-    this.changeUsernameService.changeUsername(changeUsernameObj).subscribe(
-      res => {
-        if (res.status) {
-          const emitterObject = {
-            type: "Update user information on dashboard"
-          };
-          this.userDashboardEmitter.emitChange(emitterObject);
-          this.modalBody = res.message;
-          this.hasTheFormBeenSubmitted = false;
-          this.userChangeUsernameForm.reset();
-          $("#error-modal").modal();
-          this.hasSubmitButtonBeenClicked = false;
-        }
-      },
+  private toggleChangeUsernameService(encryptedUserObject: AESEncryptionResult): void {
+    this.changeUsernameService.changeUsername(encryptedUserObject).subscribe(res => {
+      if (res.status) {
+        const emitterObject = {
+          type: "Update user information on dashboard"
+        };
+        this.userDashboardEmitter.emitChange(emitterObject);
+        this.modalBody = res.message;
+        this.hasTheFormBeenSubmitted = false;
+        this.userChangeUsernameForm.reset();
+        $("#error-modal").modal();
+        this.hasSubmitButtonBeenClicked = false;
+      }
+    },
       error => {
         this.modalBody = error.message;
         $("#error-modal").modal();
