@@ -2,7 +2,7 @@ const promise = require("bluebird");
 const fs = promise.promisifyAll(require("fs"));
 import path = require("path");
 import jwt = require("jsonwebtoken");
-import { JsonWebToken } from "../../shared/interfaces/IJsonWebToken";
+import { JsonWebToken } from "../../shared/JsonWebToken";
 import { UsersCollection } from "../cluster/master";
 
 export class JsonWebTokenWorkers {

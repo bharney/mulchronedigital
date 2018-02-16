@@ -4,7 +4,7 @@ import { Database } from "../../globals/Database";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { UsersCollection } from "../../cluster/master";
 import { ObjectId } from "mongodb";
-import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
+import { JsonWebToken } from "../../../shared/JsonWebToken";
 import { User } from "../../models/user";
 import { Encryption } from "../../../shared/Encryption";
 

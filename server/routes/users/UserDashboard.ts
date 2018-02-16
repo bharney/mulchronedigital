@@ -6,7 +6,7 @@ import { Database } from "../../globals/Database";
 import { BaseRouter } from "../classes/BaseRouter";
 import { Router, Request, Response, NextFunction } from "express";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
-import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
+import { JsonWebToken } from "../../../shared/JsonWebToken";
 import { ObjectId } from "mongodb";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import * as multer from "multer";
