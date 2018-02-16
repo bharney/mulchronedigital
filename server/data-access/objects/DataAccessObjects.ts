@@ -81,4 +81,11 @@ export class DataAccessObjects {
       resolve(projection);
     });
   }
+
+  public jsonWebTokenThatIsActiveProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { jsonToken: 1, isActive: 1 };
+      resolve(projection);
+    });
+  }
 }

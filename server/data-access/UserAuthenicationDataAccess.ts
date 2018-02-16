@@ -6,7 +6,6 @@ import { ForgotPasswordCollection } from "../cluster/master";
 import { ForgotPasswordToken } from "../models/ForgotPasswordToken";
 import { ObjectId } from "mongodb";
 
-
 export class UserAuthenicationDataAccess extends DataAccess {
     private passwordResetTokens: ForgotPasswordToken[];
 
@@ -45,6 +44,17 @@ export class UserAuthenicationDataAccess extends DataAccess {
         } catch (error) {
             console.log(error);
             return this.passwordResetTokens;
+        }
+    }
+
+    public async findActiveUserAndJsonWebTokenByUserId(userId: string): Promise<User[]> {
+        try {
+            const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+            const projection = await this.dataAccessObjects.jsonWebTokenThatIsActiveProjection();
+            return await UsersCollection.find(query, projection).toArray();
+        } catch (error) {
+            console.log(error);
+            return this.usersArray;
         }
     }
 }
