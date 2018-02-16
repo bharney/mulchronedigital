@@ -9,6 +9,7 @@ import { User } from "../../models/user";
 import { Encryption } from "../../../shared/Encryption";
 
 export abstract class BaseRouter {
+
   public async checkForUserJsonWebToken(req: Request, res: Response, next: NextFunction) {
     try {
       // TODO: this looks god awful. FIX IT!

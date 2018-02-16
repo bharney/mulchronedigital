@@ -43,4 +43,15 @@ export class UserDashboardDataAccess extends DataAccess {
       console.log(error);
     }
   }
+
+  public async findUserLoginDetailsByEmail(userEmail: string) {
+    try {
+      const query = await this.dataAccessObjects.findUserByEmailAndIsActiveQuery(userEmail);
+      const projection = await this.dataAccessObjects.userLoginProjection();
+      return await UsersCollection.find(query, projection).toArray();
+    } catch (error) {
+      // TODO: log error;
+      console.log(error);
+    }
+  }
 }

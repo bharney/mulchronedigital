@@ -43,6 +43,13 @@ export class DataAccessObjects {
     });
   }
 
+  public userLoginProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { _id: 1, password: 1, username: 1, isAdmin: 1, isActive: 1, publicKeyPairOne: 1, privateKeyPairTwo: 1 };
+      resolve(projection);
+    });
+  }
+
   public updateUserPasswordProjection(password: string, modifiedAt: Date) {
     return new Promise((resolve, reject) => {
       if (password === undefined) {
@@ -63,7 +70,7 @@ export class DataAccessObjects {
         reject(new Error("No userId was provided at findRecentForgotPasswordTokenById(userId: ObjectId"));
       }
       const date = new Date();
-      const query = { "userId": userId, "validUntil": {$gte: date} };
+      const query = { "userId": userId, "validUntil": { $gte: date } };
       resolve(query);
     });
   }

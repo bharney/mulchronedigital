@@ -15,6 +15,8 @@ import { EmailQueueExport } from "../../cluster/master";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";
+import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
+import { DataAccess } from "../../data-access/classes/DataAccess";
 
 export class UserAuthenicationRouter extends BaseRouter {
   public router: Router;
@@ -116,7 +118,10 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   public async decryptLoginUrl(req: Request, res: Response, next: NextFunction) {
     try {
-      const encryptedUserLogin = req.params.encryptedinfo.replace(/-/, "\/");
+      let encryptedUserLogin = req.params.encryptedinfo;
+      if (encryptedUserLogin.includes("-")) {
+        encryptedUserLogin = encryptedUserLogin.replace(/-/, "\/");
+      }
       if (await !Encryption.verifiyUniqueSymmetricKey(req.params.key)) {
         const responseMessages = new ResponseMessages();
         return res.status(503).json(responseMessages.generalError());
@@ -141,14 +146,11 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
         return res.status(401).json(responseMessages.emailIsNotValid());
       }
-
       if (!await UserAuthenicationValidator.isPasswordValid(userPassword)) {
         return res.status(401).json(responseMessages.passwordIsNotValid());
       }
-      const databaseUsers: User[] = await UsersCollection.find(
-        { "email": userEmail },
-        { "_id": 1, "password": 1, "username": 1, "isAdmin": 1, "isActive": 1, "publicKeyPairOne": 1, "privateKeyPairTwo": 1 }
-      ).toArray();
+      const userdashboardDataAccess = new UserDashboardDataAccess();
+      const databaseUsers: User[] = await userdashboardDataAccess.findUserLoginDetailsByEmail(userEmail);
       // should only be one user with this email
       if (databaseUsers.length === 1) {
         if (!databaseUsers[0].isActive) {
