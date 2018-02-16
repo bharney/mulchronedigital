@@ -10,7 +10,7 @@ import { UserIpAddress } from "../classes/UserIpAddress";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { ObjectId } from "mongodb";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
-import { IJsonWebToken, JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
+import { JsonWebToken } from "../../../shared/interfaces/IJsonWebToken";
 import { EmailQueueExport } from "../../cluster/master";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
@@ -191,7 +191,7 @@ export class UserAuthenicationRouter extends BaseRouter {
     try {
       // here we are not going to check to see if the user session expired.
       // what if the user was logged out for like 5 days?
-      const token: IJsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(req.headers["user-authenication-token"]);
+      const token: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(req.headers["user-authenication-token"]);
       if (token === null) {
         return res.status(401).json(responseMessages.noJsonWebTokenInHeader());
       }

@@ -1,4 +1,4 @@
-export class JsonWebToken implements IJsonWebToken {
+export class JsonWebToken {
   public id;
   public isAdmin;
   public iat;
@@ -14,11 +14,4 @@ export class JsonWebToken implements IJsonWebToken {
     this.publicKeyPairOne = publicKeyPairOne;
     this.privateKeyPairTwo = privateKeyPairTwo;
   }
-}
-
-export interface IJsonWebToken {
-  id: string;
-  isAdmin: false;
-  iat: number;
-  exp: number;
 }
