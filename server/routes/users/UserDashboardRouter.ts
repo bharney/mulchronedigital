@@ -101,7 +101,7 @@ export class UserDashboardRouter extends BaseRouter {
       return res.status(503).json(responseMessages.generalError());
     }
   }
-  
+
   private async validateUserChangeUsername(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {

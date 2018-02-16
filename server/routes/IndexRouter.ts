@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { UserAuthenicationRouter } from "./users/UserAuthenicationRouter";
-import { UserDashboardRouter } from "./users/UserDashboard";
+import { UserDashboardRouter } from "./users/UserDashboardRouter";
 
 export class IndexRouter {
   public router: Router;
