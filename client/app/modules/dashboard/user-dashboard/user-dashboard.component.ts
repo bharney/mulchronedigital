@@ -2,10 +2,10 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
 import { Dashboard } from "../../../shared/models/dashboard.model";
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
-import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 import { MainDashboardService } from "../../../shared/services/user-dashboard.service";
 import { UserDashboardEmitter } from "../../../shared/services/emitters/user-dashboard-emitter.service";
 import { UserLocation } from "../../../../../shared/interfaces/IUserLocation";
+import { JsonWebToken } from "../../../../../shared/JsonWebToken";
 
 @Component({
   selector: "app-users-dashboard",

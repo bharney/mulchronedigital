@@ -4,7 +4,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LoginService } from "../../../shared/services/user-authenication.service";
 import { ILoginUserResponse, IUserRegisterResponse, LoginUser } from "../../../shared/models/user-authenication.model";
-import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
+import { JsonWebToken } from "../../../../../shared/JsonWebToken";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
 import { Encryption, AESEncryptionResult } from "../../../../../shared/Encryption";
 declare const $: any;

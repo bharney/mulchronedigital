@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
 import { ActivatedRoute, Router } from "@angular/router";
-import { JsonWebToken } from "../../../../shared/interfaces/IJsonWebToken";
 import { RefreshTokenService } from "../../shared/services/refresh-token.service";
+import { JsonWebToken } from "../../../../shared/JsonWebToken";
 declare const $: any;
 
 @Component({

@@ -1,7 +1,7 @@
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
-import { JsonWebToken } from "../../../../../shared/interfaces/IJsonWebToken";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
+import { JsonWebToken } from "../../../../../shared/JsonWebToken";
 
 @Component({
   selector: "app-admin-dashboard",
@@ -18,7 +18,7 @@ export class AdminDashboardComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
-  ngOnInit() { 
+  ngOnInit() {
     this.isTheUserAuthorizedToBeHere();
   }
 

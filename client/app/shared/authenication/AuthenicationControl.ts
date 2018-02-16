@@ -1,7 +1,7 @@
 import { ActivatedRoute, Router } from "@angular/router";
 import { Injectable } from "@angular/core";
 import { Headers, RequestOptions } from "@angular/http";
-import { JsonWebToken } from "../../../../shared/interfaces/IJsonWebToken";
+import { JsonWebToken } from "../../../../shared/JsonWebToken";
 import * as jwt from "jsonwebtoken";
 
 @Injectable()

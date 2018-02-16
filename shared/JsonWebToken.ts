@@ -1,10 +1,10 @@
 export class JsonWebToken {
-  public id;
-  public isAdmin;
-  public iat;
-  public exp;
-  public publicKeyPairOne;
-  public privateKeyPairTwo;
+  public id: string;
+  public isAdmin: string;
+  public iat: number;
+  public exp: number;
+  public publicKeyPairOne: string;
+  public privateKeyPairTwo: string;
 
   constructor(id: string, isAdmin: string, iat: number, exp: number, publicKeyPairOne: string, privateKeyPairTwo: string) {
     this.id = id;
