@@ -1,9 +1,4 @@
-export interface IUserLocation {
-  latitude: number;
-  longitude: number;
-}
-
-export class UserLocation implements IUserLocation {
+export class UserLocation {
   public latitude: number;
   public longitude: number;
 

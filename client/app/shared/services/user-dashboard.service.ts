@@ -3,11 +3,11 @@ import { Injectable } from "@angular/core";
 import { Http, RequestOptions, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { Dashboard, UserChangePassword, UserChangeUsername } from "../models/dashboard.model";
-import { UserLocation } from "../../../../shared/interfaces/IUserLocation";
 import { AuthenicationControl } from "../authenication/AuthenicationControl";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import { AESEncryptionResult } from "../../../../shared/Encryption";
+import { UserLocation } from "../../../../shared/UserLocation";
 
 
 // TODO: Make all of these calls into seperate injectables.

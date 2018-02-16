@@ -4,8 +4,8 @@ import { Dashboard } from "../../../shared/models/dashboard.model";
 import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
 import { MainDashboardService } from "../../../shared/services/user-dashboard.service";
 import { UserDashboardEmitter } from "../../../shared/services/emitters/user-dashboard-emitter.service";
-import { UserLocation } from "../../../../../shared/interfaces/IUserLocation";
 import { JsonWebToken } from "../../../../../shared/JsonWebToken";
+import { UserLocation } from "../../../../../shared/UserLocation";
 
 @Component({
   selector: "app-users-dashboard",
