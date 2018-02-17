@@ -84,13 +84,13 @@ export class DataAccessObjects {
     });
   }
 
-  public findRecentForgotPasswordTokenById(userId: ObjectId): Promise<object> {
+  public findRecentForgotPasswordTokenById(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userId === undefined) {
         reject(new Error("No userId was provided at findRecentForgotPasswordTokenById(userId: ObjectId"));
       }
       const date = new Date();
-      const query = { "userId": userId, "validUntil": { $gte: date } };
+      const query = { "userId": new ObjectId(userId), "validUntil": { $gte: date } };
       resolve(query);
     });
   }
@@ -105,6 +105,13 @@ export class DataAccessObjects {
   public jsonWebTokenThatIsActiveProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { jsonToken: 1, isActive: 1 };
+      resolve(projection);
+    });
+  }
+
+  public userIpAddressMatch(ip: string): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { ipAddresses: { $elemMatch: { ipAddress: ip } } };
       resolve(projection);
     });
   }

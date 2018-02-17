@@ -35,7 +35,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
         }
     }
 
-    public async checkForRecentForgotPasswordTokens(userId: ObjectId): Promise<ForgotPasswordToken[]> {
+    public async checkForRecentForgotPasswordTokens(userId: string): Promise<ForgotPasswordToken[]> {
         try {
             const query = await this.dataAccessObjects.findRecentForgotPasswordTokenById(userId);
             const projection = await this.dataAccessObjects.forgotPasswordTokenIdProjection();
@@ -56,7 +56,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             console.log(error);
             return this.usersArray;
         }
-    } 
+    }
 
     public async findIfUserExistsByUsername(userName: string): Promise<User[]> {
         try {
@@ -74,6 +74,17 @@ export class UserAuthenicationDataAccess extends DataAccess {
         try {
             const query = await this.dataAccessObjects.findUserByEmailQuery(userEmail);
             const projection = await this.dataAccessObjects.userObjectIdProjection();
+            return await UsersCollection.find(query, projection).toArray();
+        } catch (error) {
+            console.log(error);
+            return this.usersArray;
+        }
+    }
+
+    public async findMatchingIpAddressbyUserId(userId: string, ip: string): Promise<User[]> {
+        try {
+            const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+            const projection = await this.dataAccessObjects.userIpAddressMatch(ip);
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             console.log(error);

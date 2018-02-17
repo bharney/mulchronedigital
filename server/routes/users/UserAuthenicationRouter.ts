@@ -155,13 +155,11 @@ export class UserAuthenicationRouter extends BaseRouter {
           res.status(200).json(await responseMessages.successfulUserLogin(databaseUsers[0]));
           // TODO: MAKE A FUNCTION!!!!
           const httpHelpers = new HttpHelpers();
-          const userId = new ObjectId(databaseUsers[0]._id);
+          const userId = databaseUsers[0]._id;
           const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
           const ipAddressObject = new UserIpAddress(ip);
-          const matchingUserIpAddresses = await UsersCollection.find(
-            { "_id": userId },
-            { "ipAddresses": { $elemMatch: { "ipAddress": ip } } }
-          ).toArray();
+          const dataAccess = new UserAuthenicationDataAccess();
+          const matchingUserIpAddresses = await dataAccess.findMatchingIpAddressbyUserId(userId, ip);
           if (matchingUserIpAddresses[0].ipAddresses === undefined) {
             // TODO: we are now associating a new or unknown IP address to the user.
             // we probably dont have to await this, but here is where we can pass something out to RabbitMQ... maybe????
@@ -242,7 +240,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (databaseUsers.length <= 0) {
         return res.status(401).json(responseMessages.noUserFoundThatIsActive());
       }
-      const userId = new ObjectId(databaseUsers[0]._id);
+      const userId = databaseUsers[0]._id;
       const resetPasswordTokens: ForgotPasswordToken[] = await userAuthDataAccess.checkForRecentForgotPasswordTokens(userId);
       if (resetPasswordTokens.length > 0) {
         return res.status(429).json(responseMessages.tooManyForgotPasswordRequests());
@@ -261,7 +259,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const userActions = new UserActionHelper();
-      await userActions.userForgotPassword(userId, ip, new ObjectId(tokenId));
+      await userActions.userForgotPassword(userId, ip, tokenId);
     } catch (error) {
       console.log(error);
       return res.status(503).json(responseMessages.generalError());

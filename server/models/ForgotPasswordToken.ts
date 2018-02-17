@@ -7,8 +7,8 @@ export class ForgotPasswordToken {
     public validUntil: Date;
     public newPassword: string;
 
-    constructor(userId: ObjectId) {
-        this.userId = userId;
+    constructor(userId: string) {
+        this.userId = new ObjectId(userId);
         const now = new Date();
         this.createdAt = now;
         const tomorrow = new Date(now.setDate(now.getDate() + 1));
@@ -29,16 +29,16 @@ export class ForgotPasswordToken {
     // TODO: through this in a helper class or something
     private HashPassword(newPassword: string): Promise<string> {
         return new Promise((resolve, reject) => {
-          bcrypt.genSalt(10)
-            .then(salt => {
-              return bcrypt.hash(newPassword, salt);
-            })
-            .then(hashedPassword => {
-              resolve(hashedPassword);
-            })
-            .catch(error => {
-              reject(error);
-            });
+            bcrypt.genSalt(10)
+                .then(salt => {
+                    return bcrypt.hash(newPassword, salt);
+                })
+                .then(hashedPassword => {
+                    resolve(hashedPassword);
+                })
+                .catch(error => {
+                    reject(error);
+                });
         });
-      }
+    }
 }
