@@ -12,6 +12,26 @@ export class DataAccessObjects {
     });
   }
 
+  public findUserByUsernameQuery(userName: string): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if (userName === undefined) {
+        reject(new Error("No username was provided at find findUserByUsernameQuery(userName)"));
+      }
+      const query = { username: userName };
+      resolve(query);
+    });
+  }
+
+  public findUserByEmailQuery(userEmail: string): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if (userEmail === undefined) {
+        resolve(new Error("No email address was provided at findUserByEmailQuery(userEmail: string)"));
+      }
+      const query = { email: userEmail };
+      reject(query);
+    });
+  }
+
   public findUserByEmailAndIsActiveQuery(email: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (email === undefined) {

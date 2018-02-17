@@ -56,5 +56,28 @@ export class UserAuthenicationDataAccess extends DataAccess {
             console.log(error);
             return this.usersArray;
         }
+    } 
+
+    public async findIfUserExistsByUsername(userName: string): Promise<User[]> {
+        try {
+            const query = await this.dataAccessObjects.findUserByUsernameQuery(userName);
+            const projection = await this.dataAccessObjects.userObjectIdProjection();
+            return await UsersCollection.find(query, projection).toArray();
+        } catch (error) {
+            // TODO: log it
+            console.log(error);
+            return this.usersArray;
+        }
+    }
+
+    public async findIfUserExistsByEmail(userEmail: string): Promise<User[]> {
+        try {
+            const query = await this.dataAccessObjects.findUserByEmailQuery(userEmail);
+            const projection = await this.dataAccessObjects.userObjectIdProjection();
+            return await UsersCollection.find(query, projection).toArray();
+        } catch (error) {
+            console.log(error);
+            return this.usersArray;
+        }
     }
 }

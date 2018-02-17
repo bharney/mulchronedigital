@@ -53,11 +53,9 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.username)) {
         return res.status(422).json(responseMessages.userNameIsNotValid());
       }
-
       if (!await UserAuthenicationValidator.isEmailValid(req.body.email)) {
         return res.status(422).json(responseMessages.emailIsNotValid());
       }
-
       if (!await UserAuthenicationValidator.isPasswordValid(req.body.password)) {
         return res.status(422).json(responseMessages.passwordIsNotValid());
       }
@@ -71,16 +69,12 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async doesUsernameOrEmailExistAlready(req: Request, res: Response, next: NextFunction) {
     try {
       const responseMessages = new ResponseMessages();
-      const databaseUser: User[] = await UsersCollection.find(
-        { "username": req.body.username }, { "_id": 1 }
-      ).toArray();
+      const dataAcess = new UserAuthenicationDataAccess();
+      const databaseUser: User[] = await dataAcess.findIfUserExistsByUsername(req.body.username);
       if (databaseUser.length > 0) {
         return res.status(409).json(responseMessages.usernameIsTaken(req.body.username));
       }
-      const databaseEmail = await UsersCollection.find(
-        { "email": req.body.email },
-        { "_id": 1 }
-      ).toArray();
+      const databaseEmail: User[] = await dataAcess.findIfUserExistsByEmail(req.body.email);
       if (databaseEmail.length > 0) {
         return res.status(409).json(responseMessages.emailIsTaken(req.body.email));
       }
