@@ -4,7 +4,6 @@ import { UserDashboardRouter } from "./users/UserDashboardRouter";
 
 export class IndexRouter {
   public router: Router;
-  private htmlRouter: Router;
   private userAuthenicationRouter: Router;
   private userDashboardRouter: Router;
 
