@@ -54,4 +54,26 @@ export class UserDashboardDataAccess extends DataAccess {
       console.log(error);
     }
   }
+
+  public async findUserPasswordAndUsernameById(userId: string): Promise<User[]> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+      const projection = await this.dataAccessObjects.userPasswordAndUsernameProjection();
+      return await UsersCollection.find(query, projection).toArray();
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
+
+  public async modifiyUsernameByUserId(userId: string, user: User): Promise<any> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+      const projection = await this.dataAccessObjects.changeUsernameProjection(user);
+      return UsersCollection.updateOne(query, projection);
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
 }

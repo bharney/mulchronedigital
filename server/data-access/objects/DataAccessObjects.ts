@@ -130,4 +130,18 @@ export class DataAccessObjects {
       resolve(newDocument);
     });
   }
+
+  public userPasswordAndUsernameProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { _id: 0, password: 1, username: 1 };
+      resolve(projection);
+    });
+  }
+
+  public changeUsernameProjection(user: User): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { $set: { username: user.username, modifiedAt: user.modifiedAt } };
+      resolve(projection);
+    });
+  }
 }

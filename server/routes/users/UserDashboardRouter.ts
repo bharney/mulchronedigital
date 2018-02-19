@@ -105,7 +105,6 @@ export class UserDashboardRouter extends BaseRouter {
   private async validateUserChangeUsername(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      console.log(req.body);
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)) {
         return res.status(422).json(responseMessages.userNameIsNotValid());
       }
@@ -118,10 +117,8 @@ export class UserDashboardRouter extends BaseRouter {
         return res.status(409).json(responseMessages.usernameIsTaken(req.body.newUsername));
       }
       const userId = res.locals.token.id;
-      const databaseUsers: User[] = await UsersCollection.find(
-        { _id: new ObjectId(userId) },
-        { password: 1, _id: 0, username: 1 }
-      ).toArray();
+      const dataAccess = new UserDashboardDataAccess();
+      const databaseUsers: User[] = await dataAccess.findUserPasswordAndUsernameById(userId);
       if (databaseUsers.length <= 0) {
         return res.status(422).json(responseMessages.noUserFound());
       }
@@ -130,10 +127,7 @@ export class UserDashboardRouter extends BaseRouter {
       }
       const oldUsername = databaseUsers[0].username;
       const user = new User(req.body.newUsername);
-      const updateResult = await UsersCollection.updateOne(
-        { _id: new ObjectId(userId) },
-        { $set: { username: user.username, modifiedAt: user.modifiedAt } }
-      );
+      const updateResult = await dataAccess.modifiyUsernameByUserId(userId, user);
       if (updateResult.modifiedCount === 1) {
         res.status(200).json(responseMessages.usernameChangeSuccessful(user.username));
         const httpHelpers = new HttpHelpers();
