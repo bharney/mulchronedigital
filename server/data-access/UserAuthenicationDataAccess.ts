@@ -47,4 +47,15 @@ export class UserAuthenicationDataAccess extends DataAccess {
             return this.passwordResetTokens;
         }
     }
+
+    public async getJSONWebTokenOfActiveUserByUserId(userId: string): Promise<User[]> {
+        try {
+            const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+            const projection = await this.dataAccessObjects.activeUserJsonWebToken();
+            return await UsersCollection.find(query, projection).toArray();
+        } catch (error) {
+            console.log(error);
+            return this.usersArray;
+        }
+    }
 }

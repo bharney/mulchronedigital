@@ -63,7 +63,7 @@ export class DataAccessObjects {
         reject(new Error("No userId was provided at findRecentForgotPasswordTokenById(userId: ObjectId"));
       }
       const date = new Date();
-      const query = { "userId": userId, "validUntil": {$gte: date} };
+      const query = { "userId": userId, "validUntil": { $gte: date } };
       resolve(query);
     });
   }
@@ -71,6 +71,13 @@ export class DataAccessObjects {
   public forgotPasswordTokenIdProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { _id: 1 };
+      resolve(projection);
+    });
+  }
+
+  public activeUserJsonWebToken(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { jsonToken: 1, isActive: 1 };
       resolve(projection);
     });
   }

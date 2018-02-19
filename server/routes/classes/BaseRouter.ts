@@ -7,6 +7,7 @@ import { ObjectId } from "mongodb";
 import { JsonWebToken } from "../../../shared/JsonWebToken";
 import { User } from "../../models/user";
 import { Encryption } from "../../../shared/Encryption";
+import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 
 export abstract class BaseRouter {
   public async checkForUserJsonWebToken(req: Request, res: Response, next: NextFunction) {
@@ -26,10 +27,8 @@ export abstract class BaseRouter {
         const responseMessages = new ResponseMessages();
         return res.status(503).json(responseMessages.generalError());
       }
-      const databaseUsers: User[] = await UsersCollection.find(
-        { "_id": new ObjectId(res.locals.token.id) },
-        { "jsonToken": 1, "isActive": 1 }
-      ).toArray();
+      const dataAccess = new UserAuthenicationDataAccess();
+      const databaseUsers: User[] = await dataAccess.getJSONWebTokenOfActiveUserByUserId(res.locals.token.id);
       if (databaseUsers.length <= 0) {
         // send user message and redirect them client side to login screen or whatever.
         const responseMessages = new ResponseMessages();
