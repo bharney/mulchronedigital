@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { User } from "../../models/user";
+import { UserIpAddress } from "../../routes/classes/UserIpAddress";
 
 export class DataAccessObjects {
   public findUserByIdQuery(userId: string): Promise<object> {
@@ -113,6 +114,20 @@ export class DataAccessObjects {
     return new Promise(resolve => {
       const projection = { ipAddresses: { $elemMatch: { ipAddress: ip } } };
       resolve(projection);
+    });
+  }
+
+  public addIpAddressToIpAddressArray(ipAddressObject: UserIpAddress): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { $push: { "ipAddresses": ipAddressObject } };
+      resolve(projection);
+    });
+  }
+
+  public newDocument(newDocumentValue: boolean): Promise<object> {
+    return new Promise(resolve => {
+      const newDocument = { new: newDocumentValue };
+      resolve(newDocument);
     });
   }
 }
