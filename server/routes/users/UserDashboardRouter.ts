@@ -197,10 +197,8 @@ export class UserDashboardRouter extends BaseRouter {
   private async storeUploadedImageInDatabase(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      const updatedProfile = await UsersCollection.findOneAndUpdate(
-        { _id: new ObjectId(res.locals.token.id) },
-        { $set: { profileImage: res.locals.image } }
-      );
+      const dataAccess = new UserDashboardDataAccess();
+      const updatedProfile = await dataAccess.updateUserProfileImage(res.locals.token.id, res.locals.image);
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
         return res.status(200).json(responseMessages.changeProfilePictureSuccessful());
       } else {

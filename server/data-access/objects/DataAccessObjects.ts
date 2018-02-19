@@ -171,4 +171,11 @@ export class DataAccessObjects {
       resolve(projection);
     });
   }
+
+  public updateUserProfileImageProjection(image: object): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { $set: { profileImage: image } };
+      resolve(projection);
+    });
+  }
 }

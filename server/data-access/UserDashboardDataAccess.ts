@@ -98,4 +98,15 @@ export class UserDashboardDataAccess extends DataAccess {
       // TODO: log it.
     }
   }
+
+  public async updateUserProfileImage(userId: string, image: object): Promise<any> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+      const projection = await this.dataAccessObjects.updateUserProfileImageProjection(image);
+      return await UsersCollection.findOneAndUpdate(query, projection);
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
 }
