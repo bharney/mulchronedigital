@@ -15,6 +15,8 @@ import { EmailQueueExport } from "../../cluster/master";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";
+import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
+import { DataAccess } from "../../data-access/classes/DataAccess";
 
 export class UserAuthenicationRouter extends BaseRouter {
   public router: Router;
@@ -51,11 +53,9 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.username)) {
         return res.status(422).json(responseMessages.userNameIsNotValid());
       }
-
       if (!await UserAuthenicationValidator.isEmailValid(req.body.email)) {
         return res.status(422).json(responseMessages.emailIsNotValid());
       }
-
       if (!await UserAuthenicationValidator.isPasswordValid(req.body.password)) {
         return res.status(422).json(responseMessages.passwordIsNotValid());
       }
@@ -69,16 +69,12 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async doesUsernameOrEmailExistAlready(req: Request, res: Response, next: NextFunction) {
     try {
       const responseMessages = new ResponseMessages();
-      const databaseUser: User[] = await UsersCollection.find(
-        { "username": req.body.username }, { "_id": 1 }
-      ).toArray();
+      const dataAcess = new UserAuthenicationDataAccess();
+      const databaseUser: User[] = await dataAcess.findIfUserExistsByUsername(req.body.username);
       if (databaseUser.length > 0) {
         return res.status(409).json(responseMessages.usernameIsTaken(req.body.username));
       }
-      const databaseEmail = await UsersCollection.find(
-        { "email": req.body.email },
-        { "_id": 1 }
-      ).toArray();
+      const databaseEmail: User[] = await dataAcess.findIfUserExistsByEmail(req.body.email);
       if (databaseEmail.length > 0) {
         return res.status(409).json(responseMessages.emailIsTaken(req.body.email));
       }
@@ -116,7 +112,10 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   public async decryptLoginUrl(req: Request, res: Response, next: NextFunction) {
     try {
-      const encryptedUserLogin = req.params.encryptedinfo.replace(/-/, "\/");
+      let encryptedUserLogin = req.params.encryptedinfo;
+      if (encryptedUserLogin.includes("-")) {
+        encryptedUserLogin = encryptedUserLogin.replace(/-/, "\/");
+      }
       if (await !Encryption.verifiyUniqueSymmetricKey(req.params.key)) {
         const responseMessages = new ResponseMessages();
         return res.status(503).json(responseMessages.generalError());
@@ -141,14 +140,11 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
         return res.status(401).json(responseMessages.emailIsNotValid());
       }
-
       if (!await UserAuthenicationValidator.isPasswordValid(userPassword)) {
         return res.status(401).json(responseMessages.passwordIsNotValid());
       }
-      const databaseUsers: User[] = await UsersCollection.find(
-        { "email": userEmail },
-        { "_id": 1, "password": 1, "username": 1, "isAdmin": 1, "isActive": 1, "publicKeyPairOne": 1, "privateKeyPairTwo": 1 }
-      ).toArray();
+      const userdashboardDataAccess = new UserDashboardDataAccess();
+      const databaseUsers: User[] = await userdashboardDataAccess.findUserLoginDetailsByEmail(userEmail);
       // should only be one user with this email
       if (databaseUsers.length === 1) {
         if (!databaseUsers[0].isActive) {
@@ -159,13 +155,11 @@ export class UserAuthenicationRouter extends BaseRouter {
           res.status(200).json(await responseMessages.successfulUserLogin(databaseUsers[0]));
           // TODO: MAKE A FUNCTION!!!!
           const httpHelpers = new HttpHelpers();
-          const userId = new ObjectId(databaseUsers[0]._id);
+          const userId = databaseUsers[0]._id;
           const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
           const ipAddressObject = new UserIpAddress(ip);
-          const matchingUserIpAddresses = await UsersCollection.find(
-            { "_id": userId },
-            { "ipAddresses": { $elemMatch: { "ipAddress": ip } } }
-          ).toArray();
+          const dataAccess = new UserAuthenicationDataAccess();
+          const matchingUserIpAddresses = await dataAccess.findMatchingIpAddressbyUserId(userId, ip);
           if (matchingUserIpAddresses[0].ipAddresses === undefined) {
             // TODO: we are now associating a new or unknown IP address to the user.
             // we probably dont have to await this, but here is where we can pass something out to RabbitMQ... maybe????
@@ -246,7 +240,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (databaseUsers.length <= 0) {
         return res.status(401).json(responseMessages.noUserFoundThatIsActive());
       }
-      const userId = new ObjectId(databaseUsers[0]._id);
+      const userId = databaseUsers[0]._id;
       const resetPasswordTokens: ForgotPasswordToken[] = await userAuthDataAccess.checkForRecentForgotPasswordTokens(userId);
       if (resetPasswordTokens.length > 0) {
         return res.status(429).json(responseMessages.tooManyForgotPasswordRequests());
@@ -265,7 +259,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const userActions = new UserActionHelper();
-      await userActions.userForgotPassword(userId, ip, new ObjectId(tokenId));
+      await userActions.userForgotPassword(userId, ip, tokenId);
     } catch (error) {
       console.log(error);
       return res.status(503).json(responseMessages.generalError());

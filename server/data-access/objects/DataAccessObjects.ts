@@ -12,6 +12,26 @@ export class DataAccessObjects {
     });
   }
 
+  public findUserByUsernameQuery(userName: string): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if (userName === undefined) {
+        reject(new Error("No username was provided at find findUserByUsernameQuery(userName)"));
+      }
+      const query = { username: userName };
+      resolve(query);
+    });
+  }
+
+  public findUserByEmailQuery(userEmail: string): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if (userEmail === undefined) {
+        resolve(new Error("No email address was provided at findUserByEmailQuery(userEmail: string)"));
+      }
+      const query = { email: userEmail };
+      reject(query);
+    });
+  }
+
   public findUserByEmailAndIsActiveQuery(email: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (email === undefined) {
@@ -43,6 +63,13 @@ export class DataAccessObjects {
     });
   }
 
+  public userLoginProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { _id: 1, password: 1, username: 1, isAdmin: 1, isActive: 1, publicKeyPairOne: 1, privateKeyPairTwo: 1 };
+      resolve(projection);
+    });
+  }
+
   public updateUserPasswordProjection(password: string, modifiedAt: Date) {
     return new Promise((resolve, reject) => {
       if (password === undefined) {
@@ -57,13 +84,13 @@ export class DataAccessObjects {
     });
   }
 
-  public findRecentForgotPasswordTokenById(userId: ObjectId): Promise<object> {
+  public findRecentForgotPasswordTokenById(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userId === undefined) {
         reject(new Error("No userId was provided at findRecentForgotPasswordTokenById(userId: ObjectId"));
       }
       const date = new Date();
-      const query = { "userId": userId, "validUntil": { $gte: date } };
+      const query = { "userId": new ObjectId(userId), "validUntil": { $gte: date } };
       resolve(query);
     });
   }
@@ -75,9 +102,16 @@ export class DataAccessObjects {
     });
   }
 
-  public activeUserJsonWebToken(): Promise<object> {
+  public jsonWebTokenThatIsActiveProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { jsonToken: 1, isActive: 1 };
+      resolve(projection);
+    });
+  }
+
+  public userIpAddressMatch(ip: string): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { ipAddresses: { $elemMatch: { ipAddress: ip } } };
       resolve(projection);
     });
   }

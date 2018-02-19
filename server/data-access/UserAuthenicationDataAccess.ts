@@ -6,7 +6,6 @@ import { ForgotPasswordCollection } from "../cluster/master";
 import { ForgotPasswordToken } from "../models/ForgotPasswordToken";
 import { ObjectId } from "mongodb";
 
-
 export class UserAuthenicationDataAccess extends DataAccess {
     private passwordResetTokens: ForgotPasswordToken[];
 
@@ -36,7 +35,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
         }
     }
 
-    public async checkForRecentForgotPasswordTokens(userId: ObjectId): Promise<ForgotPasswordToken[]> {
+    public async checkForRecentForgotPasswordTokens(userId: string): Promise<ForgotPasswordToken[]> {
         try {
             const query = await this.dataAccessObjects.findRecentForgotPasswordTokenById(userId);
             const projection = await this.dataAccessObjects.forgotPasswordTokenIdProjection();
@@ -51,7 +50,41 @@ export class UserAuthenicationDataAccess extends DataAccess {
     public async getJSONWebTokenOfActiveUserByUserId(userId: string): Promise<User[]> {
         try {
             const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-            const projection = await this.dataAccessObjects.activeUserJsonWebToken();
+            const projection = await this.dataAccessObjects.jsonWebTokenThatIsActiveProjection();
+            return await UsersCollection.find(query, projection).toArray();
+        } catch (error) {
+            console.log(error);
+            return this.usersArray;
+        }
+    }
+
+    public async findIfUserExistsByUsername(userName: string): Promise<User[]> {
+        try {
+            const query = await this.dataAccessObjects.findUserByUsernameQuery(userName);
+            const projection = await this.dataAccessObjects.userObjectIdProjection();
+            return await UsersCollection.find(query, projection).toArray();
+        } catch (error) {
+            // TODO: log it
+            console.log(error);
+            return this.usersArray;
+        }
+    }
+
+    public async findIfUserExistsByEmail(userEmail: string): Promise<User[]> {
+        try {
+            const query = await this.dataAccessObjects.findUserByEmailQuery(userEmail);
+            const projection = await this.dataAccessObjects.userObjectIdProjection();
+            return await UsersCollection.find(query, projection).toArray();
+        } catch (error) {
+            console.log(error);
+            return this.usersArray;
+        }
+    }
+
+    public async findMatchingIpAddressbyUserId(userId: string, ip: string): Promise<User[]> {
+        try {
+            const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+            const projection = await this.dataAccessObjects.userIpAddressMatch(ip);
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             console.log(error);

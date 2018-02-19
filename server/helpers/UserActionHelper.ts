@@ -1,6 +1,5 @@
 import { UserAction, UserChangedPasswordAction, UserChangedUsernameAction, UserForgotPasswordAction, UserLoggedInAction } from "../models/UserAction";
 import { UserActionsCollection } from "../cluster/master";
-import { ObjectId } from "mongodb";
 
 export class UserActionHelper {
     private userLoggedInActionType: string = "user_logged_in";
@@ -12,7 +11,7 @@ export class UserActionHelper {
 
     }
 
-    public async userLoggedIn(userId: ObjectId, ip: string): Promise<any> {
+    public async userLoggedIn(userId: string, ip: string): Promise<any> {
         try {
             const userAction = new UserLoggedInAction(userId, ip, this.userLoggedInActionType);
             await this.insertUserAction(userAction);
@@ -22,7 +21,7 @@ export class UserActionHelper {
         }
     }
 
-    public async userChangedPassword(userId: ObjectId, ip: string, oldPassword: string) {
+    public async userChangedPassword(userId: string, ip: string, oldPassword: string) {
         try {
             const userAction = new UserChangedPasswordAction(userId, ip, this.userChangedPasswordActionType, oldPassword);
             await this.insertUserAction(userAction);
@@ -32,7 +31,7 @@ export class UserActionHelper {
         }
     }
 
-    public async userChangedUsername(userId: ObjectId, ip: string, oldUsername: string) {
+    public async userChangedUsername(userId: string, ip: string, oldUsername: string) {
         try {
             const userAction = new UserChangedUsernameAction(userId, ip, this.userChangedUsernameAction, oldUsername);
             await this.insertUserAction(userAction);
@@ -42,7 +41,7 @@ export class UserActionHelper {
         }
     }
 
-    public async userForgotPassword(userId: ObjectId, ip: string, forgotPasswordTokenId: ObjectId): Promise<any> {
+    public async userForgotPassword(userId: string, ip: string, forgotPasswordTokenId: string): Promise<any> {
         try {
             const userAction = new UserForgotPasswordAction(userId, ip, this.userForgotPasswordAction, forgotPasswordTokenId);
             await this.insertUserAction(userAction);

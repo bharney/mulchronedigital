@@ -10,6 +10,7 @@ import { Encryption } from "../../../shared/Encryption";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 
 export abstract class BaseRouter {
+
   public async checkForUserJsonWebToken(req: Request, res: Response, next: NextFunction) {
     try {
       // TODO: this looks god awful. FIX IT!
