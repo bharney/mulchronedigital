@@ -87,4 +87,15 @@ export class UserDashboardDataAccess extends DataAccess {
       // TODO: log it.
     }
   }
+
+  public async updateUserLocationByDataAcess(userId: string, ip: string, latitude: number, longitude: number): Promise<any> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQueryMatchingIp(userId, ip);
+      const projection = await this.dataAccessObjects.updateIpAddressLatitudeAndLongitude(latitude, longitude);
+      return await UsersCollection.findOneAndUpdate(query, projection);
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
 }

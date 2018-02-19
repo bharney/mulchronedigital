@@ -13,6 +13,19 @@ export class DataAccessObjects {
     });
   }
 
+  public findUserByIdQueryMatchingIp(userId: string, ip: string): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if (userId === undefined) {
+        reject(new Error("No user ID was provided at findUserIpAdressObject(userId: string, ip: string)"));
+      }
+      if (ip === undefined) {
+        reject(new Error("No ip address object was provided at findUserIpAdressObject(userId: string, ip: string)"));
+      }
+      const query = { _id: new ObjectId(userId), ipAddresses: { $elemMatch: { ipAddress: ip } } };
+      resolve(query);
+    });
+  }
+
   public findUserByUsernameQuery(userName: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userName === undefined) {
@@ -148,6 +161,13 @@ export class DataAccessObjects {
   public getProfileImageProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { "_id": 1, "profileImage.secure_url": 1, "profileImage.public_id": 1 };
+      resolve(projection);
+    });
+  }
+
+  public updateIpAddressLatitudeAndLongitude(latitude: number, longitude: number): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { $set: { "ipAddresses.$.latitude": latitude, "ipAddresses.$.longitude": longitude } };
       resolve(projection);
     });
   }

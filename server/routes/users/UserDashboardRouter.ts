@@ -13,6 +13,7 @@ import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
 import { Cloudinary } from "../../apis/Cloudinary";
+import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 const parseFile = multer({
   limits: { fileSize: 5000000, files: 1 }
 }).single("image");
@@ -171,9 +172,6 @@ export class UserDashboardRouter extends BaseRouter {
         if (imageType === imageFileExtensions[i]) {
           const dataAccess = new UserDashboardDataAccess();
           const user: User = await dataAccess.getUserProfileImageInformationByUserId(res.locals.token.id);
-          // UsersCollection.findOne(
-          //   { "_id": new ObjectId(res.locals.token.id) },
-            // { "profileImage.secure_url": 1, "profileImage.public_id": 1, "_id": 1 });
           const cloudinary = new Cloudinary();
           const profileImage = await cloudinary.uploadCloudinaryImage(res.locals.image.buffer);
           if (profileImage) {
@@ -217,16 +215,16 @@ export class UserDashboardRouter extends BaseRouter {
   private async updateUserLocationInformation(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      if (typeof req.body.latitude !== "number" || typeof req.body.longitude !== "number") {
+      const latitude = req.body.latitude;
+      const longitude = req.body.longitude;
+      if (typeof latitude !== "number" || typeof longitude !== "number") {
         return res.status(409).json(responseMessages.generalError());
       }
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-      const userId = new ObjectId(res.locals.token.id);
-      const updatedProfile = await UsersCollection.findOneAndUpdate(
-        { _id: userId, "ipAddresses": { $elemMatch: { "ipAddress": ip } } },
-        { $set: { "ipAddresses.$.latitude": req.body.latitude, "ipAddresses.$.longitude": req.body.longitude } }
-      );
+      const userId = res.locals.token.id;
+      const dataAccess = new UserDashboardDataAccess();
+      const updatedProfile = await dataAccess.updateUserLocationByDataAcess(userId, ip, latitude, longitude);
       if (updatedProfile.lastErrorObject.n === 1) {
         return res.status(200);
       } else {
