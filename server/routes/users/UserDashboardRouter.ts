@@ -169,9 +169,11 @@ export class UserDashboardRouter extends BaseRouter {
       const imageType = imageTypeArray[1];
       for (let i = 0; i < imageFileExtensions.length; i++) {
         if (imageType === imageFileExtensions[i]) {
-          const user: User = await UsersCollection.findOne(
-            { "_id": new ObjectId(res.locals.token.id) },
-            { "profileImage.secure_url": 1, "profileImage.public_id": 1, "_id": 1 });
+          const dataAccess = new UserDashboardDataAccess();
+          const user: User = await dataAccess.getUserProfileImageInformationByUserId(res.locals.token.id);
+          // UsersCollection.findOne(
+          //   { "_id": new ObjectId(res.locals.token.id) },
+            // { "profileImage.secure_url": 1, "profileImage.public_id": 1, "_id": 1 });
           const cloudinary = new Cloudinary();
           const profileImage = await cloudinary.uploadCloudinaryImage(res.locals.image.buffer);
           if (profileImage) {

@@ -144,4 +144,11 @@ export class DataAccessObjects {
       resolve(projection);
     });
   }
+
+  public getProfileImageProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { "_id": 1, "profileImage.secure_url": 1, "profileImage.public_id": 1 };
+      resolve(projection);
+    });
+  }
 }

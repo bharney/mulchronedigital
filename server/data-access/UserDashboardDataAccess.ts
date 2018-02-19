@@ -76,4 +76,15 @@ export class UserDashboardDataAccess extends DataAccess {
       // TODO: log it.
     }
   }
+
+  public async getUserProfileImageInformationByUserId(userId: string): Promise<User> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+      const projection = await this.dataAccessObjects.getProfileImageProjection();
+      return UsersCollection.findOne(query, projection);
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
 }
