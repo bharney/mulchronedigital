@@ -224,7 +224,7 @@ export class UserDashboardRouter extends BaseRouter {
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const userId = res.locals.token.id;
       const dataAccess = new UserDashboardDataAccess();
-      const updatedProfile = await dataAccess.updateUserLocationByDataAcess(userId, ip, latitude, longitude);
+      const updatedProfile = await dataAccess.updateUserLocationForIpAddress(userId, ip, latitude, longitude);
       if (updatedProfile.lastErrorObject.n === 1) {
         return res.status(200);
       } else {

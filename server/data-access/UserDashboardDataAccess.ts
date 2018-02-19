@@ -88,7 +88,7 @@ export class UserDashboardDataAccess extends DataAccess {
     }
   }
 
-  public async updateUserLocationByDataAcess(userId: string, ip: string, latitude: number, longitude: number): Promise<any> {
+  public async updateUserLocationForIpAddress(userId: string, ip: string, latitude: number, longitude: number): Promise<any> {
     try {
       const query = await this.dataAccessObjects.findUserByIdQueryMatchingIp(userId, ip);
       const projection = await this.dataAccessObjects.updateIpAddressLatitudeAndLongitude(latitude, longitude);
