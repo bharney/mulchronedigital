@@ -54,4 +54,59 @@ export class UserDashboardDataAccess extends DataAccess {
       console.log(error);
     }
   }
+
+  public async findUserPasswordAndUsernameById(userId: string): Promise<User[]> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+      const projection = await this.dataAccessObjects.userPasswordAndUsernameProjection();
+      return await UsersCollection.find(query, projection).toArray();
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
+
+  public async modifiyUsernameByUserId(userId: string, user: User): Promise<any> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+      const projection = await this.dataAccessObjects.changeUsernameProjection(user);
+      return UsersCollection.updateOne(query, projection);
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
+
+  public async getUserProfileImageInformationByUserId(userId: string): Promise<User> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+      const projection = await this.dataAccessObjects.getProfileImageProjection();
+      return UsersCollection.findOne(query, projection);
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
+
+  public async updateUserLocationForIpAddress(userId: string, ip: string, latitude: number, longitude: number): Promise<any> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQueryMatchingIp(userId, ip);
+      const projection = await this.dataAccessObjects.updateIpAddressLatitudeAndLongitude(latitude, longitude);
+      return await UsersCollection.findOneAndUpdate(query, projection);
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
+
+  public async updateUserProfileImage(userId: string, image: object): Promise<any> {
+    try {
+      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+      const projection = await this.dataAccessObjects.updateUserProfileImageProjection(image);
+      return await UsersCollection.findOneAndUpdate(query, projection);
+    } catch (error) {
+      console.log(error);
+      // TODO: log it.
+    }
+  }
 }

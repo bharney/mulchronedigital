@@ -163,11 +163,7 @@ export class UserAuthenicationRouter extends BaseRouter {
           if (matchingUserIpAddresses[0].ipAddresses === undefined) {
             // TODO: we are now associating a new or unknown IP address to the user.
             // we probably dont have to await this, but here is where we can pass something out to RabbitMQ... maybe????
-            await UsersCollection.findOneAndUpdate(
-              { "_id": userId },
-              { $push: { "ipAddresses": ipAddressObject } },
-              { new: true }
-            );
+            await dataAccess.updateUserProfileIpAddresses(userId, ipAddressObject);
           }
           const userActions = new UserActionHelper();
           await userActions.userLoggedIn(userId, ip);

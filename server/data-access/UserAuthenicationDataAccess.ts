@@ -5,6 +5,7 @@ import { DataAccess } from "../data-access/classes/DataAccess";
 import { ForgotPasswordCollection } from "../cluster/master";
 import { ForgotPasswordToken } from "../models/ForgotPasswordToken";
 import { ObjectId } from "mongodb";
+import { UserIpAddress } from "../routes/classes/UserIpAddress";
 
 export class UserAuthenicationDataAccess extends DataAccess {
     private passwordResetTokens: ForgotPasswordToken[];
@@ -47,7 +48,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
         }
     }
 
-    public async findActiveUserAndJsonWebTokenByUserId(userId: string): Promise<User[]> {
+    public async getJSONWebTokenOfActiveUserByUserId(userId: string): Promise<User[]> {
         try {
             const query = await this.dataAccessObjects.findUserByIdQuery(userId);
             const projection = await this.dataAccessObjects.jsonWebTokenThatIsActiveProjection();
@@ -89,6 +90,18 @@ export class UserAuthenicationDataAccess extends DataAccess {
         } catch (error) {
             console.log(error);
             return this.usersArray;
+        }
+    }
+
+    public async updateUserProfileIpAddresses(userId: string, ipAddressObject: UserIpAddress): Promise<any> {
+        try {
+            const query = await this.dataAccessObjects.findUserByIdQuery(userId);
+            const projection = await this.dataAccessObjects.addIpAddressToIpAddressArray(ipAddressObject);
+            const newObject = await this.dataAccessObjects.newDocument(true);
+            await UsersCollection.findOneAndUpdate(query, projection, newObject);
+        } catch (error) {
+            console.log(error);
+            // TODO: log it
         }
     }
 }

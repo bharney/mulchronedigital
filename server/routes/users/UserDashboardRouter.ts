@@ -13,6 +13,7 @@ import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
 import { Cloudinary } from "../../apis/Cloudinary";
+import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 const parseFile = multer({
   limits: { fileSize: 5000000, files: 1 }
 }).single("image");
@@ -105,7 +106,6 @@ export class UserDashboardRouter extends BaseRouter {
   private async validateUserChangeUsername(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      console.log(req.body);
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)) {
         return res.status(422).json(responseMessages.userNameIsNotValid());
       }
@@ -118,10 +118,8 @@ export class UserDashboardRouter extends BaseRouter {
         return res.status(409).json(responseMessages.usernameIsTaken(req.body.newUsername));
       }
       const userId = res.locals.token.id;
-      const databaseUsers: User[] = await UsersCollection.find(
-        { _id: new ObjectId(userId) },
-        { password: 1, _id: 0, username: 1 }
-      ).toArray();
+      const dataAccess = new UserDashboardDataAccess();
+      const databaseUsers: User[] = await dataAccess.findUserPasswordAndUsernameById(userId);
       if (databaseUsers.length <= 0) {
         return res.status(422).json(responseMessages.noUserFound());
       }
@@ -130,10 +128,7 @@ export class UserDashboardRouter extends BaseRouter {
       }
       const oldUsername = databaseUsers[0].username;
       const user = new User(req.body.newUsername);
-      const updateResult = await UsersCollection.updateOne(
-        { _id: new ObjectId(userId) },
-        { $set: { username: user.username, modifiedAt: user.modifiedAt } }
-      );
+      const updateResult = await dataAccess.modifiyUsernameByUserId(userId, user);
       if (updateResult.modifiedCount === 1) {
         res.status(200).json(responseMessages.usernameChangeSuccessful(user.username));
         const httpHelpers = new HttpHelpers();
@@ -175,9 +170,8 @@ export class UserDashboardRouter extends BaseRouter {
       const imageType = imageTypeArray[1];
       for (let i = 0; i < imageFileExtensions.length; i++) {
         if (imageType === imageFileExtensions[i]) {
-          const user: User = await UsersCollection.findOne(
-            { "_id": new ObjectId(res.locals.token.id) },
-            { "profileImage.secure_url": 1, "profileImage.public_id": 1, "_id": 1 });
+          const dataAccess = new UserDashboardDataAccess();
+          const user: User = await dataAccess.getUserProfileImageInformationByUserId(res.locals.token.id);
           const cloudinary = new Cloudinary();
           const profileImage = await cloudinary.uploadCloudinaryImage(res.locals.image.buffer);
           if (profileImage) {
@@ -203,10 +197,8 @@ export class UserDashboardRouter extends BaseRouter {
   private async storeUploadedImageInDatabase(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      const updatedProfile = await UsersCollection.findOneAndUpdate(
-        { _id: new ObjectId(res.locals.token.id) },
-        { $set: { profileImage: res.locals.image } }
-      );
+      const dataAccess = new UserDashboardDataAccess();
+      const updatedProfile = await dataAccess.updateUserProfileImage(res.locals.token.id, res.locals.image);
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
         return res.status(200).json(responseMessages.changeProfilePictureSuccessful());
       } else {
@@ -221,16 +213,16 @@ export class UserDashboardRouter extends BaseRouter {
   private async updateUserLocationInformation(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      if (typeof req.body.latitude !== "number" || typeof req.body.longitude !== "number") {
+      const latitude = req.body.latitude;
+      const longitude = req.body.longitude;
+      if (typeof latitude !== "number" || typeof longitude !== "number") {
         return res.status(409).json(responseMessages.generalError());
       }
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-      const userId = new ObjectId(res.locals.token.id);
-      const updatedProfile = await UsersCollection.findOneAndUpdate(
-        { _id: userId, "ipAddresses": { $elemMatch: { "ipAddress": ip } } },
-        { $set: { "ipAddresses.$.latitude": req.body.latitude, "ipAddresses.$.longitude": req.body.longitude } }
-      );
+      const userId = res.locals.token.id;
+      const dataAccess = new UserDashboardDataAccess();
+      const updatedProfile = await dataAccess.updateUserLocationForIpAddress(userId, ip, latitude, longitude);
       if (updatedProfile.lastErrorObject.n === 1) {
         return res.status(200);
       } else {

@@ -29,7 +29,7 @@ export abstract class BaseRouter {
         return res.status(503).json(responseMessages.generalError());
       }
       const dataAccess = new UserAuthenicationDataAccess();
-      const databaseUsers: User[] = await dataAccess.findActiveUserAndJsonWebTokenByUserId(res.locals.token.id);
+      const databaseUsers: User[] = await dataAccess.getJSONWebTokenOfActiveUserByUserId(res.locals.token.id);
       if (databaseUsers.length <= 0) {
         // send user message and redirect them client side to login screen or whatever.
         const responseMessages = new ResponseMessages();
