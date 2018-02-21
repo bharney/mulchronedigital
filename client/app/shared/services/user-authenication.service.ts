@@ -19,9 +19,8 @@ export class LoginService {
   ) { }
 
   public loginUser(encryptedLoginInfo: AESEncryptionResult): Observable<ILoginUserResponse> {
-    // replace forward slashes with hyphens for the purposes of getting the correct information on the server by replace hyphens with forward slashes.
-    const encryptedText = encryptedLoginInfo.encryptedText.replace(/\//g, "-");
-    return this.http.get(`/api/userauth/loginuser/${encryptedText}/${encryptedLoginInfo.key}`)
+    const options = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
+    return this.http.post("/api/userauth/loginuser", encryptedLoginInfo, options)
       .map(this.apiRequests.parseResponse)
       .catch(this.apiRequests.errorCatcher);
   }

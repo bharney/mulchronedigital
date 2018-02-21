@@ -35,8 +35,8 @@ export class UserAuthenicationRouter extends BaseRouter {
     this.router.post("/registeruser", this.insertNewUser);
 
     // Login User
-    this.router.use("/loginuser/:encryptedinfo/:key", this.decryptLoginUrl);
-    this.router.get("/loginuser/:encryptedinfo/:key", this.validateLoginUserRequest);
+    this.router.use("/loginuser", this.decryptRequestBody);
+    this.router.post("/loginuser", this.validateLoginUserRequest);
 
     // RefreshJsonWebToken
     this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
@@ -110,33 +110,11 @@ export class UserAuthenicationRouter extends BaseRouter {
     }
   }
 
-  public async decryptLoginUrl(req: Request, res: Response, next: NextFunction) {
-    try {
-      let encryptedUserLogin = req.params.encryptedinfo;
-      if (encryptedUserLogin.includes("-")) {
-        encryptedUserLogin = encryptedUserLogin.replace(/-/, "\/");
-      }
-      if (await !Encryption.verifiyUniqueSymmetricKey(req.params.key)) {
-        const responseMessages = new ResponseMessages();
-        return res.status(503).json(responseMessages.generalError());
-      }
-      const decryptedUrlInfo = JSON.parse(await Encryption.AESDecrypt(encryptedUserLogin, req.params.key));
-      res.locals.email = decryptedUrlInfo.email;
-      res.locals.password = decryptedUrlInfo.password;
-      next();
-    } catch (error) {
-      // TODO: log decryption error.
-      console.log(error);
-      const responseMessages = new ResponseMessages();
-      return res.status(503).json(responseMessages.generalError());
-    }
-  }
-
   private async validateLoginUserRequest(req: Request, res: Response, next: NextFunction) {
     try {
       const responseMessages = new ResponseMessages();
-      const userEmail = res.locals.email;
-      const userPassword = res.locals.password;
+      const userEmail = req.body.email;
+      const userPassword = req.body.password;
       if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
         return res.status(401).json(responseMessages.emailIsNotValid());
       }
