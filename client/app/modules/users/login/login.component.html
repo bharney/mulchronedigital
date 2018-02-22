@@ -35,7 +35,7 @@
                           <input type="password" class="form-control" id="login-password-input" placeholder="Enter password" formControlName="password">
                         </div>
                         <div class="alert alert-danger" role="alert" *ngIf="userLoginForm.controls.password.errors && hasTheFormBeenSubmitted">
-                            <strong>This password does not meet our minimum requirements, did you forget your password? If so, click <a href="" [routerLink]="['../../users/forgot-password']">here</a> to reset it.</strong>
+                            <strong>This password does not meet our minimum requirements, did you forget your password? If so, click <a href="" [routerLink]="['../../users/forgotpassword']">here</a> to reset it.</strong>
                         </div>
                     </div>
                     <button *ngIf="!hasSubmitButtonBeenClicked" type="button" class="btn btn-primary" (click)="toggleLoginUser()">Login</button>
