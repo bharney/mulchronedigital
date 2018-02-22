@@ -31,11 +31,11 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
   private configureUserChangeUsernameForm(): void {
     this.userChangeUsernameForm = this.formBuilder.group({
       newUsername: [
-        "testuser23",
+        "",
         [Validators.required, Validators.minLength(4), Validators.maxLength(12)]
       ],
       password: [
-        "TestPassword1!",
+        "",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ]
     });

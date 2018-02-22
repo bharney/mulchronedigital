@@ -3,7 +3,7 @@ import { FormGroup, Validators, FormBuilder } from "@angular/forms";
 import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
 import { UserChangePassword, IUserChangePasswordResponse } from "../../../../../shared/models/dashboard.model";
 import { ChangeUserPasswordService } from "../../../../../shared/services/user-dashboard.service";
-import { Encryption, AESEncryptionResult } from '../../../../../../../shared/Encryption';
+import { Encryption, AESEncryptionResult } from "../../../../../../../shared/Encryption";
 declare const $: any;
 
 @Component({
@@ -30,15 +30,15 @@ export class UserDashboardChangePasswordComponent implements OnInit {
   private configureUserChangePasswordForm(): void {
     this.userChangePasswordForm = this.formBuilder.group({
       currentPassword: [
-        "TestPassword1!",
+        "",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ],
       password: [
-        "TestPassword1!@#$%",
+        "",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ],
       confirmPassword: [
-        "TestPassword1!@#$%",
+        "",
         [
           Validators.required,
           UserAuthenicationValidator.confirmPasswordValidation

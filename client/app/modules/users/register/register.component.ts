@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { RegisterService } from "../../../shared/services/user-authenication.service";
 import { RegisterUser, IUserRegisterResponse } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
-import { AESEncryptionResult, Encryption } from '../../../../../shared/Encryption';
+import { AESEncryptionResult, Encryption } from "../../../../../shared/Encryption";
 declare const $: any;
 
 @Component({
@@ -34,19 +34,19 @@ export class RegisterComponent implements OnInit {
   private createFormGroup(): void {
     this.userRegistrationForm = this.formBuilder.group({
       username: [
-        "testuser",
+        "",
         [Validators.required, Validators.minLength(4), Validators.maxLength(12)]
       ],
       email: [
-        "testuser@gmail.com",
+        "",
         [Validators.required, UserAuthenicationValidator.emailValidation]
       ],
       password: [
-        "TestPassword1!",
+        "",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ],
       confirmPassword: [
-        "TestPassword1!",
+        "",
         [
           Validators.required,
           UserAuthenicationValidator.confirmPasswordValidation

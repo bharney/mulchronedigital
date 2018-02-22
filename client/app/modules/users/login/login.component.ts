@@ -36,11 +36,11 @@ export class LoginComponent implements OnInit {
   private createFormGroup(): void {
     this.userLoginForm = this.formBuilder.group({
       email: [
-        "testuser@gmail.com",
+        "",
         [Validators.required, UserAuthenicationValidator.emailValidation]
       ],
       password: [
-        "TestPassword1!",
+        "",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ]
     });
