@@ -3,6 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { ActivateUser } from "../../../shared/models/user-authenication.model";
 import { ActivateUserService } from "../../../shared/services/activate-user.service";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
+import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
 
 @Component({
   selector: "app-activate-user",
@@ -17,7 +18,8 @@ export class ActivateUserComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private activateUserService: ActivateUserService
+    private activateUserService: ActivateUserService,
+    private googleAnalytics: GoogleAnalytics
   ) { }
 
   ngOnInit() {

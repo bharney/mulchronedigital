@@ -5,6 +5,7 @@ import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuth
 import { UserChangeUsername } from "../../../../../shared/models/dashboard.model";
 import { UserDashboardEmitter } from "../../../../../shared/services/emitters/user-dashboard-emitter.service";
 import { Encryption, AESEncryptionResult } from "../../../../../../../shared/Encryption";
+import { GoogleAnalytics } from "../../../../../shared/services/google-analytics.service";
 declare const $: any;
 
 @Component({
@@ -21,7 +22,8 @@ export class UserDashboardChangeUsernameComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private changeUsernameService: ChangeUsernameService,
-    private userDashboardEmitter: UserDashboardEmitter
+    private userDashboardEmitter: UserDashboardEmitter,
+    private googleAnalytics: GoogleAnalytics
   ) { }
 
   ngOnInit() {

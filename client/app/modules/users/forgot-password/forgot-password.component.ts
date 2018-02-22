@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
 import { ForgotPasswordService } from "./forgot-password.service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
 declare const $: any;
 
 @Component({
@@ -23,7 +24,8 @@ export class ForgotPasswordComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private forgotPasswordService: ForgotPasswordService
+    private forgotPasswordService: ForgotPasswordService,
+    private googleAnalytics: GoogleAnalytics
   ) { }
 
   ngOnInit() {

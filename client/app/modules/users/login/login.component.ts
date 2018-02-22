@@ -7,6 +7,7 @@ import { ILoginUserResponse, IUserRegisterResponse, LoginUser } from "../../../s
 import { JsonWebToken } from "../../../../../shared/JsonWebToken";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
 import { Encryption, AESEncryptionResult } from "../../../../../shared/Encryption";
+import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
 declare const $: any;
 
 @Component({
@@ -26,7 +27,8 @@ export class LoginComponent implements OnInit {
     private loginService: LoginService,
     private formBuilder: FormBuilder,
     private authControl: AuthenicationControl,
-    private router: Router
+    private router: Router,
+    private googleAnalytics: GoogleAnalytics
   ) {}
 
   ngOnInit(): void {

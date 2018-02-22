@@ -5,6 +5,7 @@ import { RegisterService } from "../../../shared/services/user-authenication.ser
 import { RegisterUser, IUserRegisterResponse } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
 import { AESEncryptionResult, Encryption } from "../../../../../shared/Encryption";
+import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
 declare const $: any;
 
 @Component({
@@ -24,7 +25,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private registerService: RegisterService,
-    private router: Router
+    private router: Router,
+    private googleAnalytics: GoogleAnalytics
   ) { }
 
   ngOnInit(): void {

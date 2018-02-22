@@ -2,6 +2,7 @@ import { ChangeUserProfileImageService } from "../../../../../shared/services/us
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { UserDashboardEmitter } from "../../../../../shared/services/emitters/user-dashboard-emitter.service";
 import { Element } from "@angular/compiler";
+import { GoogleAnalytics } from "../../../../../shared/services/google-analytics.service";
 declare const $: any;
 
 @Component({
@@ -18,7 +19,8 @@ export class UserDashboardProfilePictureComponent {
 
   constructor(
     private changeUserProfileImageService: ChangeUserProfileImageService,
-    private userDashboardEmitter: UserDashboardEmitter
+    private userDashboardEmitter: UserDashboardEmitter,
+    private googleAnalytics: GoogleAnalytics
   ) { }
 
   public toggleUploadImage(): void {

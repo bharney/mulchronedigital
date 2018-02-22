@@ -8,6 +8,7 @@ import { AuthenicationControl } from "./shared/authenication/AuthenicationContro
 import { ApiRequests } from "./shared/http/ApiRequests";
 import { NavbarTopComponent } from "./components/navbar-top/navbar-top.component";
 import { RefreshTokenService } from "./shared/services/refresh-token.service";
+import { GoogleAnalytics } from "./shared/services/google-analytics.service";
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { RefreshTokenService } from "./shared/services/refresh-token.service";
   providers: [
     AuthenicationControl,
     ApiRequests,
-    RefreshTokenService
+    RefreshTokenService,
+    GoogleAnalytics
   ],
   bootstrap: [AppComponent]
 })

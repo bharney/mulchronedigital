@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { GoogleAnalytics } from "../../../../../shared/services/google-analytics.service";
 
 @Component({
   selector: "app-user-dashboard-home",
@@ -8,7 +9,9 @@ import { Component, OnInit } from "@angular/core";
 
 export class UserDashboardHomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private googleAnalytics: GoogleAnalytics
+  ) { }
 
   ngOnInit() { }
 }

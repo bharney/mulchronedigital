@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { GoogleAnalytics } from "../../shared/services/google-analytics.service";
 
 @Component({
   selector: "app-four-oh-four",
@@ -7,7 +8,9 @@ import { Component, OnInit } from "@angular/core";
 })
 export class FourOhFourComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private googleAnalytics: GoogleAnalytics
+  ) { }
 
   ngOnInit() {
   }

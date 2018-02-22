@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
+import { GoogleAnalytics } from "../../shared/services/google-analytics.service";
 declare const $: any;
 
 @Component({
@@ -10,7 +11,8 @@ declare const $: any;
 export class HomeComponent implements OnInit {
 
   constructor(
-    public authControl: AuthenicationControl
+    public authControl: AuthenicationControl,
+    private googleAnalytics: GoogleAnalytics
   ) { }
 
   ngOnInit() {

@@ -4,6 +4,7 @@ import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuth
 import { UserChangePassword, IUserChangePasswordResponse } from "../../../../../shared/models/dashboard.model";
 import { ChangeUserPasswordService } from "../../../../../shared/services/user-dashboard.service";
 import { Encryption, AESEncryptionResult } from "../../../../../../../shared/Encryption";
+import { GoogleAnalytics } from "../../../../../shared/services/google-analytics.service";
 declare const $: any;
 
 @Component({
@@ -20,7 +21,8 @@ export class UserDashboardChangePasswordComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private changeUserPasswordService: ChangeUserPasswordService
+    private changeUserPasswordService: ChangeUserPasswordService,
+    private googleAnalytics: GoogleAnalytics
   ) { }
 
   ngOnInit() {
