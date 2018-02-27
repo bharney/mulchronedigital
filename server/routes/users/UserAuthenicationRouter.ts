@@ -56,8 +56,8 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       next();
     } catch (error) {
-      // TODO: router error handler
-      throw error;
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
     }
   }
 
@@ -73,12 +73,12 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       next();
     } catch (error) {
-      // TODO: router error handler
-      throw error;
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
     }
   }
 
-  private async insertNewUser(req: Request, res: Response) {
+  private async insertNewUser(req: Request, res: Response, next: NextFunction) {
     try {
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
@@ -97,13 +97,14 @@ export class UserAuthenicationRouter extends BaseRouter {
         return res.status(503).json(ResponseMessages.generalError());
       }
     } catch (error) {
-      // TODO: router error handler
-      throw error;
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
     }
   }
 
   private async validateLoginUserRequest(req: Request, res: Response, next: NextFunction) {
     try {
+      throw new Error("welcome home nigga");
       const userEmail = req.body.email;
       const userPassword = req.body.password;
       if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
@@ -139,7 +140,8 @@ export class UserAuthenicationRouter extends BaseRouter {
         return res.status(401).json(ResponseMessages.noUserFound());
       }
     } catch (error) {
-      throw error;
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
     }
   }
 
@@ -161,13 +163,12 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       return res.status(200).json(await ResponseMessages.successfulUserLogin(databaseUsers[0]));
     } catch (error) {
-      // TODO: log error with winston
-      console.log(error);
-      return res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
     }
   }
 
-  private async validateActivateUser(req: Request, res: Response) {
+  private async validateActivateUser(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.body.id;
       if (!UserAuthenicationValidator.isThisAValidMongoObjectId(userId)) {
@@ -180,13 +181,12 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       return res.status(401).json(ResponseMessages.generalError());
     } catch (error) {
-      // TODO: log error with winston
-      console.log(error);
-      return res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
     }
   }
 
-  private async validateUserForgotPassword(req: Request, res: Response) {
+  private async validateUserForgotPassword(req: Request, res: Response, next: NextFunction) {
     try {
       if (!await UserAuthenicationValidator.isEmailValid(req.body.email)) {
         return res.status(422).json(ResponseMessages.emailIsNotValid());
@@ -216,8 +216,8 @@ export class UserAuthenicationRouter extends BaseRouter {
       const userActions = new UserActionHelper();
       await userActions.userForgotPassword(userId, ip, tokenId);
     } catch (error) {
-      console.log(error);
-      return res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
     }
   }
 }
