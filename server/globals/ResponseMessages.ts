@@ -2,6 +2,7 @@ import { JsonWebTokenWorkers } from "../security/JsonWebTokenWorkers";
 import { User } from "../models/user";
 import { UsersCollection } from "../master";
 import { ObjectId } from "mongodb";
+import errorLogger from "../logging/ErrorLogger";
 
 export class ResponseMessages {
 
@@ -128,8 +129,7 @@ export class ResponseMessages {
         throw new Error("Updating user token didn't work");
       }
     } catch (error) {
-      // TODO: retry or send user error message?
-      throw error;
+      errorLogger.error(error);
     }
   }
 

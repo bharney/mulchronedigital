@@ -1,6 +1,7 @@
 import bcrypt = require("bcryptjs");
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
 import { UniqueIdentifier } from "../../shared/UniqueIdentifer";
+import errorLogger from "../logging/ErrorLogger";
 const exec = require("child_process").exec;
 
 export class User {
@@ -53,7 +54,7 @@ export class User {
       const result = true;
       return result;
     } catch (error) {
-      console.log(error);
+      errorLogger.error(error);
       const result = false;
       return result;
     }

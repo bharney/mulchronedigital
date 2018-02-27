@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import errorLogger from "../logging/ErrorLogger";
 import bcrypt = require("bcryptjs");
 
 export class ForgotPasswordToken {
@@ -20,8 +21,7 @@ export class ForgotPasswordToken {
             this.newPassword = await this.HashPassword(newPassword);
             return true;
         } catch (error) {
-            // TODO: error log
-            console.log(error);
+            errorLogger.error(error);
             return false;
         }
     }
