@@ -182,17 +182,13 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async validateActivateUser(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      if (!UserAuthenicationValidator.isUserNameValid(req.body.username)) {
-        return res.status(401).json(responseMessages.userNameIsNotValid());
-      }
-      if (!UserAuthenicationValidator.isThisAValidMongoObjectId(req.body.id)) {
-        // todo: create some kind of message.
+      const userId = req.body.id;
+      if (!UserAuthenicationValidator.isThisAValidMongoObjectId(userId)) {
+        // TODO: create some kind of message.
         return res.status(401).json(responseMessages.generalError());
       }
-      const updatedProfile = await UsersCollection.findOneAndUpdate(
-        { _id: new ObjectId(req.body.id), username: req.body.username },
-        { $set: { isActive: true } }
-      );
+      const dataAccess = new UserAuthenicationDataAccess();
+      const updatedProfile = await dataAccess.updateUserProfileIsActive(userId);
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
         return res.status(200).json(responseMessages.userAccountActiveSuccess());
       }

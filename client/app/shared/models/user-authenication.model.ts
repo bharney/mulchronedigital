@@ -15,7 +15,6 @@ export class RegisterUser implements IUser {
   }
 }
 
-
 export class LoginUser implements IUser {
   public email;
   public password;
@@ -26,18 +25,11 @@ export class LoginUser implements IUser {
   }
 }
 
-export interface IActivateUser {
-  id: string;
-  username: string;
-}
-
-export class ActivateUser implements IActivateUser {
+export class ActivateUser {
   public id;
-  public username;
 
-  constructor(id: string, username: string) {
+  constructor(id: string) {
     this.id = id;
-    this.username = username;
   }
 }
 

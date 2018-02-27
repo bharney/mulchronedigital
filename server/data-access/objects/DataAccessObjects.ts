@@ -13,6 +13,16 @@ export class DataAccessObjects {
     });
   }
 
+  public findInactiveUserAccountByIdQuery(userId: string): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if (userId === undefined) {
+        reject(new Error("No user ID was provided at findInactiveUserAccountByIdQuery(userId: string)"));
+      }
+      const query = { _id: new ObjectId(userId), isActive: false };
+      resolve(query);
+    });
+  }
+
   public findUserByIdQueryMatchingIp(userId: string, ip: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userId === undefined) {
@@ -182,6 +192,13 @@ export class DataAccessObjects {
   public getJsonWebTokenInformationProjection() {
     return new Promise(resolve => {
       const projection = { _id: 1, username: 1, isAdmin: 1, jsonToken: 1 };
+      resolve(projection);
+    });
+  }
+
+  public updateUserProfileToActiveProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { $set: { isActive: true } };
       resolve(projection);
     });
   }

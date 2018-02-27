@@ -28,10 +28,9 @@ export class ActivateUserComponent implements OnInit {
         this.router.navigate(["../../users/register"]);
       }
       this.username = params["username"];
-      const activateUser = new ActivateUser(params["id"], params["username"]);
+      const activateUser = new ActivateUser(params["id"]);
       this.activateUserService.makeUserActive(activateUser).subscribe(response => {
         this.isActivationProcessHappening = false;
-
         console.log(response);
       }, (error) => {
         console.log(error);

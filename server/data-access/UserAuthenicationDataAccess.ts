@@ -103,4 +103,15 @@ export class UserAuthenicationDataAccess extends DataAccess {
             // TODO: log it
         }
     }
+
+    public async updateUserProfileIsActive(userId: string): Promise<any> {
+        try {
+            const query = await this.dataAccessObjects.findInactiveUserAccountByIdQuery(userId);
+            const projection = await this.dataAccessObjects.updateUserProfileToActiveProjection();
+            return await UsersCollection.findOneAndUpdate(query, projection);
+        } catch (error) {
+            console.log(error);
+            // TODO: log it
+        }
+    }
 }
