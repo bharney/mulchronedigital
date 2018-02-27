@@ -1,5 +1,6 @@
 import { UserAction, UserChangedPasswordAction, UserChangedUsernameAction, UserForgotPasswordAction, UserLoggedInAction } from "../models/UserAction";
 import { UserActionsCollection } from "../master";
+import errorLogger from "../logging/ErrorLogger";
 
 export class UserActionHelper {
     private userLoggedInActionType: string = "user_logged_in";
@@ -16,8 +17,7 @@ export class UserActionHelper {
             const userAction = new UserLoggedInAction(userId, ip, this.userLoggedInActionType);
             await this.insertUserAction(userAction);
         } catch (error) {
-            // TODO: log error
-            console.log(error);
+            errorLogger.error(error);
         }
     }
 
@@ -26,8 +26,7 @@ export class UserActionHelper {
             const userAction = new UserChangedPasswordAction(userId, ip, this.userChangedPasswordActionType, oldPassword);
             await this.insertUserAction(userAction);
         } catch (error) {
-            // TODO: log error
-            console.log(error);
+            errorLogger.error(error);
         }
     }
 
@@ -36,8 +35,7 @@ export class UserActionHelper {
             const userAction = new UserChangedUsernameAction(userId, ip, this.userChangedUsernameAction, oldUsername);
             await this.insertUserAction(userAction);
         } catch (error) {
-            // TODO: log error
-            console.log(error);
+            errorLogger.error(error);
         }
     }
 
@@ -46,8 +44,7 @@ export class UserActionHelper {
             const userAction = new UserForgotPasswordAction(userId, ip, this.userForgotPasswordAction, forgotPasswordTokenId);
             await this.insertUserAction(userAction);
         } catch (error) {
-            // TODO: log error
-            console.log(error);
+            errorLogger.error(error);
         }
     }
 
@@ -55,8 +52,7 @@ export class UserActionHelper {
         try {
             await UserActionsCollection.insertOne(action);
         } catch (error) {
-            // TODO: log error
-            console.log(error);
+            errorLogger.error(error);
         }
     }
 }
