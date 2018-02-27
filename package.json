@@ -55,6 +55,7 @@
     "socketio-sticky-session": "^0.4.2",
     "tether": "^1.4.0",
     "winston": "^2.4.0",
+    "winston-mongodb": "^4.0.0-rc1",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
@@ -75,7 +76,7 @@
     "@types/request": "^2.0.3",
     "@types/socket.io": "^1.4.30",
     "@types/tether": "^1.4.3",
-    "@types/winston": "^2.3.7",
+    "@types/winston": "^2.3.8",
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
     "codelyzer": "~4.0.0",
