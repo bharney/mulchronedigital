@@ -8,7 +8,6 @@ import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UsersCollection } from "../../cluster/master";
 import { UserIpAddress } from "../classes/UserIpAddress";
 import { HttpHelpers } from "../../globals/HttpHelpers";
-import { ObjectId } from "mongodb";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/JsonWebToken";
 import { EmailQueueExport } from "../../cluster/master";
