@@ -82,8 +82,8 @@ export class UserDashboardComponent implements OnInit {
   public navigateDashboad(event) {
     switch (event.target.id) {
       case "change-password-navlink":
-      this.router.navigate([`../../user-dashboard/user`, { id: this.id }, { outlets: { dashboard: ["changepassword"] } }]);      
-      break;
+        this.router.navigate([`../../user-dashboard/user`, { id: this.id }, { outlets: { dashboard: ["changepassword"] } }]);
+        break;
       case "change-username-navlink":
         this.router.navigate([`../../user-dashboard/user`, { id: this.id }, { outlets: { "dashboard": ["changeusername"] } }]);
         break;

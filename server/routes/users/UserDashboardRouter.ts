@@ -106,24 +106,25 @@ export class UserDashboardRouter extends BaseRouter {
   private async validateUserChangeUsername(req: Request, res: Response) {
     const responseMessages = new ResponseMessages();
     try {
-      if (!await UserAuthenicationValidator.isUserNameValid(req.body.newUsername)) {
+      const newUsername = req.body.newUsername;
+      const password = req.body.password;
+      const userId = res.locals.token.id;
+      if (!await UserAuthenicationValidator.isUserNameValid(newUsername)) {
         return res.status(422).json(responseMessages.userNameIsNotValid());
       }
-      if (!await UserAuthenicationValidator.isPasswordValid(req.body.password)) {
+      if (!await UserAuthenicationValidator.isPasswordValid(password)) {
         return res.status(422).json(responseMessages.passwordIsNotValid());
       }
-      // TODO: abstract this chunk of code, it is going to be come extremely redundant.
-      const existingUsers: User[] = await UsersCollection.find({ username: req.body.newUsername }, { "_id": 1 }).toArray();
-      if (existingUsers.length > 0) {
-        return res.status(409).json(responseMessages.usernameIsTaken(req.body.newUsername));
-      }
-      const userId = res.locals.token.id;
       const dataAccess = new UserDashboardDataAccess();
+      const existingUsers: User[] = await dataAccess.findIfUserExistsByUsername(newUsername);
+      if (existingUsers.length > 0) {
+        return res.status(409).json(responseMessages.usernameIsTaken(newUsername));
+      }
       const databaseUsers: User[] = await dataAccess.findUserPasswordAndUsernameById(userId);
       if (databaseUsers.length <= 0) {
         return res.status(422).json(responseMessages.noUserFound());
       }
-      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.password, databaseUsers[0].password)) {
+      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(password, databaseUsers[0].password)) {
         return res.status(401).json(responseMessages.passwordsDoNotMatch());
       }
       const oldUsername = databaseUsers[0].username;
