@@ -55,7 +55,7 @@
     "socketio-sticky-session": "^0.4.2",
     "tether": "^1.4.0",
     "winston": "^2.4.0",
-    "winston-mongodb": "^4.0.0-rc1",
+    "winston-mongodb": "^3.0.0",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
