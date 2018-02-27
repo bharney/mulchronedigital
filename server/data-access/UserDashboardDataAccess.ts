@@ -2,6 +2,7 @@ import { DataAccess } from "./classes/DataAccess";
 import { DataAccessObjects } from "./objects/DataAccessObjects";
 import { UsersCollection } from "../master";
 import { User } from "../models/user";
+import errorLogger from "../logging/ErrorLogger";
 
 export class UserDashboardDataAccess extends DataAccess {
   public static async getUserDashboardInformation(userId: string): Promise<User[]> {
@@ -12,7 +13,7 @@ export class UserDashboardDataAccess extends DataAccess {
       // return only the username for the time being, omit the userid
       return await UsersCollection.find(query, projection).toArray();
     } catch (error) {
-      // TODO: log error
+      errorLogger.error(error);
       return [];
     }
   }
@@ -23,7 +24,7 @@ export class UserDashboardDataAccess extends DataAccess {
       const projection = await DataAccessObjects.usernamePasswordAndIdProjection();
       return await UsersCollection.find(query, projection).toArray();
     } catch (error) {
-      // TODO: log error
+      errorLogger.error(error);
       return [];
     }
   }
@@ -37,7 +38,7 @@ export class UserDashboardDataAccess extends DataAccess {
       const projection = await DataAccessObjects.updateUserPasswordProjection(user.password, user.modifiedAt);
       return await UsersCollection.updateOne(query, projection);
     } catch (error) {
-      // TODO: log error;
+      errorLogger.error(error);
       console.log(error);
     }
   }
@@ -48,7 +49,7 @@ export class UserDashboardDataAccess extends DataAccess {
       const projection = await DataAccessObjects.userLoginProjection();
       return await UsersCollection.find(query, projection).toArray();
     } catch (error) {
-      // TODO: log error;
+      errorLogger.error(error);
       console.log(error);
     }
   }
@@ -59,8 +60,8 @@ export class UserDashboardDataAccess extends DataAccess {
       const projection = await DataAccessObjects.userPasswordAndUsernameProjection();
       return await UsersCollection.find(query, projection).toArray();
     } catch (error) {
-      console.log(error);
-      // TODO: log it.
+      errorLogger.error(error);
+      return [];
     }
   }
 
@@ -70,8 +71,7 @@ export class UserDashboardDataAccess extends DataAccess {
       const projection = await DataAccessObjects.changeUsernameProjection(user);
       return UsersCollection.updateOne(query, projection);
     } catch (error) {
-      console.log(error);
-      // TODO: log it.
+      errorLogger.error(error);
     }
   }
 
@@ -81,8 +81,7 @@ export class UserDashboardDataAccess extends DataAccess {
       const projection = await DataAccessObjects.getProfileImageProjection();
       return UsersCollection.findOne(query, projection);
     } catch (error) {
-      console.log(error);
-      // TODO: log it.
+      errorLogger.error(error);
     }
   }
 
@@ -92,8 +91,7 @@ export class UserDashboardDataAccess extends DataAccess {
       const projection = await DataAccessObjects.updateIpAddressLatitudeAndLongitude(latitude, longitude);
       return await UsersCollection.findOneAndUpdate(query, projection);
     } catch (error) {
-      console.log(error);
-      // TODO: log it.
+      errorLogger.error(error);
     }
   }
 
@@ -103,8 +101,7 @@ export class UserDashboardDataAccess extends DataAccess {
       const projection = await DataAccessObjects.updateUserProfileImageProjection(image);
       return await UsersCollection.findOneAndUpdate(query, projection);
     } catch (error) {
-      console.log(error);
-      // TODO: log it.
+      errorLogger.error(error);
     }
   }
 }
