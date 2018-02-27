@@ -54,8 +54,7 @@ export class UserDashboardRouter extends BaseRouter {
 
   private async getUserInformation(req: Request, res: Response) {
     try {
-      const userdashboardDataAccess = new UserDashboardDataAccess();
-      const databaseUsers: User[] = await userdashboardDataAccess.getUserDashboardInformation(res.locals.token.id);
+      const databaseUsers: User[] = await UserDashboardDataAccess.getUserDashboardInformation(res.locals.token.id);
       if (databaseUsers.length <= 0) {
         return res.status(503).json(ResponseMessages.generalError());
       }
@@ -74,8 +73,7 @@ export class UserDashboardRouter extends BaseRouter {
         return res.status(422).json(ResponseMessages.passwordIsNotValid());
       }
       // TODO: abstract this chunk of code, it is going to be come extremely redundant.
-      const userdashboardDataAccess = new UserDashboardDataAccess();
-      const databaseUsers: User[] = await userdashboardDataAccess.getUserPassword(res.locals.token.id);
+      const databaseUsers: User[] = await UserDashboardDataAccess.getUserPassword(res.locals.token.id);
       if (databaseUsers.length <= 0) {
         return res.status(422).json(ResponseMessages.noUserFound());
       }
@@ -83,7 +81,7 @@ export class UserDashboardRouter extends BaseRouter {
         return res.status(401).json(ResponseMessages.passwordsDoNotMatch());
       }
       const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
-      const updatePasswordResult = await userdashboardDataAccess.updateUserPassword(databaseUsers[0]._id, user);
+      const updatePasswordResult = await UserDashboardDataAccess.updateUserPassword(databaseUsers[0]._id, user);
       if (updatePasswordResult.modifiedCount === 1) {
         res.status(200).json(ResponseMessages.userChangedPasswordSuccessfully());
         const httpHelpers = new HttpHelpers();
@@ -110,13 +108,12 @@ export class UserDashboardRouter extends BaseRouter {
       }
       if (!await UserAuthenicationValidator.isPasswordValid(password)) {
         return res.status(422).json(ResponseMessages.passwordIsNotValid());
-      }
-      const dataAccess = new UserDashboardDataAccess();
-      const existingUsers: User[] = await dataAccess.findIfUserExistsByUsername(newUsername);
+      }      
+      const existingUsers: User[] = await UserDashboardDataAccess.findIfUserExistsByUsername(newUsername);
       if (existingUsers.length > 0) {
         return res.status(409).json(ResponseMessages.usernameIsTaken(newUsername));
       }
-      const databaseUsers: User[] = await dataAccess.findUserPasswordAndUsernameById(userId);
+      const databaseUsers: User[] = await UserDashboardDataAccess.findUserPasswordAndUsernameById(userId);
       if (databaseUsers.length <= 0) {
         return res.status(422).json(ResponseMessages.noUserFound());
       }
@@ -125,7 +122,7 @@ export class UserDashboardRouter extends BaseRouter {
       }
       const oldUsername = databaseUsers[0].username;
       const user = new User(req.body.newUsername);
-      const updateResult = await dataAccess.modifiyUsernameByUserId(userId, user);
+      const updateResult = await UserDashboardDataAccess.modifiyUsernameByUserId(userId, user);
       if (updateResult.modifiedCount === 1) {
         res.status(200).json(ResponseMessages.usernameChangeSuccessful(user.username));
         const httpHelpers = new HttpHelpers();
@@ -166,8 +163,7 @@ export class UserDashboardRouter extends BaseRouter {
       const imageType = imageTypeArray[1];
       for (let i = 0; i < imageFileExtensions.length; i++) {
         if (imageType === imageFileExtensions[i]) {
-          const dataAccess = new UserDashboardDataAccess();
-          const user: User = await dataAccess.getUserProfileImageInformationByUserId(res.locals.token.id);
+          const user: User = await UserDashboardDataAccess.getUserProfileImageInformationByUserId(res.locals.token.id);
           const cloudinary = new Cloudinary();
           const profileImage = await cloudinary.uploadCloudinaryImage(res.locals.image.buffer);
           if (profileImage) {
@@ -192,8 +188,7 @@ export class UserDashboardRouter extends BaseRouter {
 
   private async storeUploadedImageInDatabase(req: Request, res: Response) {
     try {
-      const dataAccess = new UserDashboardDataAccess();
-      const updatedProfile = await dataAccess.updateUserProfileImage(res.locals.token.id, res.locals.image);
+      const updatedProfile = await UserDashboardDataAccess.updateUserProfileImage(res.locals.token.id, res.locals.image);
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
         return res.status(200).json(ResponseMessages.changeProfilePictureSuccessful());
       } else {
@@ -215,8 +210,7 @@ export class UserDashboardRouter extends BaseRouter {
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const userId = res.locals.token.id;
-      const dataAccess = new UserDashboardDataAccess();
-      const updatedProfile = await dataAccess.updateUserLocationForIpAddress(userId, ip, latitude, longitude);
+      const updatedProfile = await UserDashboardDataAccess.updateUserLocationForIpAddress(userId, ip, latitude, longitude);
       if (updatedProfile.lastErrorObject.n === 1) {
         return res.status(200);
       } else {

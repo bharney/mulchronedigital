@@ -4,26 +4,23 @@ import { UsersCollection } from "../cluster/master";
 import { DataAccess } from "../data-access/classes/DataAccess";
 import { ForgotPasswordCollection } from "../cluster/master";
 import { ForgotPasswordToken } from "../models/ForgotPasswordToken";
-import { ObjectId } from "mongodb";
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
 
 export class UserAuthenicationDataAccess extends DataAccess {
-    private passwordResetTokens: ForgotPasswordToken[];
 
-    public async userForgotPasswordFindUserByEmail(email: string): Promise<User[]> {
+    public static async userForgotPasswordFindUserByEmail(email: string): Promise<User[]> {
         try {
-            const query = await this.dataAccessObjects.findUserByEmailAndIsActiveQuery(email);
-            const projection = await this.dataAccessObjects.userObjectIdProjection();
-            this.usersArray = await UsersCollection.find(query, projection).toArray();
-            return this.usersArray;
+            const query = await DataAccessObjects.findUserByEmailAndIsActiveQuery(email);
+            const projection = await DataAccessObjects.userObjectIdProjection();
+            return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             console.log(error);
             // TODO: log error
-            return this.usersArray;
+            return [];
         }
     }
 
-    public async insertForgotPasswordToken(token: ForgotPasswordToken): Promise<string> {
+    public static async insertForgotPasswordToken(token: ForgotPasswordToken): Promise<string> {
         try {
             const insert = await ForgotPasswordCollection.insertOne(token);
             if (insert.result.ok === 1 && insert.result.n === 1) {
@@ -36,56 +33,55 @@ export class UserAuthenicationDataAccess extends DataAccess {
         }
     }
 
-    public async checkForRecentForgotPasswordTokens(userId: string): Promise<ForgotPasswordToken[]> {
+    public static async checkForRecentForgotPasswordTokens(userId: string): Promise<ForgotPasswordToken[]> {
         try {
-            const query = await this.dataAccessObjects.findRecentForgotPasswordTokenById(userId);
-            const projection = await this.dataAccessObjects.forgotPasswordTokenIdProjection();
-            this.passwordResetTokens = await ForgotPasswordCollection.find(query, projection).toArray();
-            return this.passwordResetTokens;
+            const query = await DataAccessObjects.findRecentForgotPasswordTokenById(userId);
+            const projection = await DataAccessObjects.forgotPasswordTokenIdProjection();
+            return await ForgotPasswordCollection.find(query, projection).toArray();
         } catch (error) {
             console.log(error);
-            return this.passwordResetTokens;
+            return [];
         }
     }
 
-    public async getJSONWebTokenOfActiveUserByUserId(userId: string): Promise<User[]> {
+    public static async getJSONWebTokenOfActiveUserByUserId(userId: string): Promise<User[]> {
         try {
-            const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-            const projection = await this.dataAccessObjects.jsonWebTokenThatIsActiveProjection();
+            const query = await DataAccessObjects.findUserByIdQuery(userId);
+            const projection = await DataAccessObjects.jsonWebTokenThatIsActiveProjection();
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             console.log(error);
-            return this.usersArray;
+            return [];
         }
     }
 
-    public async findIfUserExistsByEmail(userEmail: string): Promise<User[]> {
+    public static async findIfUserExistsByEmail(userEmail: string): Promise<User[]> {
         try {
-            const query = await this.dataAccessObjects.findUserByEmailQuery(userEmail);
-            const projection = await this.dataAccessObjects.userObjectIdProjection();
+            const query = await DataAccessObjects.findUserByEmailQuery(userEmail);
+            const projection = await DataAccessObjects.userObjectIdProjection();
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             console.log(error);
-            return this.usersArray;
+            return [];
         }
     }
 
-    public async findMatchingIpAddressbyUserId(userId: string, ip: string): Promise<User[]> {
+    public static async findMatchingIpAddressbyUserId(userId: string, ip: string): Promise<User[]> {
         try {
-            const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-            const projection = await this.dataAccessObjects.userIpAddressMatch(ip);
+            const query = await DataAccessObjects.findUserByIdQuery(userId);
+            const projection = await DataAccessObjects.userIpAddressMatch(ip);
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             console.log(error);
-            return this.usersArray;
+            return [];
         }
     }
 
-    public async updateUserProfileIpAddresses(userId: string, ipAddressObject: UserIpAddress): Promise<any> {
+    public static async updateUserProfileIpAddresses(userId: string, ipAddressObject: UserIpAddress): Promise<any> {
         try {
-            const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-            const projection = await this.dataAccessObjects.addIpAddressToIpAddressArray(ipAddressObject);
-            const newObject = await this.dataAccessObjects.newDocument(true);
+            const query = await DataAccessObjects.findUserByIdQuery(userId);
+            const projection = await DataAccessObjects.addIpAddressToIpAddressArray(ipAddressObject);
+            const newObject = await DataAccessObjects.newDocument(true);
             await UsersCollection.findOneAndUpdate(query, projection, newObject);
         } catch (error) {
             console.log(error);
@@ -93,10 +89,10 @@ export class UserAuthenicationDataAccess extends DataAccess {
         }
     }
 
-    public async findUserJsonWebTokenRefreshInformationById(userId: string): Promise<User[]> {
+    public static async findUserJsonWebTokenRefreshInformationById(userId: string): Promise<User[]> {
         try {
-            const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-            const projection = await this.dataAccessObjects.getJsonWebTokenInformationProjection();
+            const query = await DataAccessObjects.findUserByIdQuery(userId);
+            const projection = await DataAccessObjects.getJsonWebTokenInformationProjection();
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             console.log(error);
@@ -104,10 +100,10 @@ export class UserAuthenicationDataAccess extends DataAccess {
         }
     }
 
-    public async updateUserProfileIsActive(userId: string): Promise<any> {
+    public static async updateUserProfileIsActive(userId: string): Promise<any> {
         try {
-            const query = await this.dataAccessObjects.findInactiveUserAccountByIdQuery(userId);
-            const projection = await this.dataAccessObjects.updateUserProfileToActiveProjection();
+            const query = await DataAccessObjects.findInactiveUserAccountByIdQuery(userId);
+            const projection = await DataAccessObjects.updateUserProfileToActiveProjection();
             return await UsersCollection.findOneAndUpdate(query, projection);
         } catch (error) {
             console.log(error);
@@ -115,7 +111,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
         }
     }
 
-    public async insertNewUser(newUser: User): Promise<any> {
+    public static async insertNewUser(newUser: User): Promise<any> {
         try {
             return await await UsersCollection.insertOne(newUser);
         } catch (error) {

@@ -3,7 +3,7 @@ import { User } from "../../models/user";
 import { UserIpAddress } from "../../routes/classes/UserIpAddress";
 
 export class DataAccessObjects {
-  public findUserByIdQuery(userId: string): Promise<object> {
+  public static findUserByIdQuery(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userId === undefined) {
         reject(new Error("No user ID was provided at findUserByIdQuery(userId: string)"));
@@ -13,7 +13,7 @@ export class DataAccessObjects {
     });
   }
 
-  public findInactiveUserAccountByIdQuery(userId: string): Promise<object> {
+  public static findInactiveUserAccountByIdQuery(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userId === undefined) {
         reject(new Error("No user ID was provided at findInactiveUserAccountByIdQuery(userId: string)"));
@@ -23,7 +23,7 @@ export class DataAccessObjects {
     });
   }
 
-  public findUserByIdQueryMatchingIp(userId: string, ip: string): Promise<object> {
+  public static findUserByIdQueryMatchingIp(userId: string, ip: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userId === undefined) {
         reject(new Error("No user ID was provided at findUserIpAdressObject(userId: string, ip: string)"));
@@ -36,7 +36,7 @@ export class DataAccessObjects {
     });
   }
 
-  public findUserByUsernameQuery(userName: string): Promise<object> {
+  public static findUserByUsernameQuery(userName: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userName === undefined) {
         reject(new Error("No username was provided at find findUserByUsernameQuery(userName)"));
@@ -46,7 +46,7 @@ export class DataAccessObjects {
     });
   }
 
-  public findUserByEmailQuery(userEmail: string): Promise<object> {
+  public static findUserByEmailQuery(userEmail: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userEmail === undefined) {
         resolve(new Error("No email address was provided at findUserByEmailQuery(userEmail: string)"));
@@ -56,7 +56,7 @@ export class DataAccessObjects {
     });
   }
 
-  public findUserByEmailAndIsActiveQuery(email: string): Promise<object> {
+  public static findUserByEmailAndIsActiveQuery(email: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (email === undefined) {
         reject(new Error("No user email was proviarted at findUserByEmailQuery(email: string)"));
@@ -66,35 +66,35 @@ export class DataAccessObjects {
     });
   }
 
-  public usernameAndProfileImageProjection(): Promise<object> {
+  public static usernameAndProfileImageProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { username: 1, "profileImage.secure_url": 1, _id: 0 };
       resolve(projection);
     });
   }
 
-  public userObjectIdProjection(): Promise<object> {
+  public static userObjectIdProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { _id: 1 };
       resolve(projection);
     });
   }
 
-  public usernamePasswordAndIdProjection(): Promise<object> {
+  public static usernamePasswordAndIdProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { password: 1, _id: 1 };
       resolve(projection);
     });
   }
 
-  public userLoginProjection(): Promise<object> {
+  public static userLoginProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { _id: 1, password: 1, username: 1, isAdmin: 1, isActive: 1, publicKeyPairOne: 1, privateKeyPairTwo: 1 };
       resolve(projection);
     });
   }
 
-  public updateUserPasswordProjection(password: string, modifiedAt: Date) {
+  public static updateUserPasswordProjection(password: string, modifiedAt: Date) {
     return new Promise((resolve, reject) => {
       if (password === undefined) {
         reject(new Error("No user modal was provided at updateUserPasswordProjection(user: User"));
@@ -108,7 +108,7 @@ export class DataAccessObjects {
     });
   }
 
-  public findRecentForgotPasswordTokenById(userId: string): Promise<object> {
+  public static findRecentForgotPasswordTokenById(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userId === undefined) {
         reject(new Error("No userId was provided at findRecentForgotPasswordTokenById(userId: ObjectId"));
@@ -119,84 +119,84 @@ export class DataAccessObjects {
     });
   }
 
-  public forgotPasswordTokenIdProjection(): Promise<object> {
+  public static forgotPasswordTokenIdProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { _id: 1 };
       resolve(projection);
     });
   }
 
-  public jsonWebTokenThatIsActiveProjection(): Promise<object> {
+  public static jsonWebTokenThatIsActiveProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { jsonToken: 1, isActive: 1 };
       resolve(projection);
     });
   }
 
-  public userIpAddressMatch(ip: string): Promise<object> {
+  public static userIpAddressMatch(ip: string): Promise<object> {
     return new Promise(resolve => {
       const projection = { ipAddresses: { $elemMatch: { ipAddress: ip } } };
       resolve(projection);
     });
   }
 
-  public addIpAddressToIpAddressArray(ipAddressObject: UserIpAddress): Promise<object> {
+  public static addIpAddressToIpAddressArray(ipAddressObject: UserIpAddress): Promise<object> {
     return new Promise(resolve => {
       const projection = { $push: { "ipAddresses": ipAddressObject } };
       resolve(projection);
     });
   }
 
-  public newDocument(newDocumentValue: boolean): Promise<object> {
+  public static newDocument(newDocumentValue: boolean): Promise<object> {
     return new Promise(resolve => {
       const newDocument = { new: newDocumentValue };
       resolve(newDocument);
     });
   }
 
-  public userPasswordAndUsernameProjection(): Promise<object> {
+  public static userPasswordAndUsernameProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { _id: 0, password: 1, username: 1 };
       resolve(projection);
     });
   }
 
-  public changeUsernameProjection(user: User): Promise<object> {
+  public static changeUsernameProjection(user: User): Promise<object> {
     return new Promise(resolve => {
       const projection = { $set: { username: user.username, modifiedAt: user.modifiedAt } };
       resolve(projection);
     });
   }
 
-  public getProfileImageProjection(): Promise<object> {
+  public static getProfileImageProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { "_id": 1, "profileImage.secure_url": 1, "profileImage.public_id": 1 };
       resolve(projection);
     });
   }
 
-  public updateIpAddressLatitudeAndLongitude(latitude: number, longitude: number): Promise<object> {
+  public static updateIpAddressLatitudeAndLongitude(latitude: number, longitude: number): Promise<object> {
     return new Promise(resolve => {
       const projection = { $set: { "ipAddresses.$.latitude": latitude, "ipAddresses.$.longitude": longitude } };
       resolve(projection);
     });
   }
 
-  public updateUserProfileImageProjection(image: object): Promise<object> {
+  public static updateUserProfileImageProjection(image: object): Promise<object> {
     return new Promise(resolve => {
       const projection = { $set: { profileImage: image } };
       resolve(projection);
     });
   }
 
-  public getJsonWebTokenInformationProjection() {
+  public static getJsonWebTokenInformationProjection() {
     return new Promise(resolve => {
       const projection = { _id: 1, username: 1, isAdmin: 1, jsonToken: 1 };
       resolve(projection);
     });
   }
 
-  public updateUserProfileToActiveProjection(): Promise<object> {
+  public static updateUserProfileToActiveProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { $set: { isActive: true } };
       resolve(projection);

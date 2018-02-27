@@ -63,12 +63,11 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private async doesUsernameOrEmailExistAlready(req: Request, res: Response, next: NextFunction) {
     try {
-      const dataAcess = new UserAuthenicationDataAccess();
-      const databaseUser: User[] = await dataAcess.findIfUserExistsByUsername(req.body.username);
+      const databaseUser: User[] = await UserAuthenicationDataAccess.findIfUserExistsByUsername(req.body.username);
       if (databaseUser.length > 0) {
         return res.status(409).json(ResponseMessages.usernameIsTaken(req.body.username));
       }
-      const databaseEmail: User[] = await dataAcess.findIfUserExistsByEmail(req.body.email);
+      const databaseEmail: User[] = await UserAuthenicationDataAccess.findIfUserExistsByEmail(req.body.email);
       if (databaseEmail.length > 0) {
         return res.status(409).json(ResponseMessages.emailIsTaken(req.body.email));
       }
@@ -87,8 +86,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       const newUser = new User(req.body.username, req.body.email, req.body.password, ipAddressObject);
       // TODO: split this up into seperate functions. little messy;
       if (await newUser.SetupNewUser()) {
-        const dataAccess = new UserAuthenicationDataAccess();
-        const insertResult = await dataAccess.insertNewUser(newUser);
+        const insertResult = await UserAuthenicationDataAccess.insertNewUser(newUser);
         if (insertResult.result.n === 1) {
           res.status(200).json(ResponseMessages.userRegistrationSuccessful(req.body.username, req.body.email));
           EmailQueueExport.sendUserActivationEmailToQueue(newUser);
@@ -114,8 +112,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isPasswordValid(userPassword)) {
         return res.status(401).json(ResponseMessages.passwordIsNotValid());
       }
-      const userdashboardDataAccess = new UserDashboardDataAccess();
-      const databaseUsers: User[] = await userdashboardDataAccess.findUserLoginDetailsByEmail(userEmail);
+      const databaseUsers: User[] = await UserDashboardDataAccess.findUserLoginDetailsByEmail(userEmail);
       // should only be one user with this email
       if (databaseUsers.length === 1) {
         if (!databaseUsers[0].isActive) {
@@ -129,12 +126,11 @@ export class UserAuthenicationRouter extends BaseRouter {
           const userId = databaseUsers[0]._id;
           const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
           const ipAddressObject = new UserIpAddress(ip);
-          const dataAccess = new UserAuthenicationDataAccess();
-          const matchingUserIpAddresses = await dataAccess.findMatchingIpAddressbyUserId(userId, ip);
+          const matchingUserIpAddresses = await UserAuthenicationDataAccess.findMatchingIpAddressbyUserId(userId, ip);
           if (matchingUserIpAddresses[0].ipAddresses === undefined) {
             // TODO: we are now associating a new or unknown IP address to the user.
             // we probably dont have to await this, but here is where we can pass something out to RabbitMQ... maybe????
-            await dataAccess.updateUserProfileIpAddresses(userId, ipAddressObject);
+            await UserAuthenicationDataAccess.updateUserProfileIpAddresses(userId, ipAddressObject);
           }
           const userActions = new UserActionHelper();
           await userActions.userLoggedIn(userId, ip);
@@ -155,8 +151,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (token === null) {
         return res.status(401).json(ResponseMessages.noJsonWebTokenInHeader());
       }
-      const dataAccess = new UserAuthenicationDataAccess();
-      const databaseUsers: User[] = await dataAccess.findUserJsonWebTokenRefreshInformationById(token.id);
+      const databaseUsers: User[] = await UserAuthenicationDataAccess.findUserJsonWebTokenRefreshInformationById(token.id);
       if (databaseUsers.length <= 0) {
         return res.status(401).json(ResponseMessages.noUserFound());
       }
@@ -179,8 +174,7 @@ export class UserAuthenicationRouter extends BaseRouter {
         // TODO: create some kind of message.
         return res.status(401).json(ResponseMessages.generalError());
       }
-      const dataAccess = new UserAuthenicationDataAccess();
-      const updatedProfile = await dataAccess.updateUserProfileIsActive(userId);
+      const updatedProfile = await UserAuthenicationDataAccess.updateUserProfileIsActive(userId);
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
         return res.status(200).json(ResponseMessages.userAccountActiveSuccess());
       }
@@ -197,20 +191,19 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isEmailValid(req.body.email)) {
         return res.status(422).json(ResponseMessages.emailIsNotValid());
       }
-      const userAuthDataAccess = new UserAuthenicationDataAccess();
-      const databaseUsers: User[] = await userAuthDataAccess.userForgotPasswordFindUserByEmail(req.body.email);
+      const databaseUsers: User[] = await UserAuthenicationDataAccess.userForgotPasswordFindUserByEmail(req.body.email);
       if (databaseUsers.length <= 0) {
         return res.status(401).json(ResponseMessages.noUserFoundThatIsActive());
       }
       const userId = databaseUsers[0]._id;
-      const resetPasswordTokens: ForgotPasswordToken[] = await userAuthDataAccess.checkForRecentForgotPasswordTokens(userId);
+      const resetPasswordTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.checkForRecentForgotPasswordTokens(userId);
       if (resetPasswordTokens.length > 0) {
         return res.status(429).json(ResponseMessages.tooManyForgotPasswordRequests());
       }
       const forgotPasswordToken = new ForgotPasswordToken(userId);
       const newPassword = Math.random().toString(36).slice(-12);
       await forgotPasswordToken.securePassword(newPassword);
-      const tokenId = await userAuthDataAccess.insertForgotPasswordToken(forgotPasswordToken);
+      const tokenId = await UserAuthenicationDataAccess.insertForgotPasswordToken(forgotPasswordToken);
       if (tokenId.length === 0) {
         return res.status(503).json(ResponseMessages.generalError());
       }

@@ -4,39 +4,37 @@ import { UsersCollection } from "../cluster/master";
 import { User } from "../models/user";
 
 export class UserDashboardDataAccess extends DataAccess {
-  public async getUserDashboardInformation(userId: string): Promise<User[]> {
+  public static async getUserDashboardInformation(userId: string): Promise<User[]> {
     try {
-      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-      const projection = await this.dataAccessObjects.usernameAndProfileImageProjection();
+      const query = await DataAccessObjects.findUserByIdQuery(userId);
+      const projection = await DataAccessObjects.usernameAndProfileImageProjection();
       // TODO: why does this have to be to return as an array?
       // return only the username for the time being, omit the userid
-      this.usersArray = await UsersCollection.find(query, projection).toArray();
-      return this.usersArray;
+      return await UsersCollection.find(query, projection).toArray();
     } catch (error) {
       // TODO: log error
-      return this.usersArray;
+      return [];
     }
   }
 
-  public async getUserPassword(userId: string): Promise<User[]> {
+  public static async getUserPassword(userId: string): Promise<User[]> {
     try {
-      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-      const projection = await this.dataAccessObjects.usernamePasswordAndIdProjection();
-      this.usersArray = await UsersCollection.find(query, projection).toArray();
-      return this.usersArray;
+      const query = await DataAccessObjects.findUserByIdQuery(userId);
+      const projection = await DataAccessObjects.usernamePasswordAndIdProjection();
+      return await UsersCollection.find(query, projection).toArray();
     } catch (error) {
       // TODO: log error
-      return this.usersArray;
+      return [];
     }
   }
 
-  public async updateUserPassword(userId: string, user: User): Promise<any> {
+  public static async updateUserPassword(userId: string, user: User): Promise<any> {
     try {
       if (!await user.updateUserPassword()) {
         throw new Error("new password failed at updateUserPassword(user: User)");
       }
-      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-      const projection = await this.dataAccessObjects.updateUserPasswordProjection(user.password, user.modifiedAt);
+      const query = await DataAccessObjects.findUserByIdQuery(userId);
+      const projection = await DataAccessObjects.updateUserPasswordProjection(user.password, user.modifiedAt);
       return await UsersCollection.updateOne(query, projection);
     } catch (error) {
       // TODO: log error;
@@ -44,10 +42,10 @@ export class UserDashboardDataAccess extends DataAccess {
     }
   }
 
-  public async findUserLoginDetailsByEmail(userEmail: string) {
+  public static async findUserLoginDetailsByEmail(userEmail: string) {
     try {
-      const query = await this.dataAccessObjects.findUserByEmailAndIsActiveQuery(userEmail);
-      const projection = await this.dataAccessObjects.userLoginProjection();
+      const query = await DataAccessObjects.findUserByEmailAndIsActiveQuery(userEmail);
+      const projection = await DataAccessObjects.userLoginProjection();
       return await UsersCollection.find(query, projection).toArray();
     } catch (error) {
       // TODO: log error;
@@ -55,10 +53,10 @@ export class UserDashboardDataAccess extends DataAccess {
     }
   }
 
-  public async findUserPasswordAndUsernameById(userId: string): Promise<User[]> {
+  public static async findUserPasswordAndUsernameById(userId: string): Promise<User[]> {
     try {
-      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-      const projection = await this.dataAccessObjects.userPasswordAndUsernameProjection();
+      const query = await DataAccessObjects.findUserByIdQuery(userId);
+      const projection = await DataAccessObjects.userPasswordAndUsernameProjection();
       return await UsersCollection.find(query, projection).toArray();
     } catch (error) {
       console.log(error);
@@ -66,10 +64,10 @@ export class UserDashboardDataAccess extends DataAccess {
     }
   }
 
-  public async modifiyUsernameByUserId(userId: string, user: User): Promise<any> {
+  public static async modifiyUsernameByUserId(userId: string, user: User): Promise<any> {
     try {
-      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-      const projection = await this.dataAccessObjects.changeUsernameProjection(user);
+      const query = await DataAccessObjects.findUserByIdQuery(userId);
+      const projection = await DataAccessObjects.changeUsernameProjection(user);
       return UsersCollection.updateOne(query, projection);
     } catch (error) {
       console.log(error);
@@ -77,10 +75,10 @@ export class UserDashboardDataAccess extends DataAccess {
     }
   }
 
-  public async getUserProfileImageInformationByUserId(userId: string): Promise<User> {
+  public static async getUserProfileImageInformationByUserId(userId: string): Promise<User> {
     try {
-      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-      const projection = await this.dataAccessObjects.getProfileImageProjection();
+      const query = await DataAccessObjects.findUserByIdQuery(userId);
+      const projection = await DataAccessObjects.getProfileImageProjection();
       return UsersCollection.findOne(query, projection);
     } catch (error) {
       console.log(error);
@@ -88,10 +86,10 @@ export class UserDashboardDataAccess extends DataAccess {
     }
   }
 
-  public async updateUserLocationForIpAddress(userId: string, ip: string, latitude: number, longitude: number): Promise<any> {
+  public static async updateUserLocationForIpAddress(userId: string, ip: string, latitude: number, longitude: number): Promise<any> {
     try {
-      const query = await this.dataAccessObjects.findUserByIdQueryMatchingIp(userId, ip);
-      const projection = await this.dataAccessObjects.updateIpAddressLatitudeAndLongitude(latitude, longitude);
+      const query = await DataAccessObjects.findUserByIdQueryMatchingIp(userId, ip);
+      const projection = await DataAccessObjects.updateIpAddressLatitudeAndLongitude(latitude, longitude);
       return await UsersCollection.findOneAndUpdate(query, projection);
     } catch (error) {
       console.log(error);
@@ -99,10 +97,10 @@ export class UserDashboardDataAccess extends DataAccess {
     }
   }
 
-  public async updateUserProfileImage(userId: string, image: object): Promise<any> {
+  public static async updateUserProfileImage(userId: string, image: object): Promise<any> {
     try {
-      const query = await this.dataAccessObjects.findUserByIdQuery(userId);
-      const projection = await this.dataAccessObjects.updateUserProfileImageProjection(image);
+      const query = await DataAccessObjects.findUserByIdQuery(userId);
+      const projection = await DataAccessObjects.updateUserProfileImageProjection(image);
       return await UsersCollection.findOneAndUpdate(query, projection);
     } catch (error) {
       console.log(error);
