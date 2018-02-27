@@ -41,7 +41,6 @@ export class UserAuthenicationRouter extends BaseRouter {
     this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
 
     this.router.patch("/activateuser", this.validateActivateUser);
-
     // Forgot password
     this.router.patch("/forgotpassword", this.validateUserForgotPassword);
   }
@@ -189,9 +188,11 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       const dataAccess = new UserAuthenicationDataAccess();
       const updatedProfile = await dataAccess.updateUserProfileIsActive(userId);
+      console.log(updatedProfile);
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
         return res.status(200).json(responseMessages.userAccountActiveSuccess());
       }
+      return res.status(401).json(responseMessages.generalError());
     } catch (error) {
       // TODO: log error with winston
       console.log(error);

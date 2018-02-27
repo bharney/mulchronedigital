@@ -13,6 +13,7 @@ import { GoogleAnalytics } from "../../../shared/services/google-analytics.servi
 })
 export class ActivateUserComponent implements OnInit {
   public isActivationProcessHappening: boolean = true;
+  public activationSuccessful: boolean = false;
   public username: string;
 
   constructor(
@@ -31,9 +32,10 @@ export class ActivateUserComponent implements OnInit {
       const activateUser = new ActivateUser(params["id"]);
       this.activateUserService.makeUserActive(activateUser).subscribe(response => {
         this.isActivationProcessHappening = false;
-        console.log(response);
+        this.activationSuccessful = true;
       }, (error) => {
-        console.log(error);
+        this.isActivationProcessHappening = false;
+        this.activationSuccessful = false;
       });
     });
   }
