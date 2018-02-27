@@ -16,7 +16,6 @@ import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenication
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";
 import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
-import { DataAccess } from "../../data-access/classes/DataAccess";
 
 export class UserAuthenicationRouter extends BaseRouter {
   public router: Router;
@@ -163,7 +162,8 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (token === null) {
         return res.status(401).json(responseMessages.noJsonWebTokenInHeader());
       }
-      const databaseUsers: User[] = await UsersCollection.find({ _id: new ObjectId(token.id) }, { _id: 1, username: 1, isAdmin: 1, jsonToken: 1 }).toArray();
+      const dataAccess = new UserAuthenicationDataAccess();
+      const databaseUsers: User[] = await dataAccess.findUserJsonWebTokenRefreshInformationById(token.id);
       if (databaseUsers.length <= 0) {
         return res.status(401).json(responseMessages.noUserFound());
       }

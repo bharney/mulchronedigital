@@ -178,4 +178,11 @@ export class DataAccessObjects {
       resolve(projection);
     });
   }
+
+  public getJsonWebTokenInformationProjection() {
+    return new Promise(resolve => {
+      const projection = { _id: 1, username: 1, isAdmin: 1, jsonToken: 1 };
+      resolve(projection);
+    });
+  }
 }
