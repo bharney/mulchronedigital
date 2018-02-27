@@ -11,7 +11,6 @@ import { ObjectId } from "mongodb";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
-import { UsersCollection } from "../../cluster/master";
 import { Cloudinary } from "../../apis/Cloudinary";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 const parseFile = multer({
