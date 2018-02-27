@@ -188,7 +188,6 @@ export class UserAuthenicationRouter extends BaseRouter {
       }
       const dataAccess = new UserAuthenicationDataAccess();
       const updatedProfile = await dataAccess.updateUserProfileIsActive(userId);
-      console.log(updatedProfile);
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
         return res.status(200).json(responseMessages.userAccountActiveSuccess());
       }
