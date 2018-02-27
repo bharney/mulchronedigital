@@ -1,7 +1,7 @@
 const winston = require("winston");
 const MongoDB = require("winston-mongodb").MongoDB;
 
-const ErrorLogger = new (winston.Logger)({
+const errorLogger = new (winston.Logger)({
     level: "error",
     transports: [
         new (winston.transports.MongoDB)({
@@ -14,4 +14,4 @@ const ErrorLogger = new (winston.Logger)({
     ]
 });
 
-export default ErrorLogger;
+export default errorLogger;
