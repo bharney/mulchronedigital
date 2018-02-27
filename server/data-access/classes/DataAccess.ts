@@ -1,6 +1,7 @@
 import { User } from "../../models/user";
 import { DataAccessObjects } from "../objects/DataAccessObjects";
 import { UsersCollection } from "../../master";
+import errorLogger from "../../logging/ErrorLogger";
 
 export class DataAccess {
 
@@ -10,8 +11,7 @@ export class DataAccess {
             const projection = await DataAccessObjects.userObjectIdProjection();
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
-            // TODO: log it
-            console.log(error);
+            errorLogger.error(error);
             return [];
         }
     }
