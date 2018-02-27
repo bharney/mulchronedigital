@@ -59,7 +59,7 @@ export class ResponseMessages {
   public static generalError(): object {
     return {
       "status": false,
-      "message": "Something went wrong on our end, please give a moment and try again."
+      "message": "Something went wrong on our end, please try again in a moment."
     };
   }
 
