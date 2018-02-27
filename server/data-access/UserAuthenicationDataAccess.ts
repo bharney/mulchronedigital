@@ -114,4 +114,13 @@ export class UserAuthenicationDataAccess extends DataAccess {
             // TODO: log it
         }
     }
+
+    public async insertNewUser(newUser: User): Promise<any> {
+        try {
+            return await await UsersCollection.insertOne(newUser);
+        } catch (error) {
+            console.log(error);
+            // TODO: log it
+        }
+    }
 }

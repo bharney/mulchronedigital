@@ -5,7 +5,6 @@ import { BaseRouter } from "../classes/BaseRouter";
 import { Database } from "../../globals/Database";
 import { User } from "../../models/user";
 import { ResponseMessages } from "../../globals/ResponseMessages";
-import { UsersCollection } from "../../cluster/master";
 import { UserIpAddress } from "../classes/UserIpAddress";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
@@ -91,7 +90,8 @@ export class UserAuthenicationRouter extends BaseRouter {
       const newUser = new User(req.body.username, req.body.email, req.body.password, ipAddressObject);
       // TODO: split this up into seperate functions. little messy;
       if (await newUser.SetupNewUser()) {
-        const insertResult = await UsersCollection.insertOne(newUser);
+        const dataAccess = new UserAuthenicationDataAccess();
+        const insertResult = await dataAccess.insertNewUser(newUser);
         if (insertResult.result.n === 1) {
           res.status(200).json(responseMessages.userRegistrationSuccessful(req.body.username, req.body.email));
           EmailQueueExport.sendUserActivationEmailToQueue(newUser);
