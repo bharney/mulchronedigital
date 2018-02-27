@@ -4,10 +4,10 @@ import path = require("path");
 import logger = require("morgan");
 import bodyParser = require("body-parser");
 import compression = require("compression");
-
 import { IndexRouter } from "./routes/IndexRouter";
 import { Database } from "./globals/Database";
 import { NextFunction, Request, Response } from "express";
+import errorLogger from "./logging/ErrorLogger";
 
 export default class Server {
   public port = process.env.PORT || 8080;
@@ -31,6 +31,11 @@ export default class Server {
     this.app.enable("trust proxy");
     this.app.use("/", this.configureRequestHeaders);
     this.app.use("/", this.indexRouter);
+    this.app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+      // global error handler will throw this into mongodb collection.
+      errorLogger.error(error);
+      // TODO: send a message out to rabbitmq and send an email alert of sorts.
+    });
   }
 
   private async configureRequestHeaders(req: Request, res: Response, next: NextFunction) {
