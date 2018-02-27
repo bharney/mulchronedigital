@@ -5,6 +5,7 @@ import { DataAccess } from "../data-access/classes/DataAccess";
 import { ForgotPasswordCollection } from "../master";
 import { ForgotPasswordToken } from "../models/ForgotPasswordToken";
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
+import errorLogger from "../logging/ErrorLogger";
 
 export class UserAuthenicationDataAccess extends DataAccess {
 
@@ -14,8 +15,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             const projection = await DataAccessObjects.userObjectIdProjection();
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
-            console.log(error);
-            // TODO: log error
+            errorLogger.error(error);
             return [];
         }
     }
@@ -29,6 +29,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             }
             return "";
         } catch (error) {
+            errorLogger.error(error);
             return "";
         }
     }
@@ -39,7 +40,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             const projection = await DataAccessObjects.forgotPasswordTokenIdProjection();
             return await ForgotPasswordCollection.find(query, projection).toArray();
         } catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             return [];
         }
     }
@@ -50,7 +51,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             const projection = await DataAccessObjects.jsonWebTokenThatIsActiveProjection();
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             return [];
         }
     }
@@ -61,7 +62,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             const projection = await DataAccessObjects.userObjectIdProjection();
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             return [];
         }
     }
@@ -72,7 +73,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             const projection = await DataAccessObjects.userIpAddressMatch(ip);
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             return [];
         }
     }
@@ -84,8 +85,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             const newObject = await DataAccessObjects.newDocument(true);
             await UsersCollection.findOneAndUpdate(query, projection, newObject);
         } catch (error) {
-            console.log(error);
-            // TODO: log it
+            errorLogger.error(error);
         }
     }
 
@@ -95,8 +95,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             const projection = await DataAccessObjects.getJsonWebTokenInformationProjection();
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
-            console.log(error);
-            // TODO: log it
+            errorLogger.error(error);
         }
     }
 
@@ -106,8 +105,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
             const projection = await DataAccessObjects.updateUserProfileToActiveProjection();
             return await UsersCollection.findOneAndUpdate(query, projection);
         } catch (error) {
-            console.log(error);
-            // TODO: log it
+            errorLogger.error(error);
         }
     }
 
@@ -115,8 +113,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
         try {
             return await await UsersCollection.insertOne(newUser);
         } catch (error) {
-            console.log(error);
-            // TODO: log it
+            errorLogger.error(error);
         }
     }
 }

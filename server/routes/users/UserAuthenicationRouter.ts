@@ -104,7 +104,6 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private async validateLoginUserRequest(req: Request, res: Response, next: NextFunction) {
     try {
-      throw new Error("welcome home nigga");
       const userEmail = req.body.email;
       const userPassword = req.body.password;
       if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
