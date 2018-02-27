@@ -9,7 +9,7 @@ import { UserIpAddress } from "../classes/UserIpAddress";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/JsonWebToken";
-import { EmailQueueExport } from "../../cluster/master";
+import { EmailQueueExport } from "../../master";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";

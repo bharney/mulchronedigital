@@ -3,7 +3,7 @@ const fs = promise.promisifyAll(require("fs"));
 import path = require("path");
 import jwt = require("jsonwebtoken");
 import { JsonWebToken } from "../../shared/JsonWebToken";
-import { UsersCollection } from "../cluster/master";
+import { UsersCollection } from "../master";
 
 export class JsonWebTokenWorkers {
 

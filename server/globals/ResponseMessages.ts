@@ -1,6 +1,6 @@
 import { JsonWebTokenWorkers } from "../security/JsonWebTokenWorkers";
 import { User } from "../models/user";
-import { UsersCollection } from "../cluster/master";
+import { UsersCollection } from "../master";
 import { ObjectId } from "mongodb";
 
 export class ResponseMessages {

@@ -1,8 +1,8 @@
 import { User } from "../models/user";
 import { DataAccessObjects } from "./objects/DataAccessObjects";
-import { UsersCollection } from "../cluster/master";
+import { UsersCollection } from "../master";
 import { DataAccess } from "../data-access/classes/DataAccess";
-import { ForgotPasswordCollection } from "../cluster/master";
+import { ForgotPasswordCollection } from "../master";
 import { ForgotPasswordToken } from "../models/ForgotPasswordToken";
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
 

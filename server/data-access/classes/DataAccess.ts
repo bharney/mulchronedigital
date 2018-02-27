@@ -1,6 +1,6 @@
 import { User } from "../../models/user";
 import { DataAccessObjects } from "../objects/DataAccessObjects";
-import { UsersCollection } from "../../cluster/master";
+import { UsersCollection } from "../../master";
 
 export class DataAccess {
 

@@ -1,5 +1,5 @@
 import { UserAction, UserChangedPasswordAction, UserChangedUsernameAction, UserForgotPasswordAction, UserLoggedInAction } from "../models/UserAction";
-import { UserActionsCollection } from "../cluster/master";
+import { UserActionsCollection } from "../master";
 
 export class UserActionHelper {
     private userLoggedInActionType: string = "user_logged_in";
