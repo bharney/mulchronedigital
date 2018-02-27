@@ -40,9 +40,8 @@ export abstract class BaseRouter {
       }
       next();
     } catch (error) {
-      // TODO: error handler
-      console.log(error);
-      return res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
     }
   }
 
@@ -55,8 +54,8 @@ export abstract class BaseRouter {
       req.body = JSON.parse(newRequestBody);
       next();
     } catch (error) {
-      // TODO: log decryption error.
-      return res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
     }
   }
 }
