@@ -4,8 +4,8 @@ import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicat
 import { ForgotPasswordService } from "./forgot-password.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
-import { AESEncryptionResult, Encryption } from '../../../../../shared/Encryption';
-import { ResetPassword } from '../../../shared/models/user-authenication.model';
+import { AESEncryptionResult, Encryption } from "../../../../../shared/Encryption";
+import { ResetPassword } from "../../../shared/models/user-authenication.model";
 declare const $: any;
 
 @Component({
