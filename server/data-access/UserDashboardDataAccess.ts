@@ -17,43 +17,7 @@ export class UserDashboardDataAccess extends DataAccess {
       return [];
     }
   }
-
-  public static async getUserPassword(userId: string): Promise<User[]> {
-    try {
-      const query = await DataAccessObjects.findUserByIdQuery(userId);
-      const projection = await DataAccessObjects.usernamePasswordAndIdProjection();
-      return await UsersCollection.find(query, projection).toArray();
-    } catch (error) {
-      errorLogger.error(error);
-      return [];
-    }
-  }
-
-  public static async updateUserPassword(userId: string, user: User): Promise<any> {
-    try {
-      if (!await user.updateUserPassword()) {
-        throw new Error("new password failed at updateUserPassword(user: User)");
-      }
-      const query = await DataAccessObjects.findUserByIdQuery(userId);
-      const projection = await DataAccessObjects.updateUserPasswordProjection(user.password, user.modifiedAt);
-      return await UsersCollection.updateOne(query, projection);
-    } catch (error) {
-      errorLogger.error(error);
-      console.log(error);
-    }
-  }
-
-  public static async findUserLoginDetailsByEmail(userEmail: string) {
-    try {
-      const query = await DataAccessObjects.findUserByEmailAndIsActiveQuery(userEmail);
-      const projection = await DataAccessObjects.userLoginProjection();
-      return await UsersCollection.find(query, projection).toArray();
-    } catch (error) {
-      errorLogger.error(error);
-      console.log(error);
-    }
-  }
-
+  
   public static async findUserPasswordAndUsernameById(userId: string): Promise<User[]> {
     try {
       const query = await DataAccessObjects.findUserByIdQuery(userId);

@@ -3,22 +3,24 @@ import errorLogger from "../logging/ErrorLogger";
 import bcrypt = require("bcryptjs");
 
 export class ForgotPasswordToken {
-    public userId: ObjectId;
+    public userId: string;
     public createdAt: Date;
     public validUntil: Date;
-    public newPassword: string;
+    public tokenPassword: string;
+    public ip: string;
 
-    constructor(userId: string) {
-        this.userId = new ObjectId(userId);
+    constructor(userId: string, ip: string) {
+        this.userId = userId;
         const now = new Date();
         this.createdAt = now;
         const tomorrow = new Date(now.setDate(now.getDate() + 1));
         this.validUntil = tomorrow;
+        this.ip = ip;
     }
 
     public async securePassword(newPassword: string): Promise<boolean> {
         try {
-            this.newPassword = await this.HashPassword(newPassword);
+            this.tokenPassword = await this.HashPassword(newPassword);
             return true;
         } catch (error) {
             errorLogger.error(error);

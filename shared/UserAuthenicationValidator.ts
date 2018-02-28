@@ -46,6 +46,12 @@ export class UserAuthenicationValidator {
     });
   }
 
+  public static isTokenPasswordValid(tokenPassword: string): Promise<boolean> {
+    return new Promise(resolve => {
+      (tokenPassword.length === 12) ? resolve(true) : resolve(false);
+    });
+  }
+
   public static isEmailValid(email: string): Promise<boolean> {
     return new Promise(resolve => {
       const emailRegex: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

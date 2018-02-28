@@ -9,11 +9,11 @@ import { UserIpAddress } from "../classes/UserIpAddress";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/JsonWebToken";
-import { EmailQueueExport } from "../../master";
+import { EmailQueueExport, UsersCollection } from "../../master";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";
-import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
+import { DataAccess } from "../../data-access/classes/DataAccess";
 
 export class UserAuthenicationRouter extends BaseRouter {
   public router: Router;
@@ -39,8 +39,14 @@ export class UserAuthenicationRouter extends BaseRouter {
     this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
 
     this.router.patch("/activateuser", this.validateActivateUser);
+
     // Forgot password
+    this.router.use("/forgotpassword", this.decryptRequestBody);
     this.router.patch("/forgotpassword", this.validateUserForgotPassword);
+
+    // Reset password
+    this.router.use("/resetpassword", this.decryptRequestBody);
+    this.router.use("/resetpassword", this.validateResetPassword);
   }
 
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
@@ -112,7 +118,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isPasswordValid(userPassword)) {
         return res.status(401).json(ResponseMessages.passwordIsNotValid());
       }
-      const databaseUsers: User[] = await UserDashboardDataAccess.findUserLoginDetailsByEmail(userEmail);
+      const databaseUsers: User[] = await DataAccess.findUserLoginDetailsByEmail(userEmail);
       // should only be one user with this email
       if (databaseUsers.length === 1) {
         if (!databaseUsers[0].isActive) {
@@ -187,33 +193,82 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private async validateUserForgotPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!await UserAuthenicationValidator.isEmailValid(req.body.email)) {
+      const userEmail = req.body.email;
+      if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
         return res.status(422).json(ResponseMessages.emailIsNotValid());
       }
-      const databaseUsers: User[] = await UserAuthenicationDataAccess.userForgotPasswordFindUserByEmail(req.body.email);
+      const databaseUsers: User[] = await UserAuthenicationDataAccess.userForgotPasswordFindUserByEmail(userEmail);
       if (databaseUsers.length <= 0) {
         return res.status(401).json(ResponseMessages.noUserFoundThatIsActive());
       }
       const userId = databaseUsers[0]._id;
-      const resetPasswordTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.checkForRecentForgotPasswordTokens(userId);
+      const resetPasswordTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.findRecentForgotPasswordTokensByUserId(userId);
       if (resetPasswordTokens.length > 0) {
         return res.status(429).json(ResponseMessages.tooManyForgotPasswordRequests());
       }
-      const forgotPasswordToken = new ForgotPasswordToken(userId);
-      const newPassword = Math.random().toString(36).slice(-12);
-      await forgotPasswordToken.securePassword(newPassword);
+      const httpHelpers = new HttpHelpers();
+      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      const forgotPasswordToken = new ForgotPasswordToken(userId, ip);
+      const tokenPassword = Math.random().toString(36).slice(-12);
+      await forgotPasswordToken.securePassword(tokenPassword);
       const tokenId = await UserAuthenicationDataAccess.insertForgotPasswordToken(forgotPasswordToken);
       if (tokenId.length === 0) {
         return res.status(503).json(ResponseMessages.generalError());
       }
-      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(req.body.email, databaseUsers[0]._id, tokenId, newPassword)) {
+      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, tokenPassword)) {
         return res.status(503).json(ResponseMessages.generalError());
       }
-      res.status(200).json(ResponseMessages.forgotPasswordSuccess(req.body.email));
-      const httpHelpers = new HttpHelpers();
-      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      res.status(200).json(ResponseMessages.forgotPasswordSuccess(userEmail));
       const userActions = new UserActionHelper();
       await userActions.userForgotPassword(userId, ip, tokenId);
+    } catch (error) {
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
+    }
+  }
+
+  private async validateResetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const tokenId = req.body.tokenId;
+      const tokenPassword = req.body.tokenPassword;
+      const newPassword = req.body.newPassword;
+      if (!await UserAuthenicationValidator.isThisAValidMongoObjectId(tokenId)) {
+        return res.status(422).json(ResponseMessages.resetPasswordTokenNotValid());
+      }
+      if (!await UserAuthenicationValidator.isTokenPasswordValid(tokenPassword)) {
+        return res.status(422).json(ResponseMessages.tokenPasswordNotValid());
+      }
+      if (!await UserAuthenicationValidator.isPasswordValid(newPassword)) {
+        return res.status(422).json(ResponseMessages.passwordIsNotValid());
+      }
+      const resetTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.findForgotPasswordTokensByTokenId(tokenId);
+      if (resetTokens.length <= 0) {
+        return res.status(503).json(ResponseMessages.resetPasswordTokenNotValid());
+      }
+      const httpHelpers = new HttpHelpers();
+      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      if (resetTokens[0].ip !== ip) {
+        // TODO: log non matching IP addresses somewhere???
+        return res.status(401).json(ResponseMessages.resetPasswordTokenIpAddressDoNotMatch());
+      }
+      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(tokenPassword, resetTokens[0].tokenPassword)) {
+        return res.status(401).json(ResponseMessages.tokenPasswordNotValid());
+      }
+      const userId = resetTokens[0].userId;
+      const databaseUsers: User[] = await DataAccess.getUserPassword(userId);
+      // dont really need to enter information into the instance of this class.
+      const user: User = new User(null, null, newPassword);
+      const updateUserPasswordResult = await DataAccess.updateUserPassword(userId, user);
+      if (updateUserPasswordResult.modifiedCount === 1) {
+        res.status(200).json(ResponseMessages.userChangedPasswordSuccessfully());
+        // no need to await these do not depend on the response to the user.
+        UserAuthenicationDataAccess.updatePasswordTokenToInvalidById(tokenId);
+        const userActions = new UserActionHelper();
+        const userOldPassword = databaseUsers[0].password;
+        userActions.userChangedPassword(userId, ip, userOldPassword);
+      } else {
+        throw new Error("There was nothing updated when attemtping to update the users password");
+      }
     } catch (error) {
       res.status(503).json(ResponseMessages.generalError());
       return next(error);

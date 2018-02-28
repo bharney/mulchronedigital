@@ -34,14 +34,36 @@ export class UserAuthenicationDataAccess extends DataAccess {
         }
     }
 
-    public static async checkForRecentForgotPasswordTokens(userId: string): Promise<ForgotPasswordToken[]> {
+    public static async findRecentForgotPasswordTokensByUserId(userId: string): Promise<ForgotPasswordToken[]> {
         try {
-            const query = await DataAccessObjects.findRecentForgotPasswordTokenById(userId);
+            const query = await DataAccessObjects.findRecentForgotPasswordTokenByUserId(userId);
             const projection = await DataAccessObjects.forgotPasswordTokenIdProjection();
             return await ForgotPasswordCollection.find(query, projection).toArray();
         } catch (error) {
             errorLogger.error(error);
             return [];
+        }
+    }
+
+    public static async findForgotPasswordTokensByTokenId(tokenId: string): Promise<ForgotPasswordToken[]> {
+        try {
+            const query = await DataAccessObjects.findForgotPasswordTokenById(tokenId);
+            const projection = await DataAccessObjects.resetPasswordTokenProjection();
+            return await ForgotPasswordCollection.find(query, projection).toArray();
+        } catch (error) {
+            errorLogger.error(error);
+            return [];
+        }
+    }
+
+    public static async updatePasswordTokenToInvalidById(tokenId: string): Promise<any> {
+        try {
+            const query = await DataAccessObjects.findForgotPasswordTokenById(tokenId);
+            const projection = await DataAccessObjects.makeForgotPasswordTokenInvalidProjection();
+            return await ForgotPasswordCollection.updateOne(query, projection);
+        } catch (error) {
+            // TODO: send some retry to rabbitmq.
+            errorLogger.error(error);
         }
     }
 
@@ -111,7 +133,7 @@ export class UserAuthenicationDataAccess extends DataAccess {
 
     public static async insertNewUser(newUser: User): Promise<any> {
         try {
-            return await await UsersCollection.insertOne(newUser);
+            return await UsersCollection.insertOne(newUser);
         } catch (error) {
             errorLogger.error(error);
         }

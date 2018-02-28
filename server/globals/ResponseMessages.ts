@@ -12,7 +12,6 @@ export class ResponseMessages {
       "message": "You must enter a username between 4 and 12 characters long"
     };
   }
-
   public static passwordIsNotValid(): object {
     return {
       "status": false,
@@ -20,6 +19,27 @@ export class ResponseMessages {
     };
   }
 
+  public static resetPasswordTokenNotValid(): object {
+    return {
+      "status": false,
+      "message": "The reset token was invalid"
+    };
+  }
+
+  public static resetPasswordTokenIpAddressDoNotMatch(): object {
+    return {
+      "status": false,
+      "message": "Sorry, for security purposes you are only allowed to reset your password from the same IP address you requested it from."
+    };
+  }
+
+  public static tokenPasswordNotValid(): object {
+    return {
+      "status": false,
+      "message": "The token password you entered is not valid"
+    };
+  }
+  
   public static userIsNotActive(): object {
     return {
       "status": false,
@@ -144,7 +164,7 @@ export class ResponseMessages {
   public static userChangedPasswordSuccessfully(): object {
     return {
       "status": true,
-      "message": "User changed password successfully"
+      "message": "You have successfully changed your password"
     };
   }
 

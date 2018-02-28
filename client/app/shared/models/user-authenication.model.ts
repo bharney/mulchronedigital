@@ -43,3 +43,16 @@ export interface ILoginUserResponse {
   message: string;
   token: string;
 }
+
+
+export class ResetPassword {
+  public tokenId: string;
+  public tokenPassword: string;
+  public newPassword: string;
+
+  constructor(tokenId: string, tokenPassword: string, newPassword: string) {
+    this.tokenId = tokenId;
+    this.tokenPassword = tokenPassword;
+    this.newPassword = newPassword;
+  }
+}
