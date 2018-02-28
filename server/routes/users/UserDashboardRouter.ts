@@ -13,9 +13,6 @@ import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { Cloudinary } from "../../apis/Cloudinary";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
-const parseFile = multer({
-  limits: { fileSize: 5000000, files: 1 }
-}).single("image");
 
 export class UserDashboardRouter extends BaseRouter {
   public router: Router;
@@ -106,7 +103,7 @@ export class UserDashboardRouter extends BaseRouter {
       }
       if (!await UserAuthenicationValidator.isPasswordValid(password)) {
         return res.status(422).json(ResponseMessages.passwordIsNotValid());
-      }      
+      }
       const existingUsers: User[] = await UserDashboardDataAccess.findIfUserExistsByUsername(newUsername);
       if (existingUsers.length > 0) {
         return res.status(409).json(ResponseMessages.usernameIsTaken(newUsername));
@@ -138,11 +135,13 @@ export class UserDashboardRouter extends BaseRouter {
 
   private async parseImageUpload(req: any, res: Response, next: NextFunction) {
     try {
+      const parseFile = multer({
+        limits: { fileSize: 5000000, files: 1 }
+      }).single("image");
       parseFile(req, res, err => {
         if (err) {
           // file size too large. The client side validation SHOULD keep this route clean of any files that are not an image.
-    
-          return res.status(413).json(ResponseMessages.generalError());
+          res.status(413).json(ResponseMessages.generalError());
         }
         res.locals.image = req.file;
         next();
