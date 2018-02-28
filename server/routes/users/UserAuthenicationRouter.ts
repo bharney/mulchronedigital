@@ -13,7 +13,7 @@ import { EmailQueueExport, UsersCollection } from "../../master";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";
-import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
+import { DataAccess } from "../../data-access/classes/DataAccess";
 
 export class UserAuthenicationRouter extends BaseRouter {
   public router: Router;
@@ -118,7 +118,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.isPasswordValid(userPassword)) {
         return res.status(401).json(ResponseMessages.passwordIsNotValid());
       }
-      const databaseUsers: User[] = await UserDashboardDataAccess.findUserLoginDetailsByEmail(userEmail);
+      const databaseUsers: User[] = await DataAccess.findUserLoginDetailsByEmail(userEmail);
       // should only be one user with this email
       if (databaseUsers.length === 1) {
         if (!databaseUsers[0].isActive) {
@@ -254,7 +254,21 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(tokenPassword, resetTokens[0].tokenPassword)) {
         return res.status(401).json(ResponseMessages.tokenPasswordNotValid());
       }
-
+      const userId = resetTokens[0].userId;
+      const databaseUsers: User[] = await DataAccess.getUserPassword(userId);
+      // dont really need to enter information into the instance of this class.
+      const user: User = new User(null, null, newPassword);
+      const updateUserPasswordResult = await DataAccess.updateUserPassword(userId, user);
+      if (updateUserPasswordResult.modifiedCount === 1) {
+        res.status(200).json(ResponseMessages.userChangedPasswordSuccessfully());
+        // no need to await these do not depend on the response to the user.
+        UserAuthenicationDataAccess.updatePasswordTokenToInvalidById(tokenId);
+        const userActions = new UserActionHelper();
+        const userOldPassword = databaseUsers[0].password;
+        userActions.userChangedPassword(userId, ip, userOldPassword);
+      } else {
+        throw new Error("There was nothing updated when attemtping to update the users password");
+      }
     } catch (error) {
       res.status(503).json(ResponseMessages.generalError());
       return next(error);

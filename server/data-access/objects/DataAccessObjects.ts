@@ -112,20 +112,25 @@ export class DataAccessObjects {
       if (userId === undefined) {
         reject(new Error("No userId was provided at findRecentForgotPasswordTokenById(userId: ObjectId"));
       }
-      const date = new Date();
-      const query = { userId: new ObjectId(userId), validUntil: { $gte: date } };
+      const query = { userId: new ObjectId(userId), validUntil: { $gte: new Date() } };
       resolve(query);
     });
   }
 
-  public static findRecentForgotPasswordTokenById(tokenId: string): Promise<object> {
+  public static findForgotPasswordTokenById(tokenId: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (tokenId === undefined) {
         reject(new Error("No tokenId was provided at findRecentForgotPasswordTokenById(tokenId: string)"));
       }
-      const date = new Date();
-      const query = { _id: new ObjectId(tokenId), validUntil: { $gte: date } };
+      const query = { _id: new ObjectId(tokenId), validUntil: { $gte: new Date() } };
       resolve(query);
+    });
+  }
+
+  public static makeForgotPasswordTokenInvalidProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { $set: { "validUntil": new Date() } };
+      resolve(projection);
     });
   }
 
@@ -138,7 +143,7 @@ export class DataAccessObjects {
 
   public static resetPasswordTokenProjection(): Promise<object> {
     return new Promise(resolve => {
-      const projection = { _id: 0, ip: 1, userId: 1, tokenPassword: 1 };
+      const projection = { _id: 0, userId: 1, ip: 1, tokenPassword: 1 };
       resolve(projection);
     });
   }

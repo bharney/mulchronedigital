@@ -164,7 +164,7 @@ export class ResponseMessages {
   public static userChangedPasswordSuccessfully(): object {
     return {
       "status": true,
-      "message": "User changed password successfully"
+      "message": "You have successfully changed your password"
     };
   }
 

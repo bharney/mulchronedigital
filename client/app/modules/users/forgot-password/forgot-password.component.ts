@@ -28,19 +28,23 @@ export class ForgotPasswordComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private forgotPasswordService: ForgotPasswordService,
-    private googleAnalytics: GoogleAnalytics
+    private googleAnalytics: GoogleAnalytics,
+    private router: Router
   ) { }
 
   ngOnInit() {
+    this.createResetPasswordForm();
+    this.createRequestPasswordForgotFormGroup();
     this.activatedRoute.params.subscribe(params => {
-      if (params.hasOwnProperty("resettoken")) {
-        this.doesComponentHaveToken = true;
-        this.resetTokenId = params["resettoken"];
-        this.createResetPasswordForm();
-      } else {
-        this.doesComponentHaveToken = false;
-        this.createRequestPasswordForgotFormGroup();
-      }
+      this.resetTokenId = params["resettoken"];
+      UserAuthenicationValidator.isThisAValidMongoObjectId(this.resetTokenId)
+        .then(result => {
+          if (result) {
+            this.doesComponentHaveToken = true;
+          } else {
+            this.doesComponentHaveToken = false;
+          }
+        });
     });
   }
 
@@ -56,22 +60,22 @@ export class ForgotPasswordComponent implements OnInit {
   private createResetPasswordForm(): void {
     this.resetPasswordForm = this.formBuilder.group({
       tokenPassword: [
-        ".abjowhsru9r",
+        "",
         [Validators.required, Validators.minLength(12), Validators.maxLength(12)]
       ],
       password: [
-        "Esforces0191!@",
+        "",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ],
       confirmPassword: [
-        "Esforces0191!@",
+        "",
         [Validators.required, UserAuthenicationValidator.confirmPasswordValidation]
       ]
     });
   }
 
   public handleDownKeyOnForm(event, whichForm: string): void {
-    if (event.keyCode !== 13) {
+    if (event.keyCode !== 13 || this.hasTheFormBeenSubmitted) {
       return;
     }
     if (whichForm === "forgotPasswordForm") {
@@ -97,6 +101,7 @@ export class ForgotPasswordComponent implements OnInit {
         this.modalTitle = "Success";
         this.modalBody = response.message;
         $("#error-modal").modal();
+        this.forgotPasswordForm.reset();
       }, (error) => {
         this.hasTheFormBeenSubmitted = false;
         this.hasSubmitButtonBeenClicked = false;
@@ -124,6 +129,11 @@ export class ForgotPasswordComponent implements OnInit {
         this.modalTitle = "Success";
         this.modalBody = response.message;
         $("#error-modal").modal();
+        this.resetPasswordForm.reset();
+        setTimeout(() => {
+          $("#error-modal").modal("hide");
+          this.router.navigate(["../../users/login"]);
+        }, 3000);
       }, (error) => {
         this.hasTheFormBeenSubmitted = false;
         this.hasSubmitButtonBeenClicked = false;
