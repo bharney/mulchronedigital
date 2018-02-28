@@ -9,7 +9,7 @@ import { UserIpAddress } from "../classes/UserIpAddress";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/JsonWebToken";
-import { EmailQueueExport } from "../../master";
+import { EmailQueueExport, UsersCollection } from "../../master";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";
@@ -43,6 +43,10 @@ export class UserAuthenicationRouter extends BaseRouter {
     // Forgot password
     this.router.use("/forgotpassword", this.decryptRequestBody);
     this.router.patch("/forgotpassword", this.validateUserForgotPassword);
+
+    // Reset password
+    this.router.use("/resetpassword", this.decryptRequestBody);
+    this.router.use("/resetpassword", this.validateResetPassword);
   }
 
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
@@ -198,25 +202,59 @@ export class UserAuthenicationRouter extends BaseRouter {
         return res.status(401).json(ResponseMessages.noUserFoundThatIsActive());
       }
       const userId = databaseUsers[0]._id;
-      const resetPasswordTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.checkForRecentForgotPasswordTokens(userId);
+      const resetPasswordTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.findRecentForgotPasswordTokensByUserId(userId);
       if (resetPasswordTokens.length > 0) {
         return res.status(429).json(ResponseMessages.tooManyForgotPasswordRequests());
       }
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const forgotPasswordToken = new ForgotPasswordToken(userId, ip);
-      const newPassword = Math.random().toString(36).slice(-12);
-      await forgotPasswordToken.securePassword(newPassword);
+      const tokenPassword = Math.random().toString(36).slice(-12);
+      await forgotPasswordToken.securePassword(tokenPassword);
       const tokenId = await UserAuthenicationDataAccess.insertForgotPasswordToken(forgotPasswordToken);
       if (tokenId.length === 0) {
         return res.status(503).json(ResponseMessages.generalError());
       }
-      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, newPassword)) {
+      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, tokenPassword)) {
         return res.status(503).json(ResponseMessages.generalError());
       }
       res.status(200).json(ResponseMessages.forgotPasswordSuccess(userEmail));
       const userActions = new UserActionHelper();
       await userActions.userForgotPassword(userId, ip, tokenId);
+    } catch (error) {
+      res.status(503).json(ResponseMessages.generalError());
+      return next(error);
+    }
+  }
+
+  private async validateResetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const tokenId = req.body.tokenId;
+      const tokenPassword = req.body.tokenPassword;
+      const newPassword = req.body.newPassword;
+      if (!await UserAuthenicationValidator.isThisAValidMongoObjectId(tokenId)) {
+        return res.status(422).json(ResponseMessages.resetPasswordTokenNotValid());
+      }
+      if (!await UserAuthenicationValidator.isTokenPasswordValid(tokenPassword)) {
+        return res.status(422).json(ResponseMessages.tokenPasswordNotValid());
+      }
+      if (!await UserAuthenicationValidator.isPasswordValid(newPassword)) {
+        return res.status(422).json(ResponseMessages.passwordIsNotValid());
+      }
+      const resetTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.findForgotPasswordTokensByTokenId(tokenId);
+      if (resetTokens.length <= 0) {
+        return res.status(503).json(ResponseMessages.resetPasswordTokenNotValid());
+      }
+      const httpHelpers = new HttpHelpers();
+      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      if (resetTokens[0].ip !== ip) {
+        // TODO: log non matching IP addresses somewhere???
+        return res.status(401).json(ResponseMessages.resetPasswordTokenIpAddressDoNotMatch());
+      }
+      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(tokenPassword, resetTokens[0].tokenPassword)) {
+        return res.status(401).json(ResponseMessages.tokenPasswordNotValid());
+      }
+
     } catch (error) {
       res.status(503).json(ResponseMessages.generalError());
       return next(error);

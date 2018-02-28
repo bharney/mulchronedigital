@@ -15,10 +15,17 @@ export class ForgotPasswordService {
         private apiRequests: ApiRequests,
     ) { }
 
-    public resetUserPassword(encryptedResetPasswordObject: AESEncryptionResult): Observable<any> {
+    public forgotPassword(encryptedForgotPassword: AESEncryptionResult): Observable<any> {
         const options = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
-        return this.http.patch("/api/userauth/forgotpassword", encryptedResetPasswordObject, options)
-        .map(this.apiRequests.parseResponse)
-        .catch(this.apiRequests.errorCatcher);
+        return this.http.patch("/api/userauth/forgotpassword", encryptedForgotPassword, options)
+            .map(this.apiRequests.parseResponse)
+            .catch(this.apiRequests.errorCatcher);
+    }
+
+    public resetUserPassword(encryptedResetPassword: AESEncryptionResult): Observable<any> {
+        const options = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
+        return this.http.patch("/api/userauth/resetpassword", encryptedResetPassword, options)
+            .map(this.apiRequests.parseResponse)
+            .catch(this.apiRequests.errorCatcher);
     }
 }

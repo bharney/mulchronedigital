@@ -6,7 +6,7 @@ export class ForgotPasswordToken {
     public userId: ObjectId;
     public createdAt: Date;
     public validUntil: Date;
-    public newPassword: string;
+    public tokenPassword: string;
     public ip: string;
 
     constructor(userId: string, ip: string) {
@@ -20,7 +20,7 @@ export class ForgotPasswordToken {
 
     public async securePassword(newPassword: string): Promise<boolean> {
         try {
-            this.newPassword = await this.HashPassword(newPassword);
+            this.tokenPassword = await this.HashPassword(newPassword);
             return true;
         } catch (error) {
             errorLogger.error(error);

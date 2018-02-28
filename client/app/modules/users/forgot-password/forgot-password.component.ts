@@ -5,6 +5,7 @@ import { ForgotPasswordService } from "./forgot-password.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
 import { AESEncryptionResult, Encryption } from '../../../../../shared/Encryption';
+import { ResetPassword } from '../../../shared/models/user-authenication.model';
 declare const $: any;
 
 @Component({
@@ -21,6 +22,7 @@ export class ForgotPasswordComponent implements OnInit {
   public modalTitle: string = "";
   public modalBody: string = "";
   public doesComponentHaveToken: boolean = false;
+  public resetTokenId: string;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -33,6 +35,7 @@ export class ForgotPasswordComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       if (params.hasOwnProperty("resettoken")) {
         this.doesComponentHaveToken = true;
+        this.resetTokenId = params["resettoken"];
         this.createResetPasswordForm();
       } else {
         this.doesComponentHaveToken = false;
@@ -53,45 +56,88 @@ export class ForgotPasswordComponent implements OnInit {
   private createResetPasswordForm(): void {
     this.resetPasswordForm = this.formBuilder.group({
       tokenPassword: [
-        "",
+        ".abjowhsru9r",
         [Validators.required, Validators.minLength(12), Validators.maxLength(12)]
       ],
-      newPassword: [
-        "",
+      password: [
+        "Esforces0191!@",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ],
-      confirmNewPassword: [
-        "",
-        // confirm matching.
+      confirmPassword: [
+        "Esforces0191!@",
+        [Validators.required, UserAuthenicationValidator.confirmPasswordValidation]
       ]
     });
   }
 
-  public handleDownKeyOnForm(event): void {
-    if (event.keyCode === 13) {
+  public handleDownKeyOnForm(event, whichForm: string): void {
+    if (event.keyCode !== 13) {
+      return;
+    }
+    if (whichForm === "forgotPasswordForm") {
       this.toggleForgotPasswordSubmit();
+    } else if (whichForm === "resetPasswordForm") {
+      this.toggleResetPasswordSubmit();
     }
   }
 
   public async toggleForgotPasswordSubmit(): Promise<void> {
-    if (!this.forgotPasswordForm.valid || this.hasTheFormBeenSubmitted) {
-      return;
-    }
-    this.hasTheFormBeenSubmitted = true;
-    const stringData = JSON.stringify(this.forgotPasswordForm.value);
-    const encryptedForgotPasswordObject: AESEncryptionResult = await Encryption.AESEncrypt(stringData);
-    this.forgotPasswordService.resetUserPassword(encryptedForgotPasswordObject).subscribe(response => {
-      this.hasTheFormBeenSubmitted = false;
-      this.modalTitle = "Success";
-      this.modalBody = response.message;
-      $("#error-modal").modal();
-    }, (error) => {
-      this.hasTheFormBeenSubmitted = false;
-      this.modalTitle = "Failure";
-      this.modalBody = error.message;
-      $("#error-modal").modal();
-    });
-    console.log(this.forgotPasswordForm.value);
+    this.hasSubmitButtonBeenClicked = true;
+    setTimeout(async () => {
+      this.hasTheFormBeenSubmitted = true;
+      if (!this.forgotPasswordForm.valid) {
+        this.hasSubmitButtonBeenClicked = false;
+        return;
+      }
+      const stringData = JSON.stringify(this.forgotPasswordForm.value);
+      const encryptedForgotPasswordObject: AESEncryptionResult = await Encryption.AESEncrypt(stringData);
+      this.forgotPasswordService.forgotPassword(encryptedForgotPasswordObject).subscribe(response => {
+        this.hasTheFormBeenSubmitted = false;
+        this.hasSubmitButtonBeenClicked = false;
+        this.modalTitle = "Success";
+        this.modalBody = response.message;
+        $("#error-modal").modal();
+      }, (error) => {
+        this.hasTheFormBeenSubmitted = false;
+        this.hasSubmitButtonBeenClicked = false;
+        this.modalTitle = "Failure";
+        this.modalBody = error.message;
+        $("#error-modal").modal();
+      });
+    }, 200);
   }
 
+  public async toggleResetPasswordSubmit(): Promise<void> {
+    this.hasSubmitButtonBeenClicked = true;
+    setTimeout(async () => {
+      this.hasTheFormBeenSubmitted = true;
+      if (!this.resetPasswordForm.valid) {
+        this.hasSubmitButtonBeenClicked = false;
+        return;
+      }
+      const resetPasswordObject: ResetPassword = this.createResetPasswordObject();
+      const stringData = JSON.stringify(resetPasswordObject);
+      const encryptedForgotPasswordObject: AESEncryptionResult = await Encryption.AESEncrypt(stringData);
+      this.forgotPasswordService.resetUserPassword(encryptedForgotPasswordObject).subscribe(response => {
+        this.hasTheFormBeenSubmitted = false;
+        this.hasSubmitButtonBeenClicked = false;
+        this.modalTitle = "Success";
+        this.modalBody = response.message;
+        $("#error-modal").modal();
+      }, (error) => {
+        this.hasTheFormBeenSubmitted = false;
+        this.hasSubmitButtonBeenClicked = false;
+        this.modalTitle = "Failure";
+        this.modalBody = error.message;
+        $("#error-modal").modal();
+      });
+    }, 200);
+  }
+
+  private createResetPasswordObject(): ResetPassword {
+    const tokenId = this.resetTokenId;
+    const tokenPassword = this.resetPasswordForm.value.tokenPassword;
+    const newPassword = this.resetPasswordForm.value.confirmPassword;
+    return new ResetPassword(tokenId, tokenPassword, newPassword);
+  }
 }
