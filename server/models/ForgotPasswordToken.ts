@@ -7,13 +7,15 @@ export class ForgotPasswordToken {
     public createdAt: Date;
     public validUntil: Date;
     public newPassword: string;
+    public ip: string;
 
-    constructor(userId: string) {
+    constructor(userId: string, ip: string) {
         this.userId = new ObjectId(userId);
         const now = new Date();
         this.createdAt = now;
         const tomorrow = new Date(now.setDate(now.getDate() + 1));
         this.validUntil = tomorrow;
+        this.ip = ip;
     }
 
     public async securePassword(newPassword: string): Promise<boolean> {

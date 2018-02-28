@@ -39,7 +39,9 @@ export class UserAuthenicationRouter extends BaseRouter {
     this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
 
     this.router.patch("/activateuser", this.validateActivateUser);
+
     // Forgot password
+    this.router.use("/forgotpassword", this.decryptRequestBody);
     this.router.patch("/forgotpassword", this.validateUserForgotPassword);
   }
 
@@ -187,10 +189,11 @@ export class UserAuthenicationRouter extends BaseRouter {
 
   private async validateUserForgotPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!await UserAuthenicationValidator.isEmailValid(req.body.email)) {
+      const userEmail = req.body.email;
+      if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
         return res.status(422).json(ResponseMessages.emailIsNotValid());
       }
-      const databaseUsers: User[] = await UserAuthenicationDataAccess.userForgotPasswordFindUserByEmail(req.body.email);
+      const databaseUsers: User[] = await UserAuthenicationDataAccess.userForgotPasswordFindUserByEmail(userEmail);
       if (databaseUsers.length <= 0) {
         return res.status(401).json(ResponseMessages.noUserFoundThatIsActive());
       }
@@ -199,19 +202,19 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (resetPasswordTokens.length > 0) {
         return res.status(429).json(ResponseMessages.tooManyForgotPasswordRequests());
       }
-      const forgotPasswordToken = new ForgotPasswordToken(userId);
+      const httpHelpers = new HttpHelpers();
+      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      const forgotPasswordToken = new ForgotPasswordToken(userId, ip);
       const newPassword = Math.random().toString(36).slice(-12);
       await forgotPasswordToken.securePassword(newPassword);
       const tokenId = await UserAuthenicationDataAccess.insertForgotPasswordToken(forgotPasswordToken);
       if (tokenId.length === 0) {
         return res.status(503).json(ResponseMessages.generalError());
       }
-      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(req.body.email, databaseUsers[0]._id, tokenId, newPassword)) {
+      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, newPassword)) {
         return res.status(503).json(ResponseMessages.generalError());
       }
-      res.status(200).json(ResponseMessages.forgotPasswordSuccess(req.body.email));
-      const httpHelpers = new HttpHelpers();
-      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      res.status(200).json(ResponseMessages.forgotPasswordSuccess(userEmail));
       const userActions = new UserActionHelper();
       await userActions.userForgotPassword(userId, ip, tokenId);
     } catch (error) {

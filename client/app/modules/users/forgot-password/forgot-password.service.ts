@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Http, RequestOptions, Response } from "@angular/http";
 import { ApiRequests } from "../../../shared/http/ApiRequests";
+import { AESEncryptionResult } from "../../../../../shared/Encryption";
 
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
@@ -14,9 +15,9 @@ export class ForgotPasswordService {
         private apiRequests: ApiRequests,
     ) { }
 
-    public resetUserPassword(resetPasswordObject: any): Observable<any> {
+    public resetUserPassword(encryptedResetPasswordObject: AESEncryptionResult): Observable<any> {
         const options = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
-        return this.http.patch("/api/userauth/forgotpassword", resetPasswordObject, options)
+        return this.http.patch("/api/userauth/forgotpassword", encryptedResetPasswordObject, options)
         .map(this.apiRequests.parseResponse)
         .catch(this.apiRequests.errorCatcher);
     }

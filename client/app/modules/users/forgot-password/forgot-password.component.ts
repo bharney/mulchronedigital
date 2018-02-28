@@ -4,6 +4,7 @@ import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicat
 import { ForgotPasswordService } from "./forgot-password.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
+import { AESEncryptionResult, Encryption } from '../../../../../shared/Encryption';
 declare const $: any;
 
 @Component({
@@ -72,12 +73,14 @@ export class ForgotPasswordComponent implements OnInit {
     }
   }
 
-  public toggleForgotPasswordSubmit(): void {
+  public async toggleForgotPasswordSubmit(): Promise<void> {
     if (!this.forgotPasswordForm.valid || this.hasTheFormBeenSubmitted) {
       return;
     }
     this.hasTheFormBeenSubmitted = true;
-    this.forgotPasswordService.resetUserPassword(this.forgotPasswordForm.value).subscribe(response => {
+    const stringData = JSON.stringify(this.forgotPasswordForm.value);
+    const encryptedForgotPasswordObject: AESEncryptionResult = await Encryption.AESEncrypt(stringData);
+    this.forgotPasswordService.resetUserPassword(encryptedForgotPasswordObject).subscribe(response => {
       this.hasTheFormBeenSubmitted = false;
       this.modalTitle = "Success";
       this.modalBody = response.message;
