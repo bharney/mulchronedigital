@@ -11,7 +11,7 @@ export abstract class BaseRouter {
   public async checkForUserJsonWebToken(req: Request, res: Response, next: NextFunction) {
     try {
       // TODO: this looks god awful. FIX IT!
-      const headerToken = req.headers["user-authenication-token"];
+      const headerToken = req.headers["mulchronedigital-token"];
       if (headerToken === null) {
         return res.status(401).json(ResponseMessages.noJsonWebTokenInHeader());
       }

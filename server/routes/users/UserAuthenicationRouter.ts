@@ -154,7 +154,7 @@ export class UserAuthenicationRouter extends BaseRouter {
     try {
       // here we are not going to check to see if the user session expired.
       // what if the user was logged out for like 5 days?
-      const token: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(req.headers["user-authenication-token"]);
+      const token: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(req.headers["mulchronedigital-token"]);
       if (token === null) {
         return res.status(401).json(ResponseMessages.noJsonWebTokenInHeader());
       }
