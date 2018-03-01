@@ -67,10 +67,10 @@ export class UserAuthenicationDataAccess extends DataAccess {
         }
     }
 
-    public static async getJSONWebTokenOfActiveUserByUserId(userId: string): Promise<User[]> {
+    public static async getJSONWebTokenInfoOfActiveUserByUserId(userId: string): Promise<User[]> {
         try {
             const query = await DataAccessObjects.findUserByIdQuery(userId);
-            const projection = await DataAccessObjects.jsonWebTokenThatIsActiveProjection();
+            const projection = await DataAccessObjects.jsonWebTokenInfoThatIsActiveProjection();
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             errorLogger.error(error);

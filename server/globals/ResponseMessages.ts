@@ -1,4 +1,4 @@
-import { JsonWebTokenWorkers } from "../security/JsonWebTokenWorkers";
+import { JsonWebTokenWorkers, CreateJsonWebTokenKeyPairResult } from "../security/JsonWebTokenWorkers";
 import { User } from "../models/user";
 import { UsersCollection } from "../master";
 import { ObjectId } from "mongodb";
@@ -39,7 +39,7 @@ export class ResponseMessages {
       "message": "The token password you entered is not valid"
     };
   }
-  
+
   public static userIsNotActive(): object {
     return {
       "status": false,
@@ -133,16 +133,16 @@ export class ResponseMessages {
 
   public static async successfulUserLogin(databaseUser: User): Promise<object> {
     try {
-      const token = await JsonWebTokenWorkers.signSignWebToken(databaseUser._id, databaseUser.isAdmin, databaseUser.publicKeyPairOne, databaseUser.privateKeyPairTwo);
-      const updatedProfile = await UsersCollection.findOneAndUpdate(
+      const tokenCreateResult: CreateJsonWebTokenKeyPairResult = await JsonWebTokenWorkers.createJsonWebTokenKeyPairForUser(databaseUser);
+      const updatedProfile = await UsersCollection.updateOne(
         { _id: new ObjectId(databaseUser._id) },
-        { $set: { "jsonToken": token } }
+        { $set: { jsonToken: tokenCreateResult.token, jsonWebTokenPrivateKey: tokenCreateResult.privateKey, jsonWebTokenPublicKey: tokenCreateResult.publicKey } }
       );
-      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
+      if (updatedProfile.result.nModified === 1 && updatedProfile.result.n === 1) {
         const message = {
           "status": true,
           "message": `Welcome back ${databaseUser.username}`,
-          "token": token
+          "token": tokenCreateResult.token
         };
         return message;
       } else {

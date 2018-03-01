@@ -1,8 +1,7 @@
 import bcrypt = require("bcryptjs");
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
-import { UniqueIdentifier } from "../../shared/UniqueIdentifer";
 import errorLogger from "../logging/ErrorLogger";
-const exec = require("child_process").exec;
+import { RSA2048PrivateKeyCreationResult, RSA2048PublicKeyCreationResult, ServerEncryption } from "../security/ServerEncryption";
 
 export class User {
   public _id?: string;
@@ -21,6 +20,8 @@ export class User {
   public publicKeyPairOne: string;
   public privateKeyPairTwo: string;
   public publicKeyPairTwo: string;
+  public jsonWebTokenPrivateKey: string;
+  public jsonWebTokenPublicKey: string;
 
   constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress, rememberMe?: boolean) {
     this.isActive = false;
@@ -41,14 +42,14 @@ export class User {
     try {
       this.createdAt = new Date();
       this.password = await this.HashPassword();
-      const privateKeyResultPairOne: RSA2048PrivateKeyCreationResult = await this.createRSA2048PrivateKey();
-      const publicKeyResultPairOne: RSA2048PublicKeyCreationResult = await this.createRSA2048PublicKey(privateKeyResultPairOne.fileName, privateKeyResultPairOne.guid);
-      await this.deleteKeysFromFileSystem(privateKeyResultPairOne.fileName, publicKeyResultPairOne.fileName);
+      const privateKeyResultPairOne: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
+      const publicKeyResultPairOne: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKeyResultPairOne.fileName, privateKeyResultPairOne.guid);
+      await ServerEncryption.deleteKeysFromFileSystem(privateKeyResultPairOne.fileName, publicKeyResultPairOne.fileName);
       this.privateKeyPairOne = privateKeyResultPairOne.key;
       this.publicKeyPairOne = publicKeyResultPairOne.key;
-      const privateKeyResultPairTwo: RSA2048PrivateKeyCreationResult = await this.createRSA2048PrivateKey();
-      const publicKeyResultPairTwo: RSA2048PublicKeyCreationResult = await this.createRSA2048PublicKey(privateKeyResultPairTwo.fileName, privateKeyResultPairTwo.guid);
-      await this.deleteKeysFromFileSystem(privateKeyResultPairTwo.fileName, publicKeyResultPairTwo.fileName);
+      const privateKeyResultPairTwo: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
+      const publicKeyResultPairTwo: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKeyResultPairTwo.fileName, privateKeyResultPairTwo.guid);
+      await ServerEncryption.deleteKeysFromFileSystem(privateKeyResultPairTwo.fileName, publicKeyResultPairTwo.fileName);
       this.privateKeyPairTwo = privateKeyResultPairTwo.key;
       this.publicKeyPairTwo = publicKeyResultPairTwo.key;
       const result = true;
@@ -58,58 +59,6 @@ export class User {
       const result = false;
       return result;
     }
-  }
-
-  createRSA2048PrivateKey(): Promise<RSA2048PrivateKeyCreationResult> {
-    return new Promise((resolve, reject) => {
-      UniqueIdentifier.createGuid()
-        .then(guid => {
-          const fileName = `rsa_4096_private_${guid}.pem`;
-          const cmd = `openssl genrsa -out ${fileName} 4096} && cat ${fileName}`;
-          exec(cmd, (err, stdout, stderr) => {
-            if (err) {
-              reject(err);
-            }
-            resolve(new RSA2048PrivateKeyCreationResult(guid, fileName, stdout.toString("base64")));
-          });
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  }
-
-  createRSA2048PublicKey(fileName: string, guid: string): Promise<RSA2048PublicKeyCreationResult> {
-    return new Promise((resolve, reject) => {
-      const publicKeyFileName = `rsa_4096_${guid}_pub.pem`;
-      const cmd = `openssl rsa -pubout -in ${fileName} -out ${publicKeyFileName} && cat ${publicKeyFileName}`;
-      exec(cmd, (err, stdout, stderr) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(new RSA2048PublicKeyCreationResult(stdout.toString("base64"), publicKeyFileName));
-      });
-    });
-  }
-
-  deleteKeysFromFileSystem(fileNameOne: string, fileNameTwo: string) {
-    return new Promise((resolve, reject) => {
-      const cmdOne = `rm -f ${fileNameOne}`;
-      const cmdTwo = `rm -f ${fileNameTwo}`;
-      exec(cmdOne, (err, stdout, stderr) => {
-        if (!err) {
-          exec(cmdTwo, (err, stdout, stderr) => {
-            if (!err) {
-              resolve(true);
-            } else {
-              reject(false);
-            }
-          });
-        } else {
-          reject(false);
-        }
-      });
-    });
   }
 
   public async updateUserPassword(): Promise<boolean> {
@@ -157,26 +106,4 @@ class ProfileImage {
   public url: string;
   public secure_url: string;
   public original_filename: string;
-}
-
-class RSA2048PrivateKeyCreationResult {
-  public guid: string;
-  public fileName: string;
-  public key: string;
-
-  constructor(guid: string, fileName: string, key: string) {
-    this.guid = guid;
-    this.fileName = fileName;
-    this.key = key;
-  }
-}
-
-class RSA2048PublicKeyCreationResult {
-  public key: string;
-  public fileName: string;
-
-  constructor(key: string, publicKeyFileName: string) {
-    this.key = key;
-    this.fileName = publicKeyFileName;
-  }
 }
