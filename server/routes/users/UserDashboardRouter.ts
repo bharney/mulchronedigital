@@ -13,6 +13,7 @@ import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { Cloudinary } from "../../apis/Cloudinary";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
+import { UserIpAddress } from "../classes/UserIpAddress";
 
 export class UserDashboardRouter extends BaseRouter {
   public router: Router;
@@ -210,9 +211,10 @@ export class UserDashboardRouter extends BaseRouter {
       const updatedProfile = await UserDashboardDataAccess.updateUserLocationForIpAddress(userId, ip, latitude, longitude, userAgent);
       if (updatedProfile.result.n === 1) {
         return res.status(200);
-      } else {
-        throw new Error("Updating user location information didn't work");
       }
+      // if there was no ip address object to update, attempt to create a new one.
+      const ipAdressObject = new UserIpAddress(ip, userAgent, latitude, longitude);
+      UserAuthenicationDataAccess.updateUserProfileIpAddresses(userId, ipAdressObject);
     } catch (error) {
       res.status(503).json(ResponseMessages.generalError());
       return next(error);
