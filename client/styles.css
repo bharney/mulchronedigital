@@ -19,10 +19,6 @@ p, a, button {
   font-family: 'Roboto Mono', monospace;
 }
 
-.main-row {
-  margin-top: 25px;
-}
-
 .custom-input-addons {
   background-color: rgb(0, 128, 0);
 }
