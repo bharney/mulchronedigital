@@ -132,7 +132,7 @@ export class UserAuthenicationRouter extends BaseRouter {
           const httpHelpers = new HttpHelpers();
           const userId = databaseUsers[0]._id;
           const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-          const userAgent = await httpHelpers.getUserAgentFromRequestObject(req);
+          const userAgent = await httpHelpers.getUserAgentFromRequestObject(req.headers);
           const ipAddressObject = new UserIpAddress(ip, userAgent);
           const matchingUserIpAddresses = await UserAuthenicationDataAccess.findMatchingIpAddressbyUserId(userId, ip);
           if (matchingUserIpAddresses[0].ipAddresses === undefined) {

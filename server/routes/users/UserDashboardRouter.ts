@@ -205,7 +205,7 @@ export class UserDashboardRouter extends BaseRouter {
       }
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-      const userAgent = await httpHelpers.getUserAgentFromRequestObject(req);
+      const userAgent = await httpHelpers.getUserAgentFromRequestObject(req.headers);
       const userId = res.locals.token.id;
       const updatedProfile = await UserDashboardDataAccess.updateUserLocationForIpAddress(userId, ip, latitude, longitude, userAgent);
       if (updatedProfile.result.n === 1) {
