@@ -20,6 +20,8 @@ export class User {
   public publicKeyPairOne: string;
   public privateKeyPairTwo: string;
   public publicKeyPairTwo: string;
+  public jsonWebTokenPrivateKey: string;
+  public jsonWebTokenPublicKey: string;
 
   constructor(username: string, email?: string, password?: string, ipAddress?: UserIpAddress, rememberMe?: boolean) {
     this.isActive = false;
