@@ -1,6 +1,8 @@
 import open = require("amqplib");
 import { User } from "../models/user";
 import { QueueMessages } from "./QueueMessages";
+import errorLogger from "../logging/ErrorLogger";
+import { ContactMe } from "../../shared/ContactMe";
 
 export class EmailQueue {
   private emailQueueChannel = "email_queue";
@@ -37,14 +39,21 @@ export class EmailQueue {
       });
   }
 
-  public async sendUserActivationEmailToQueue(user: User): Promise<void> {
-    const messages = new QueueMessages();
-    const userDetails = await messages.userActivationDetailsMessage(user);
-    await this.sendMessageToEmailQueue(userDetails);
+  public async sendUserActivationEmailToQueue(user: User): Promise<boolean> {
+    try {
+      const messages = new QueueMessages();
+      const userDetails = await messages.userActivationDetailsMessage(user);
+      if (await this.sendMessageToEmailQueue(userDetails)) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      errorLogger.error(error);
+    }
   }
 
   public async sendUserForgotPasswordToQueue(email: string, userId: string, tokenId: string, newPassword: string): Promise<boolean> {
-    
+
     try {
       const messages = new QueueMessages();
       const userForgotPassword = await messages.userForgotPasswordMessage(email, userId, tokenId, newPassword);
@@ -53,17 +62,32 @@ export class EmailQueue {
       }
       return false;
     } catch (error) {
-      console.log(error);
+      errorLogger.error(error);
       return false;
     }
   }
-  
+
+  public async sendContactMeMessageToQueue(contactMeObject: ContactMe): Promise<boolean> {
+    try {
+      const messages = new QueueMessages();
+      const contactMeMessage = await messages.contactMeFormMessage(contactMeObject);
+      if (await this.sendMessageToEmailQueue(contactMeMessage)) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      errorLogger.error(error);
+      return false;
+    }
+  }
+
   private async sendMessageToEmailQueue(message: any): Promise<boolean> {
     try {
-      this.channel.sendToQueue(this.emailQueueChannel, new Buffer(JSON.stringify(message)), {persistent: true});
+      console.log(message);
+      this.channel.sendToQueue(this.emailQueueChannel, new Buffer(JSON.stringify(message)), { persistent: true });
       return true;
     } catch (error) {
-      console.log(error);
+      errorLogger.error(error);
       return false;
     }
   }

@@ -222,4 +222,25 @@ export class ResponseMessages {
       "message": "We have recently sent you a forgot password token, you are only allowed one a day"
     };
   }
+
+  public static contactMeSucess(userName: string, userEmail: string): object {
+    return {
+      "status": true,
+      "message": `Thanks for the email ${userName}. I will do my best to response to you at ${userEmail} as soon as possible.`
+    };
+  }
+
+  public static contactMeNameNotLongEnough(): object {
+    return {
+      "status": true,
+      "message": `The name you entered in the contact me form was not long enough`
+    };
+  }
+
+  public static contactMeMessageNotLongEnough(): object {
+    return {
+      "status": true,
+      "message": `The message you entered was not long enough`
+    };
+  }
 }
