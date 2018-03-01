@@ -16,4 +16,10 @@ export class HttpHelpers {
       }
     });
   }
+
+  public getUserAgentFromRequestObject(headers: any): Promise<string> {
+    return new Promise(resolve => {
+        resolve(headers["user-agent"].toString());
+    });
+  }
 }

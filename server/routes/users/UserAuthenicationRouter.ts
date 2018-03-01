@@ -88,7 +88,8 @@ export class UserAuthenicationRouter extends BaseRouter {
     try {
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-      const ipAddressObject = new UserIpAddress(ip);
+      const userAgent = await httpHelpers.getUserAgentFromRequestObject(req.headers);
+      const ipAddressObject = new UserIpAddress(ip, userAgent);
       const newUser = new User(req.body.username, req.body.email, req.body.password, ipAddressObject);
       // TODO: split this up into seperate functions. little messy;
       if (await newUser.SetupNewUser()) {
@@ -131,7 +132,8 @@ export class UserAuthenicationRouter extends BaseRouter {
           const httpHelpers = new HttpHelpers();
           const userId = databaseUsers[0]._id;
           const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-          const ipAddressObject = new UserIpAddress(ip);
+          const userAgent = await httpHelpers.getUserAgentFromRequestObject(req);
+          const ipAddressObject = new UserIpAddress(ip, userAgent);
           const matchingUserIpAddresses = await UserAuthenicationDataAccess.findMatchingIpAddressbyUserId(userId, ip);
           if (matchingUserIpAddresses[0].ipAddresses === undefined) {
             // TODO: we are now associating a new or unknown IP address to the user.

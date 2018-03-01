@@ -205,9 +205,10 @@ export class UserDashboardRouter extends BaseRouter {
       }
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      const userAgent = await httpHelpers.getUserAgentFromRequestObject(req);
       const userId = res.locals.token.id;
-      const updatedProfile = await UserDashboardDataAccess.updateUserLocationForIpAddress(userId, ip, latitude, longitude);
-      if (updatedProfile.lastErrorObject.n === 1) {
+      const updatedProfile = await UserDashboardDataAccess.updateUserLocationForIpAddress(userId, ip, latitude, longitude, userAgent);
+      if (updatedProfile.result.n === 1) {
         return res.status(200);
       } else {
         throw new Error("Updating user location information didn't work");

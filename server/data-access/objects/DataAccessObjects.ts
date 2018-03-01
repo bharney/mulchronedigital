@@ -197,9 +197,9 @@ export class DataAccessObjects {
     });
   }
 
-  public static updateIpAddressLatitudeAndLongitude(latitude: number, longitude: number): Promise<object> {
+  public static updateIpAddressLatitudeLongitudeAndUserAgent(latitude: number, longitude: number, userAgent: string): Promise<object> {
     return new Promise(resolve => {
-      const projection = { $set: { "ipAddresses.$.latitude": latitude, "ipAddresses.$.longitude": longitude } };
+      const projection = { $set: { "ipAddresses.$.latitude": latitude, "ipAddresses.$.longitude": longitude, "ipAddresses.$.userAgent": userAgent } };
       resolve(projection);
     });
   }

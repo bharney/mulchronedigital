@@ -17,7 +17,7 @@ export class UserDashboardDataAccess extends DataAccess {
       return [];
     }
   }
-  
+
   public static async findUserPasswordAndUsernameById(userId: string): Promise<User[]> {
     try {
       const query = await DataAccessObjects.findUserByIdQuery(userId);
@@ -49,11 +49,11 @@ export class UserDashboardDataAccess extends DataAccess {
     }
   }
 
-  public static async updateUserLocationForIpAddress(userId: string, ip: string, latitude: number, longitude: number): Promise<any> {
+  public static async updateUserLocationForIpAddress(userId: string, ip: string, latitude: number, longitude: number, userAgent: string): Promise<any> {
     try {
       const query = await DataAccessObjects.findUserByIdQueryMatchingIp(userId, ip);
-      const projection = await DataAccessObjects.updateIpAddressLatitudeAndLongitude(latitude, longitude);
-      return await UsersCollection.findOneAndUpdate(query, projection);
+      const projection = await DataAccessObjects.updateIpAddressLatitudeLongitudeAndUserAgent(latitude, longitude, userAgent);
+      return await UsersCollection.updateOne(query, projection);
     } catch (error) {
       errorLogger.error(error);
     }
