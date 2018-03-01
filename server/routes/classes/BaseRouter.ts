@@ -15,14 +15,11 @@ export abstract class BaseRouter {
       if (headerToken === null) {
         return res.status(401).json(ResponseMessages.noJsonWebTokenInHeader());
       }
-      if (!await JsonWebTokenWorkers.verifiyJsonWebToken(headerToken)) {
-        return res.status(409).json(ResponseMessages.jsonWebTokenExpired());
-      }
       res.locals.token = await JsonWebTokenWorkers.getDecodedJsonWebToken(headerToken);
       if (!res.locals.token) {
         return res.status(503).json(ResponseMessages.generalError());
       }
-      const databaseUsers: User[] = await UserAuthenicationDataAccess.getJSONWebTokenOfActiveUserByUserId(res.locals.token.id);
+      const databaseUsers: User[] = await UserAuthenicationDataAccess.getJSONWebTokenInfoOfActiveUserByUserId(res.locals.token.id);
       if (databaseUsers.length <= 0) {
         // send user message and redirect them client side to login screen or whatever.
         return res.status(503).json(ResponseMessages.generalError());
@@ -31,10 +28,12 @@ export abstract class BaseRouter {
       if (isUserActive === undefined || !isUserActive) {
         return res.status(503).json(ResponseMessages.userIsNotActive());
       }
-      if (!await JsonWebTokenWorkers.verifiyJsonWebToken(databaseUsers[0].jsonToken)) {
+      const jsonToken = databaseUsers[0].jsonToken;
+      const jsonTokenPublicKey = databaseUsers[0].jsonWebTokenPublicKey;
+      if (!await JsonWebTokenWorkers.verifiyJsonWebToken(jsonToken, jsonTokenPublicKey)) {
         return res.status(409).json(ResponseMessages.jsonWebTokenExpired());
       }
-      const decodedDbToken: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseUsers[0].jsonToken);
+      const decodedDbToken: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(jsonToken);
       if (!await JsonWebTokenWorkers.comparedHeaderTokenWithDbToken(res.locals.token, decodedDbToken)) {
         return res.status(409).json(ResponseMessages.jsonWebTokenDoesntMatchStoredToken());
       }

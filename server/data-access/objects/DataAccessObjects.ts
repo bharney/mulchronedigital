@@ -148,9 +148,9 @@ export class DataAccessObjects {
     });
   }
 
-  public static jsonWebTokenThatIsActiveProjection(): Promise<object> {
+  public static jsonWebTokenInfoThatIsActiveProjection(): Promise<object> {
     return new Promise(resolve => {
-      const projection = { jsonToken: 1, isActive: 1 };
+      const projection = { jsonToken: 1, jsonWebTokenPublicKey: 1, isActive: 1 };
       resolve(projection);
     });
   }

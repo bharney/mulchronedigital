@@ -42,39 +42,14 @@ export class JsonWebTokenWorkers {
     };
   }
 
-  public static getPrivateKey(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      fs.readFileAsync(path.join(process.cwd() + "/server/security/ssl/private.pem"), "utf8")
-        .then((privateKey) => {
-          resolve(privateKey);
-        })
-        .catch((error: Error) => {
-          reject(error);
-        });
-    });
-  }
-
-  public static async verifiyJsonWebToken(token): Promise<boolean> {
+  public static async verifiyJsonWebToken(jsonToken: string, jsonTokenPublicKey: string): Promise<boolean> {
     try {
-      const publicKey = await this.getPublicKey();
-      await jwt.verify(token, publicKey);
+      await jwt.verify(jsonToken, jsonTokenPublicKey);
       return true;
     } catch (error) {
       // TODO: log error?
       return false;
     }
-  }
-
-  public static getPublicKey(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      fs.readFileAsync(path.join(process.cwd(), "/server/security/ssl/public.pem"), "utf-8")
-        .then((publicKey) => {
-          resolve(publicKey);
-        })
-        .catch((error: Error) => {
-          reject(error);
-        });
-    });
   }
 
   public static async getDecodedJsonWebToken(token): Promise<any> {
