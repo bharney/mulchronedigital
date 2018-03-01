@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, NavigationEnd } from "@angular/router";
 import { RefreshTokenService } from "../../shared/services/refresh-token.service";
 import { JsonWebToken } from "../../../../shared/JsonWebToken";
 declare const $: any;
@@ -27,7 +27,11 @@ export class NavbarTopComponent implements OnInit {
         });
       }, 2500);
     } else {
-      $("#disclaimer-modal").modal();
+      this.router.events.subscribe((event) => {
+        if (event instanceof NavigationEnd && event.urlAfterRedirects.includes("/home")) {
+          $("#disclaimer-modal").modal();
+        }
+      });
     }
   }
 
