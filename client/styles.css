@@ -6,6 +6,10 @@ body {
   background-color: #f0f0f0;
 }
 
+textarea {
+  resize: none;
+}
+
 .card {
   background-color: #f7f7f7;
   border: 2px outset black;
@@ -17,10 +21,6 @@ h1, h2, h3, h4, h5, h6 {
 
 p, a, button {
   font-family: 'Roboto Mono', monospace;
-}
-
-.main-row {
-  margin-top: 25px;
 }
 
 .custom-input-addons {

@@ -1,4 +1,4 @@
-<div class="row main-row">
+<div class="row">
   <div class="col-sm-2"></div>
   <div class="col-sm-8">
     <div class="card">
@@ -8,76 +8,14 @@
           <button *ngSwitchCase="false" id="register-button" class="btn btn-primary pull-left" [routerLink]="['../users/register']">Register</button>
           <button *ngSwitchCase="false" id="login-button" class="btn btn-primary pull-right" [routerLink]="['../users/login']">Login</button>
         </div>
-        <br/>
-        <p class="text-center">
-          Open source, for science!
-        </p>
-        <a href="https://github.com/mtmulch/mulchronedigital" rel="nofollow" target="_blank">
-          <i id="github-icon" class="fa fa-github" aria-hidden="true"></i>
-        </a>
-      </div>
-    </div>
-    <div id="second-card" class="card">
-      <div class="card-block col-sm-12">
-        <h4 class="text-center">This site was built with</h4>
-        <div class="tech-logo-placeholder row">
-          <div class="col-sm-12">
-            <a href="https://nodejs.org/en/" rel="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/q_100,c_limit,h_150,w_150/v1512794323/Node.js_logo_coyfvg.svg"
-                alt="Node.js">
-            </a>
-            <a href="https://angular.io/" rel="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/q_100,c_scale,h_150,w_150/v1512794499/angular_xe1ncq.svg"
-                alt="Angular">
-            </a>
-            <a href="https://www.mongodb.com/" rel="nofollow" target="_blank">
-              <img src="https://res.cloudinary.com/dqukwohgi/image/upload/c_scale,h_150,q_100,w_150/v1512794851/MongoDB-Logo_o4oxqh.svg"
-                alt="mongoDB" class="img-fluid tech-logo-images">
-            </a>
-            <a href="https://www.typescriptlang.org/" ref="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/c_scale,h_150,q_100,w_150/v1512800471/68747470733a2f2f63646e2e7261776769742e636f6d2f706564726f6d616c74657a2f747970657363726970742d6c6f676f2d72656372656174696f6e2f6d61737465722f6c6f676f732f747970657363726970742d636f6c6f722d6c6f676f2e737667_q44iff.svg"
-                alt="TypeScript">
-            </a>
-          </div>
-        </div>
-        <div class="tech-logo-placeholder row">
-          <div class="col-sm-12">
-            <a href="https://www.microsoft.com/net/core" ref="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/q_100,c_scale,h_150,w_150/v1512795300/netcore_w8kw4j.svg"
-                alt=".NET Core">
-            </a>
-            <a href="https://www.rabbitmq.com/" ref="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/q_100,c_scale,h_150,w_150/v1512797542/rabbitmq_c6qwes.svg"
-                alt="RabbitMQ">
-            </a>
-            <a href="https://www.postgresql.org/" ref="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/q_100,c_scale,h_150,w_150/v1512796319/PostgreSQL_logo.3colors_zebbmo.svg"
-                alt="PostgreSQL">
-            </a>
-            <a href="https://docs.microsoft.com/en-us/dotnet/csharp/" ref="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/c_scale,h_150,q_100,w_150/v1512800707/C_Sharp_wordmark_hc0kcu.svg"
-                alt="C#">
-            </a>
-          </div>
-        </div>
-        <div class="tech-logo-placeholder row">
-          <div class="col-sm-12">
-            <a href="https://www.nginx.com/" ref="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/c_scale,h_150,q_100,w_150/v1512951121/Nginx_logo_e5hcj3.svg"
-                alt="Nginx">
-            </a>
-            <a href="https://www.ubuntu.com/" ref="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/c_scale,h_150,q_100/v1512951093/Logo-ubuntu_cof-orange-hex_ifmqec.svg"
-                alt="Ubuntu">
-            </a>
-            <a href="https://aws.amazon.com/" rel="nofollow" target="_blank">
-              <img class="img-fluid tech-logo-images" src="https://res.cloudinary.com/dqukwohgi/image/upload/c_scale,h_150,q_100,w_150/v1514341726/Amazon_Web_Services_Logo_fbeyo8.svg"
-                alt="Amazon Web Services">
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   </div>
+</div>
+
+<div class="row">
   <div class="col-sm-2"></div>
+  <div class="col-sm-8">
+    <app-contact-me></app-contact-me>
+  </div>
 </div>

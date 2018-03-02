@@ -1,4 +1,5 @@
 import { User } from "../models/user";
+import { ContactMe } from "../../shared/ContactMe";
 
 export class QueueMessages {
 
@@ -21,6 +22,18 @@ export class QueueMessages {
                 "email": email,
                 "tokenId": tokenId,
                 "newPassword": newPassword
+            };
+            resolve(message);
+        });
+    }
+
+    public contactMeFormMessage(contactMeObject: ContactMe): object {
+        return new Promise(resolve => {
+            const message = {
+                "type": "contact_me_message",
+                "userName": contactMeObject.userName,
+                "userEmail": contactMeObject.userEmail,
+                "message": contactMeObject.message
             };
             resolve(message);
         });
