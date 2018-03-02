@@ -5,17 +5,17 @@ import { HomeRouting } from "./home-routing";
 import { ContactMeService } from "../../shared/services/contact-me.service";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ContactMeComponent } from "./components/contact-me/contact-me.component";
-import { ErrorModalComponent } from "../../components/error-modal/error-modal.component";
+import { SharedModule } from "../../shared/modules/shared.module";
 
 @NgModule({
   imports: [
     CommonModule,
     HomeRouting,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule
   ],
   declarations: [
     HomeComponent,
-    ErrorModalComponent,
     ContactMeComponent
   ],
   providers: [
