@@ -31,15 +31,15 @@ export class ContactMeComponent implements OnInit {
   private createFormGroup(): void {
     this.contactMeForm = this.formBuilder.group({
       name: [
-        "Michael",
+        "",
         [Validators.required, Validators.minLength(3)]
       ],
       email: [
-        "mtmulch2@gmail.com",
+        "",
         [Validators.required, UserAuthenicationValidator.emailValidation]
       ],
       message: [
-        "This is a test message for the contact me page omg I really hope that this shit works.",
+        "",
         [Validators.required, Validators.minLength(25)]
       ]
     });
