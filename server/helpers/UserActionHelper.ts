@@ -1,5 +1,5 @@
 import { UserAction, UserChangedPasswordAction, UserChangedUsernameAction, UserForgotPasswordAction, UserLoggedInAction } from "../models/UserAction";
-import { UserActionsCollection } from "../master";
+import { UserActionsCollection } from "../config/master";
 import errorLogger from "../logging/ErrorLogger";
 
 export class UserActionHelper {

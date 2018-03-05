@@ -10,33 +10,24 @@ export class EmailQueue {
   private badConnectionAttempts = null;
   private channel;
 
-  constructor() {
-    this.createChannelForEmailQueue();
-  }
+  constructor() { }
 
-  private createChannelForEmailQueue(): void {
-    this.connectionString = (!process.env.RABBITMQ_URL) ? "amqp://localhost" : process.env.RABBITMQ_URL;
-    open.connect(this.connectionString)
-      .then(connection => {
-        return connection.createChannel();
-      })
-      .then(ch => {
-        ch.assertQueue(this.emailQueueChannel, { durable: true });
-        this.channel = ch;
-      })
-      .catch((error) => {
-        if (this.badConnectionAttempts === 25) {
-          console.log("RabiitMQ connection failed 25 times, shutting down process");
-          process.exit();
-        }
-        if (error) {
-          if (this.badConnectionAttempts === null) {
-            this.badConnectionAttempts = 0;
-          }
-          this.badConnectionAttempts++;
-          return this.createChannelForEmailQueue();
-        }
-      });
+  public async createChannelForEmailQueue(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.connectionString = (!process.env.RABBITMQ_URL) ? "amqp://localhost" : process.env.RABBITMQ_URL;
+      open.connect(this.connectionString)
+        .then(connection => {
+          return connection.createChannel();
+        })
+        .then(ch => {
+          ch.assertQueue(this.emailQueueChannel, { durable: true });
+          this.channel = ch;
+          resolve(true);
+        })
+        .catch(async (error) => {
+          reject(error);
+        });
+    });
   }
 
   public async sendUserActivationEmailToQueue(user: User): Promise<boolean> {
@@ -83,7 +74,6 @@ export class EmailQueue {
 
   private async sendMessageToEmailQueue(message: any): Promise<boolean> {
     try {
-      console.log(message);
       this.channel.sendToQueue(this.emailQueueChannel, new Buffer(JSON.stringify(message)), { persistent: true });
       return true;
     } catch (error) {

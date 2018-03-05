@@ -3,7 +3,7 @@ import { Router, NextFunction, Request, Response } from "express";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { ContactMe } from "../../../shared/ContactMe";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
-import { EmailQueueExport } from "../../master";
+import { EmailQueueExport } from "../../config/master";
 
 export class HomeRouter extends BaseRouter {
     public router: Router;

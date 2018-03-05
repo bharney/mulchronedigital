@@ -1,8 +1,8 @@
 import { User } from "../models/user";
 import { DataAccessObjects } from "./objects/DataAccessObjects";
-import { UsersCollection } from "../master";
+import { UsersCollection } from "../config/master";
 import { DataAccess } from "../data-access/classes/DataAccess";
-import { ForgotPasswordCollection } from "../master";
+import { ForgotPasswordCollection } from "../config/master";
 import { ForgotPasswordToken } from "../models/ForgotPasswordToken";
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
 import errorLogger from "../logging/ErrorLogger";

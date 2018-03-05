@@ -4,10 +4,10 @@ import path = require("path");
 import logger = require("morgan");
 import bodyParser = require("body-parser");
 import compression = require("compression");
-import { IndexRouter } from "./routes/IndexRouter";
-import { Database } from "./globals/Database";
+import { IndexRouter } from "../routes/IndexRouter";
+import { Database } from "../globals/Database";
 import { NextFunction, Request, Response } from "express";
-import errorLogger from "./logging/ErrorLogger";
+import errorLogger from "../logging/ErrorLogger";
 
 export default class Server {
   public port = process.env.PORT || 8080;

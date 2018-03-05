@@ -1,6 +1,6 @@
-import { Database } from "./globals/Database";
-import { EmailQueue } from "./queues/EmailQueue";
+import { Database } from "../globals/Database";
 import Server from "./server";
+import { EmailQueue } from "../queues/EmailQueue";
 
 let db;
 let UsersCollection;
@@ -35,40 +35,26 @@ async function makeDbConnectionHelper(database: Database, connectionAttempts: nu
 }
 
 async function createEmailQueueConnection(): Promise<boolean> {
+  const emailQueue = new EmailQueue();
+  const connectionAttempts = 24;
+  await createEmailQueueConnectionHelper(emailQueue, connectionAttempts);
+  return true;
+}
+
+async function createEmailQueueConnectionHelper(emailQueue: EmailQueue, connectionAttempts: number): Promise<void> {
   try {
-    const queue = new EmailQueue();
-    EmailQueueExport = queue;
-    return true;
+    if (connectionAttempts < 25) {
+      if (await emailQueue.createChannelForEmailQueue()) {
+        EmailQueueExport = emailQueue;
+      }
+    } else {
+      console.log("RabbitMQ connection failed 25 times, stopping process");
+      process.exit();
+    }
   } catch (error) {
-    return false;
+    connectionAttempts++;
+    return await createEmailQueueConnectionHelper(emailQueue, connectionAttempts);
   }
 }
 
-async function startServer(): Promise<void> {
-  try {
-    const newServer = new Server();
-    const serverWorker = newServer.app.listen(newServer.port, () => {
-      console.log(`Server is listening on ${newServer.port}`);
-    });
-
-  } catch (error) {
-    console.log(`This process failed to start`);
-  }
-}
-
-makeDbConnection()
-  .then(response => {
-    if (response) {
-      return createEmailQueueConnection();
-    }
-  })
-  .then(response => {
-    if (response) {
-      startServer();
-    }
-  })
-  .catch(error => {
-    process.exit();
-  });
-
-export { UsersCollection, UserActionsCollection, EmailQueueExport, ForgotPasswordCollection };
+export { UsersCollection, UserActionsCollection, EmailQueueExport, ForgotPasswordCollection, makeDbConnection, createEmailQueueConnection };

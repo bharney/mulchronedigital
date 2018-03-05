@@ -1,6 +1,6 @@
 import { User } from "../../models/user";
 import { DataAccessObjects } from "../objects/DataAccessObjects";
-import { UsersCollection } from "../../master";
+import { UsersCollection } from "../../config/master";
 import errorLogger from "../../logging/ErrorLogger";
 
 export class DataAccess {
