@@ -52,17 +52,17 @@ export class UserAuthenicationRouter extends BaseRouter {
   private async validateRegisterUserRequest(req: Request, res: Response, next: NextFunction) {
     try {
       if (!await UserAuthenicationValidator.isUserNameValid(req.body.username)) {
-        return res.status(422).json(ResponseMessages.userNameIsNotValid());
+        return res.status(422).json(await ResponseMessages.userNameIsNotValid());
       }
       if (!await UserAuthenicationValidator.isEmailValid(req.body.email)) {
-        return res.status(422).json(ResponseMessages.emailIsNotValid());
+        return res.status(422).json(await ResponseMessages.emailIsNotValid());
       }
       if (!await UserAuthenicationValidator.isPasswordValid(req.body.password)) {
-        return res.status(422).json(ResponseMessages.passwordIsNotValid());
+        return res.status(422).json(await ResponseMessages.passwordIsNotValid());
       }
       next();
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }
@@ -71,15 +71,15 @@ export class UserAuthenicationRouter extends BaseRouter {
     try {
       const databaseUser: User[] = await UserAuthenicationDataAccess.findIfUserExistsByUsername(req.body.username);
       if (databaseUser.length > 0) {
-        return res.status(409).json(ResponseMessages.usernameIsTaken(req.body.username));
+        return res.status(409).json(await ResponseMessages.usernameIsTaken(req.body.username));
       }
       const databaseEmail: User[] = await UserAuthenicationDataAccess.findIfUserExistsByEmail(req.body.email);
       if (databaseEmail.length > 0) {
-        return res.status(409).json(ResponseMessages.emailIsTaken(req.body.email));
+        return res.status(409).json(await ResponseMessages.emailIsTaken(req.body.email));
       }
       next();
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }
@@ -95,16 +95,16 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (await newUser.SetupNewUser()) {
         const insertResult = await UserAuthenicationDataAccess.insertNewUser(newUser);
         if (insertResult.result.n === 1) {
-          res.status(200).json(ResponseMessages.userRegistrationSuccessful(req.body.username, req.body.email));
+          res.status(200).json(await ResponseMessages.userRegistrationSuccessful(req.body.username, req.body.email));
           EmailQueueExport.sendUserActivationEmailToQueue(newUser);
         } else {
-          return res.status(503).json(ResponseMessages.generalError());
+          return res.status(503).json(await ResponseMessages.generalError());
         }
       } else {
-        return res.status(503).json(ResponseMessages.generalError());
+        return res.status(503).json(await ResponseMessages.generalError());
       }
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }
@@ -114,18 +114,18 @@ export class UserAuthenicationRouter extends BaseRouter {
       const userEmail = req.body.email;
       const userPassword = req.body.password;
       if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
-        return res.status(401).json(ResponseMessages.emailIsNotValid());
+        return res.status(401).json(await ResponseMessages.emailIsNotValid());
       }
       if (!await UserAuthenicationValidator.isPasswordValid(userPassword)) {
-        return res.status(401).json(ResponseMessages.passwordIsNotValid());
+        return res.status(401).json(await ResponseMessages.passwordIsNotValid());
       }
       const databaseUsers: User[] = await DataAccess.findUserLoginDetailsByEmail(userEmail);
       // should only be one user with this email
       if (databaseUsers.length === 1) {
         if (!databaseUsers[0].isActive) {
-          return res.status(401).json(ResponseMessages.userAccountNotActive(databaseUsers[0].username));
+          return res.status(401).json(await ResponseMessages.userAccountNotActive(databaseUsers[0].username));
         } else if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(userPassword, databaseUsers[0].password)) {
-          return res.status(401).json(ResponseMessages.passwordsDoNotMatch());
+          return res.status(401).json(await ResponseMessages.passwordsDoNotMatch());
         } else {
           res.status(200).json(await ResponseMessages.successfulUserLogin(databaseUsers[0]));
           // TODO: MAKE A FUNCTION!!!!
@@ -144,10 +144,10 @@ export class UserAuthenicationRouter extends BaseRouter {
           await userActions.userLoggedIn(userId, ip);
         }
       } else {
-        return res.status(401).json(ResponseMessages.noUserFound());
+        return res.status(401).json(await ResponseMessages.noUserFound());
       }
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }
@@ -158,19 +158,19 @@ export class UserAuthenicationRouter extends BaseRouter {
       // what if the user was logged out for like 5 days?
       const token: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(req.headers["mulchronedigital-token"]);
       if (token === null) {
-        return res.status(401).json(ResponseMessages.noJsonWebTokenInHeader());
+        return res.status(401).json(await ResponseMessages.noJsonWebTokenInHeader());
       }
       const databaseUsers: User[] = await UserAuthenicationDataAccess.findUserJsonWebTokenRefreshInformationById(token.id);
       if (databaseUsers.length <= 0) {
-        return res.status(401).json(ResponseMessages.noUserFound());
+        return res.status(401).json(await ResponseMessages.noUserFound());
       }
       const dbToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseUsers[0].jsonToken);
       if (!await JsonWebTokenWorkers.comparedHeaderTokenWithDbToken(token, dbToken)) {
-        return res.status(401).json(ResponseMessages.jsonWebTokenDoesntMatchStoredToken());
+        return res.status(401).json(await ResponseMessages.jsonWebTokenDoesntMatchStoredToken());
       }
       return res.status(200).json(await ResponseMessages.successfulUserLogin(databaseUsers[0]));
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }
@@ -180,15 +180,15 @@ export class UserAuthenicationRouter extends BaseRouter {
       const userId = req.body.id;
       if (!UserAuthenicationValidator.isThisAValidMongoObjectId(userId)) {
         // TODO: create some kind of message.
-        return res.status(401).json(ResponseMessages.generalError());
+        return res.status(401).json(await ResponseMessages.generalError());
       }
       const updatedProfile = await UserAuthenicationDataAccess.updateUserProfileIsActive(userId);
       if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
-        return res.status(200).json(ResponseMessages.userAccountActiveSuccess());
+        return res.status(200).json(await ResponseMessages.userAccountActiveSuccess());
       }
-      return res.status(401).json(ResponseMessages.generalError());
+      return res.status(401).json(await ResponseMessages.generalError());
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }
@@ -197,16 +197,16 @@ export class UserAuthenicationRouter extends BaseRouter {
     try {
       const userEmail = req.body.email;
       if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
-        return res.status(422).json(ResponseMessages.emailIsNotValid());
+        return res.status(422).json(await ResponseMessages.emailIsNotValid());
       }
       const databaseUsers: User[] = await UserAuthenicationDataAccess.userForgotPasswordFindUserByEmail(userEmail);
       if (databaseUsers.length <= 0) {
-        return res.status(401).json(ResponseMessages.noUserFoundThatIsActive());
+        return res.status(401).json(await ResponseMessages.noUserFoundThatIsActive());
       }
       const userId = databaseUsers[0]._id;
       const resetPasswordTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.findRecentForgotPasswordTokensByUserId(userId);
       if (resetPasswordTokens.length > 0) {
-        return res.status(429).json(ResponseMessages.tooManyForgotPasswordRequests());
+        return res.status(429).json(await ResponseMessages.tooManyForgotPasswordRequests());
       }
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
@@ -215,16 +215,16 @@ export class UserAuthenicationRouter extends BaseRouter {
       await forgotPasswordToken.securePassword(tokenPassword);
       const tokenId = await UserAuthenicationDataAccess.insertForgotPasswordToken(forgotPasswordToken);
       if (tokenId.length === 0) {
-        return res.status(503).json(ResponseMessages.generalError());
+        return res.status(503).json(await ResponseMessages.generalError());
       }
       if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, tokenPassword)) {
-        return res.status(503).json(ResponseMessages.generalError());
+        return res.status(503).json(await ResponseMessages.generalError());
       }
-      res.status(200).json(ResponseMessages.forgotPasswordSuccess(userEmail));
+      res.status(200).json(await ResponseMessages.forgotPasswordSuccess(userEmail));
       const userActions = new UserActionHelper();
       await userActions.userForgotPassword(userId, ip, tokenId);
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }
@@ -235,26 +235,26 @@ export class UserAuthenicationRouter extends BaseRouter {
       const tokenPassword = req.body.tokenPassword;
       const newPassword = req.body.newPassword;
       if (!await UserAuthenicationValidator.isThisAValidMongoObjectId(tokenId)) {
-        return res.status(422).json(ResponseMessages.resetPasswordTokenNotValid());
+        return res.status(422).json(await ResponseMessages.resetPasswordTokenNotValid());
       }
       if (!await UserAuthenicationValidator.isTokenPasswordValid(tokenPassword)) {
-        return res.status(422).json(ResponseMessages.tokenPasswordNotValid());
+        return res.status(422).json(await ResponseMessages.tokenPasswordNotValid());
       }
       if (!await UserAuthenicationValidator.isPasswordValid(newPassword)) {
-        return res.status(422).json(ResponseMessages.passwordIsNotValid());
+        return res.status(422).json(await ResponseMessages.passwordIsNotValid());
       }
       const resetTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.findForgotPasswordTokensByTokenId(tokenId);
       if (resetTokens.length <= 0) {
-        return res.status(503).json(ResponseMessages.resetPasswordTokenNotValid());
+        return res.status(503).json(await ResponseMessages.resetPasswordTokenNotValid());
       }
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       if (resetTokens[0].ip !== ip) {
         // TODO: log non matching IP addresses somewhere???
-        return res.status(401).json(ResponseMessages.resetPasswordTokenIpAddressDoNotMatch());
+        return res.status(401).json(await ResponseMessages.resetPasswordTokenIpAddressDoNotMatch());
       }
       if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(tokenPassword, resetTokens[0].tokenPassword)) {
-        return res.status(401).json(ResponseMessages.tokenPasswordNotValid());
+        return res.status(401).json(await ResponseMessages.tokenPasswordNotValid());
       }
       const userId = resetTokens[0].userId;
       const databaseUsers: User[] = await DataAccess.getUserPassword(userId);
@@ -262,7 +262,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       const user: User = new User(null, null, newPassword);
       const updateUserPasswordResult = await DataAccess.updateUserPassword(userId, user);
       if (updateUserPasswordResult.modifiedCount === 1) {
-        res.status(200).json(ResponseMessages.userChangedPasswordSuccessfully());
+        res.status(200).json(await ResponseMessages.userChangedPasswordSuccessfully());
         // no need to await these do not depend on the response to the user.
         UserAuthenicationDataAccess.updatePasswordTokenToInvalidById(tokenId);
         const userActions = new UserActionHelper();
@@ -272,7 +272,7 @@ export class UserAuthenicationRouter extends BaseRouter {
         throw new Error("There was nothing updated when attemtping to update the users password");
       }
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }

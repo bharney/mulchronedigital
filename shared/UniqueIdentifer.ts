@@ -2,9 +2,22 @@ export class UniqueIdentifier {
 
     static async createGuid(): Promise<string> {
         try {
-            let guid = await this.createSection() + await this.createSection() + "-";
-            guid += await this.createSection() + "-" + await this.createSection() + "-";
-            guid += await this.createSection() + "-" + await this.createSection() + await this.createSection() + await this.createSection();
+            let guid;
+            const sections = [];
+            for (let i = 0; i < 8; i++) {
+                const guidSection = this.createSection();
+                sections.push(guidSection);
+            }
+            Promise.all(sections)
+                .then(values => {
+                    for (let i = 0; i < values.length; i++) {
+                        if (i !== (values.length - 1)) {
+                            guid += values[i] + "-";
+                            continue;
+                        }
+                        guid += values[i];
+                    }
+                });
             return guid;
         } catch (error) {
             console.log(error);

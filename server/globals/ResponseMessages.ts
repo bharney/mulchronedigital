@@ -6,129 +6,181 @@ import errorLogger from "../logging/ErrorLogger";
 
 export class ResponseMessages {
 
-  public static userNameIsNotValid(): object {
-    return {
-      "status": false,
-      "message": "You must enter a username between 4 and 12 characters long"
-    };
-  }
-  public static passwordIsNotValid(): object {
-    return {
-      "status": false,
-      "message": "Your password must be atleast 8 characters with one upper case letter, one lower case letter, one number, and one special character"
-    };
+  public static userNameIsNotValid(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "You must enter a username between 4 and 12 characters long"
+      };
+      resolve(message);
+    });
   }
 
-  public static resetPasswordTokenNotValid(): object {
-    return {
-      "status": false,
-      "message": "The reset token was invalid"
-    };
+  public static passwordIsNotValid(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "Your password must be atleast 8 characters with one upper case letter, one lower case letter, one number, and one special character"
+      };
+      resolve(message);
+    });
   }
 
-  public static resetPasswordTokenIpAddressDoNotMatch(): object {
-    return {
-      "status": false,
-      "message": "Sorry, for security purposes you are only allowed to reset your password from the same IP address you requested it from."
-    };
+  public static resetPasswordTokenNotValid(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "The reset token was invalid"
+      };
+      resolve(message);
+    });
   }
 
-  public static tokenPasswordNotValid(): object {
-    return {
-      "status": false,
-      "message": "The token password you entered is not valid"
-    };
+  public static resetPasswordTokenIpAddressDoNotMatch(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "Sorry, for security purposes you are only allowed to reset your password from the same IP address you requested it from."
+      };
+      resolve(message);
+    });
   }
 
-  public static userIsNotActive(): object {
-    return {
-      "status": false,
-      "message": `Your user account is not activate, if you have previously activated this account your access may have been revoked.`,
-      "relogin": true,
-    };
+  public static tokenPasswordNotValid(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "The token password you entered is not valid"
+      };
+      resolve(message);
+    });
   }
 
-  public static emailIsNotValid(): object {
-    return {
-      "status": false,
-      "message": "You must enter a valid email address"
-    };
+  public static userIsNotActive(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": `Your user account is not activate, if you have previously activated this account your access may have been revoked.`,
+        "relogin": true,
+      };
+      resolve(message);
+    });
   }
 
-  public static usernameIsTaken(username: string): object {
-    return {
-      "status": false,
-      "message": `The username ${username} is already taken`
-    };
+  public static emailIsNotValid(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "You must enter a valid email address"
+      };
+      resolve(message);
+    });
   }
 
-  public static emailIsTaken(email: string): object {
-    return {
-      "status": false,
-      "message": `The email ${email} is already associated with an account.`
-    };
+  public static usernameIsTaken(username: string): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": `The username ${username} is already taken`
+      };
+      resolve(message);
+    });
   }
 
-  public static userRegistrationSuccessful(username: string, email: string): object {
-    return {
-      "status": true,
-      "message": `Thanks for registering ${username}! We have sent a email to ${email} so we can verify your account. 
-                  You must click the link in this email to active your account.`
-    };
+  public static emailIsTaken(email: string): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": `The email ${email} is already associated with an account.`
+      };
+      resolve(message);
+    });
   }
 
-  public static generalError(): object {
-    return {
-      "status": false,
-      "message": "Something went wrong on our end, please try again in a moment."
-    };
+  public static userRegistrationSuccessful(username: string, email: string): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "message": `Thanks for registering ${username}! We have sent a email to ${email} so we can verify your account. 
+                    You must click the link in this email to active your account.`
+      };
+      resolve(message);
+    });
   }
 
-  public static noUserFound(): object {
-    return {
-      "status": false,
-      "message": "Sorry, we did not find any users with that email address.",
-      "relogin": true
-    };
+  public static generalError(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "Something went wrong on our end, please try again in a moment."
+      };
+      resolve(message);
+    });
   }
 
-  public static noUserFoundThatIsActive(): object {
-    return {
-      "status": false,
-      "message": "Sorry, we did not find any users with that email address that are currently active.",
-      "relogin": true
-    };
+  public static noUserFound(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "Sorry, we did not find any users with that email address.",
+        "relogin": true
+      };
+      resolve(message);
+    });
   }
 
-  public static passwordsDoNotMatch(): object {
-    return {
-      "status": false,
-      "message": "Sorry the password you entered does not match the one stored."
-    };
+  public static noUserFoundThatIsActive(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "Sorry, we did not find any users with that email address that are currently active.",
+        "relogin": true
+      };
+      resolve(message);
+    });
   }
 
-  public static noJsonWebTokenInHeader(): object {
-    return {
-      "status": false,
-      "message": "No token in header",
-      "relogin": true
-    };
+  public static passwordsDoNotMatch(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "Sorry the password you entered does not match the one stored."
+      };
+      resolve(message);
+    });
   }
 
-  public static jsonWebTokenExpired(): object {
-    return {
-      "status": false,
-      "message": "Please verify your login information again please.",
-      "relogin": true
-    };
+  public static noJsonWebTokenInHeader(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "No token in header",
+        "relogin": true
+      };
+      resolve(message);
+    });
   }
 
-  public static jsonWebTokenDoesntMatchStoredToken(): object {
-    return {
-      "status": false,
-      "message": "Please verify your login information again please",
-      "relogin": true
-    };
+  public static jsonWebTokenExpired(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "Please verify your login information again please.",
+        "relogin": true
+      };
+      resolve(message);
+    });
+  }
+
+  public static jsonWebTokenDoesntMatchStoredToken(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "Please verify your login information again please",
+        "relogin": true
+      };
+      resolve(message);
+    });
   }
 
   public static async successfulUserLogin(databaseUser: User): Promise<object> {
@@ -153,94 +205,123 @@ export class ResponseMessages {
     }
   }
 
-  public static dashboardUserFound(databaseUser: User): object {
-    return {
-      "status": true,
-      "username": databaseUser.username,
-      "profileImage": databaseUser.profileImage.secure_url
-    };
+  public static dashboardUserFound(databaseUser: User): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "username": databaseUser.username,
+        "profileImage": databaseUser.profileImage.secure_url
+      };
+      resolve(message);
+    });
   }
 
-  public static userChangedPasswordSuccessfully(): object {
-    return {
-      "status": true,
-      "message": "You have successfully changed your password"
-    };
+  public static userChangedPasswordSuccessfully(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "message": "You have successfully changed your password"
+      };
+      resolve(message);
+    });
   }
 
-  public static usernameChangeSuccessful(newUsername): object {
-    return {
-      "status": true,
-      "message": `You have successfully changed your username to ${newUsername}`
-    };
+  public static usernameChangeSuccessful(newUsername): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "message": `You have successfully changed your username to ${newUsername}`
+      };
+      resolve(message);
+    });
   }
 
-  public static profilePictureUploadFailedFileToBig(): object {
-    return {
-      "status": false,
-      "message": "Uploading your profile failed, please make sure that your file does not exceed 5MB in size."
-    };
+  public static profilePictureUploadFailedUnsupportedType(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "Uploading your profile failed, please try a different image type."
+      };
+      resolve(message);
+    });
   }
 
-  public static profilePictureUploadFailedUnsupportedType(): object {
-    return {
-      "status": false,
-      "message": "Uploading your profile failed, please try a different image type."
-    };
+  public static changeProfilePictureSuccessful(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true
+      };
+      resolve(message);
+    });
   }
 
-  public static changeProfilePictureSuccessful(): object {
-    return {
-      "status": true
-    };
+  public static userAccountNotActive(username: string): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": `The account for ${username} currently isn't active. If you just registered, an email is on its way. If this account isn't new your access has been revoked.`
+      };
+      resolve(message);
+    });
   }
 
-  public static userAccountNotActive(username: string) {
-    return {
-      "status": false,
-      "message": `The account for ${username} currently isn't active. If you just registered, an email is on its way. If this account isn't new your access has been revoked.`
-    };
+  public static userAccountActiveSuccess(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "message": `Thanks for activating your account`
+      };
+      resolve(message);
+    });
   }
 
-  public static userAccountActiveSuccess() {
-    return {
-      "status": true,
-      "message": `Thanks for activating your account`
-    };
+  public static forgotPasswordSuccess(email: string): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "message": `We have sent an email to ${email}, with instructions on how to restart your password`
+      };
+      resolve(message);
+    });
   }
 
-  public static forgotPasswordSuccess(email: string): object {
-    return {
-      "status": true,
-      "message": `We have sent an email to ${email}, with instructions on how to restart your password`
-    };
+  public static tooManyForgotPasswordRequests(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "We have recently sent you a forgot password token, you are only allowed one a day"
+      };
+      resolve(message);
+    });
   }
 
-  public static tooManyForgotPasswordRequests(): object {
-    return {
-      "status": false,
-      "message": "We have recently sent you a forgot password token, you are only allowed one a day"
-    };
+  public static contactMeSucess(userName: string, userEmail: string): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "message": `Thanks for the email ${userName}. I will do my best to response to you at ${userEmail} as soon as possible.`
+      };
+      resolve(message);
+    });
   }
 
-  public static contactMeSucess(userName: string, userEmail: string): object {
-    return {
-      "status": true,
-      "message": `Thanks for the email ${userName}. I will do my best to response to you at ${userEmail} as soon as possible.`
-    };
+  public static contactMeNameNotLongEnough(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "message": `The name you entered in the contact me form was not long enough`
+      };
+      resolve(message);
+    });
   }
 
-  public static contactMeNameNotLongEnough(): object {
-    return {
-      "status": true,
-      "message": `The name you entered in the contact me form was not long enough`
-    };
-  }
-
-  public static contactMeMessageNotLongEnough(): object {
-    return {
-      "status": true,
-      "message": `The message you entered was not long enough`
-    };
+  public static contactMeMessageNotLongEnough(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "message": `The message you entered was not long enough`
+      };
+      resolve(message);
+    });
   }
 }
