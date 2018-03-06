@@ -74,11 +74,10 @@ export class RegisterComponent implements OnInit {
   }
 
   public handleRegisterUserSubmit(event): void {
-    if (event.keyCode === 13 && !this.hasUserAccpectedDisclaimer) {
+    if (event.keyCode === 13 || event.type === "click" && !this.hasUserAccpectedDisclaimer) {
       $("#disclaimer-modal").modal();
-    } else if (event.type === "click" && !this.hasUserAccpectedDisclaimer) {
-      $("#disclaimer-modal").modal();
-    } else if (event.type === "click" || event.keyCode === 13 && this.hasUserAccpectedDisclaimer) {
+    }
+    if (event.type === "click" || event.keyCode === 13 && this.hasUserAccpectedDisclaimer) {
       this.toggleRegisterUserService();
     }
   }
