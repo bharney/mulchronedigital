@@ -40,19 +40,19 @@ export class RegisterComponent implements OnInit {
   private createFormGroup(): void {
     this.userRegistrationForm = this.formBuilder.group({
       username: [
-        "testingmichael",
+        "",
         [Validators.required, Validators.minLength(4), Validators.maxLength(12)]
       ],
       email: [
-        "mtmulch@gmail.com",
+        "",
         [Validators.required, UserAuthenicationValidator.emailValidation]
       ],
       password: [
-        "Esforces0191!@",
+        "",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ],
       confirmPassword: [
-        "Esforces0191!@",
+        "",
         [
           Validators.required,
           UserAuthenicationValidator.confirmPasswordValidation
