@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     private authControl: AuthenicationControl,
     private router: Router,
     private googleAnalytics: GoogleAnalytics
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.createFormGroup();
@@ -96,12 +96,9 @@ export class LoginComponent implements OnInit {
     const token: JsonWebToken = this.authControl.getDecodedToken();
     if (token.isAdmin) {
       // TODO: route to admin dashboard
+      this.router.navigate(["../../admin-dashboard/user", { id: token.id }]);
     } else {
-      this.router.navigate([
-        `../../user-dashboard/user`,
-        { id: token.id },
-        { outlets: { dashboard: ["home"] } }
-      ]);
+      this.router.navigate([`../../user-dashboard/user`, { id: token.id }, { outlets: { dashboard: ["home"] } }]);
     }
   }
 }
