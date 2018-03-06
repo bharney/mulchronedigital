@@ -7,6 +7,8 @@ import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { AdminAuthGuard } from "../../../shared/authenication/AdminAuthGuard";
+import { AdminDashboardNavigationComponent } from "./components/admin-dashboard-navigation/admin-dashboard-navigation.component";
+import { AdminDashboardEmitter } from "../../../shared/services/emitters/admin-dashboard-emitter.service";
 
 @NgModule({
     imports: [
@@ -18,10 +20,12 @@ import { AdminAuthGuard } from "../../../shared/authenication/AdminAuthGuard";
     declarations: [
         AdminDashboardComponent,
         AdminDashboardHomeComponent,
+        AdminDashboardNavigationComponent
     ],
     providers: [
         AdminAuthGuard,
-        AuthenicationControl
+        AuthenicationControl, 
+        AdminDashboardEmitter
     ]
 })
 export class AdminDashboardLazyModule { }

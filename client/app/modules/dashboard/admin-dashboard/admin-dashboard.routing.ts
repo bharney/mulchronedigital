@@ -7,7 +7,12 @@ import { AdminAuthGuard } from "../../../shared/authenication/AdminAuthGuard";
 
 
 const routes: Routes = [
-    { path: "user", component: AdminDashboardComponent, canActivate: [AdminAuthGuard] },
+    {
+        path: "user", component: AdminDashboardComponent, canActivate: [AdminAuthGuard], children:
+            [
+                { path: "home", component: AdminDashboardHomeComponent, outlet: "admindashboard", canActivate: [AdminAuthGuard] },
+            ]
+    },
 ];
 
 export const AdminDashboardRouting: ModuleWithProviders = RouterModule.forChild(routes);
