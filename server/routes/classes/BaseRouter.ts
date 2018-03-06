@@ -13,33 +13,33 @@ export abstract class BaseRouter {
       // TODO: this looks god awful. FIX IT!
       const headerToken = req.headers["mulchronedigital-token"];
       if (headerToken === null) {
-        return res.status(401).json(ResponseMessages.noJsonWebTokenInHeader());
+        return res.status(401).json(await ResponseMessages.noJsonWebTokenInHeader());
       }
       res.locals.token = await JsonWebTokenWorkers.getDecodedJsonWebToken(headerToken);
       if (!res.locals.token) {
-        return res.status(503).json(ResponseMessages.generalError());
+        return res.status(503).json(await ResponseMessages.generalError());
       }
       const databaseUsers: User[] = await UserAuthenicationDataAccess.getJSONWebTokenInfoOfActiveUserByUserId(res.locals.token.id);
       if (databaseUsers.length <= 0) {
         // send user message and redirect them client side to login screen or whatever.
-        return res.status(503).json(ResponseMessages.generalError());
+        return res.status(503).json(await ResponseMessages.generalError());
       }
       const isUserActive = databaseUsers[0].isActive;
       if (isUserActive === undefined || !isUserActive) {
-        return res.status(503).json(ResponseMessages.userIsNotActive());
+        return res.status(503).json(await ResponseMessages.userIsNotActive());
       }
       const jsonToken = databaseUsers[0].jsonToken;
       const jsonTokenPublicKey = databaseUsers[0].jsonWebTokenPublicKey;
       if (!await JsonWebTokenWorkers.verifiyJsonWebToken(jsonToken, jsonTokenPublicKey)) {
-        return res.status(409).json(ResponseMessages.jsonWebTokenExpired());
+        return res.status(409).json(await ResponseMessages.jsonWebTokenExpired());
       }
       const decodedDbToken: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(jsonToken);
       if (!await JsonWebTokenWorkers.comparedHeaderTokenWithDbToken(res.locals.token, decodedDbToken)) {
-        return res.status(409).json(ResponseMessages.jsonWebTokenDoesntMatchStoredToken());
+        return res.status(409).json(await ResponseMessages.jsonWebTokenDoesntMatchStoredToken());
       }
       next();
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }
@@ -47,13 +47,13 @@ export abstract class BaseRouter {
   public async decryptRequestBody(req: Request, res: Response, next: NextFunction) {
     try {
       if (await !Encryption.verifiyUniqueSymmetricKey(req.body.key)) {
-        return res.status(503).json(ResponseMessages.generalError());
+        return res.status(503).json(await ResponseMessages.generalError());
       }
       const newRequestBody = await Encryption.AESDecrypt(req.body.encryptedText, req.body.key);
       req.body = JSON.parse(newRequestBody);
       next();
     } catch (error) {
-      res.status(503).json(ResponseMessages.generalError());
+      res.status(503).json(await ResponseMessages.generalError());
       return next(error);
     }
   }
