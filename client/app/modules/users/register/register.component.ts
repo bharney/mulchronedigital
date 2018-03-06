@@ -6,6 +6,7 @@ import { RegisterUser, IUserRegisterResponse } from "../../../shared/models/user
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
 import { AESEncryptionResult, Encryption } from "../../../../../shared/Encryption";
 import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
+import { UserRegisterEmitter } from "../../../shared/services/emitters/user-register-emitter.service";
 declare const $: any;
 
 @Component({
@@ -21,34 +22,37 @@ export class RegisterComponent implements OnInit {
   public modalBody: string = "";
   public registrationSuccessful: boolean = false;
   public hasSubmitButtonBeenClicked: boolean = false;
+  private hasUserAccpectedDisclaimer: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private registerService: RegisterService,
     private router: Router,
-    private googleAnalytics: GoogleAnalytics
+    private googleAnalytics: GoogleAnalytics,
+    private userRegisterEmitter: UserRegisterEmitter
   ) { }
 
   ngOnInit(): void {
     this.createFormGroup();
+    this.subscrbeToUserRegistrationEmitter();
   }
 
   private createFormGroup(): void {
     this.userRegistrationForm = this.formBuilder.group({
       username: [
-        "",
+        "testingmichael",
         [Validators.required, Validators.minLength(4), Validators.maxLength(12)]
       ],
       email: [
-        "",
+        "mtmulch@gmail.com",
         [Validators.required, UserAuthenicationValidator.emailValidation]
       ],
       password: [
-        "",
+        "Esforces0191!@",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ],
       confirmPassword: [
-        "",
+        "Esforces0191!@",
         [
           Validators.required,
           UserAuthenicationValidator.confirmPasswordValidation
@@ -57,13 +61,29 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  public handleDownKeyOnForm(event): void {
-    if (event.keyCode === 13) {
-      this.toggleRegisterUser();
+  private subscrbeToUserRegistrationEmitter() {
+    this.userRegisterEmitter.changeEmitted$.subscribe(response => {
+      console.log(response);
+      switch (response.type) {
+        case "user accepted disclaimer":
+          this.hasUserAccpectedDisclaimer = true;
+          this.toggleRegisterUserService();
+          break;
+      }
+    });
+  }
+
+  public handleRegisterUserSubmit(event): void {
+    if (event.keyCode === 13 && !this.hasUserAccpectedDisclaimer) {
+      $("#disclaimer-modal").modal();
+    } else if (event.type === "click" && !this.hasUserAccpectedDisclaimer) {
+      $("#disclaimer-modal").modal();
+    } else if (event.type === "click" || event.keyCode === 13 && this.hasUserAccpectedDisclaimer) {
+      this.toggleRegisterUserService();
     }
   }
 
-  public toggleRegisterUser(): void {
+  public toggleRegisterUserService(): void {
     this.hasSubmitButtonBeenClicked = true;
     setTimeout(async () => {
       this.hasTheFormBeenSubmitted = true;

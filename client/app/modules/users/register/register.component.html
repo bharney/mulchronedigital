@@ -9,7 +9,7 @@
     <div class="card">
       <div class="card-block">
         <h1 class="text-center">Register</h1>
-        <div class="form" [formGroup]="userRegistrationForm" (keydown)="handleDownKeyOnForm($event)">
+        <div class="form" [formGroup]="userRegistrationForm" (keydown)="handleRegisterUserSubmit($event)">
           <div class="form-group">
             <label for="username">
               <strong>Username</strong>
@@ -79,7 +79,7 @@
               <strong>The passwords do not match</strong>
             </div>
           </div>
-          <button *ngIf="!hasSubmitButtonBeenClicked" type="button" class="btn btn-primary" (click)="toggleRegisterUser()">Register</button>
+          <button *ngIf="!hasSubmitButtonBeenClicked" type="button" class="btn btn-primary" (click)="handleRegisterUserSubmit($event)">Register</button>
           <i *ngIf="hasSubmitButtonBeenClicked" class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i>
           <p id="already-have-account-text">Already have an account? Login
             <a href="" [routerLink]="['../../users/login']">Here</a>
@@ -98,3 +98,4 @@
 
 
 <app-error-modal [title]="modalTitle" [body]="modalBody" [registrationSuccessful]="registrationSuccessful"></app-error-modal>
+<app-disclaimer-modal></app-disclaimer-modal>

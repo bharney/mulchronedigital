@@ -8,7 +8,9 @@ import { UsersRouting } from "./users.routing";
 import { AuthenicationControl } from "../../shared/authenication/AuthenicationControl";
 import { SharedModule } from "../../shared/modules/shared.module";
 import { ActivateUserComponent } from "./activate-user/activate-user.component";
-import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ForgotPasswordComponent } from "./forgot-password/forgot-password.component";
+import { DisclaimerModalComponent } from "../../components/disclaimer-modal/disclaimer-modal.component";
+import { UserRegisterEmitter } from "../../shared/services/emitters/user-register-emitter.service";
 
 @NgModule({
   imports: [
@@ -21,10 +23,12 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
     RegisterComponent,
     LoginComponent,
     ActivateUserComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    DisclaimerModalComponent
 ],
   providers: [
-    AuthenicationControl
+    AuthenicationControl,
+    UserRegisterEmitter
   ]
 })
 export class UsersLazyModule { }

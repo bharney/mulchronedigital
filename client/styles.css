@@ -45,6 +45,13 @@ p, a, button {
   font-weight: 500;
 }
 
+.btn-danger {
+  text-transform: uppercase;
+  border: 2px outset #000;
+  transition: 0.75s;
+  font-weight: 500;
+}
+
 .btn-primary:hover {
   background-color: #440096;
   color: rgb(0, 128, 0);

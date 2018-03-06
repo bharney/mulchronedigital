@@ -26,12 +26,6 @@ export class NavbarTopComponent implements OnInit {
           this.authControl.storeJsonWebToken(response.token);
         });
       }, 2500);
-    } else {
-      this.router.events.subscribe((event) => {
-        if (event instanceof NavigationEnd && event.urlAfterRedirects.includes("/home")) {
-          $("#disclaimer-modal").modal();
-        }
-      });
     }
   }
 
