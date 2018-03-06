@@ -6,6 +6,7 @@ import { SharedModule } from "../../../shared/modules/shared.module";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { AdminAuthGuard } from "../../../shared/authenication/AdminAuthGuard";
 
 @NgModule({
     imports: [
@@ -19,7 +20,8 @@ import { CommonModule } from "@angular/common";
         AdminDashboardHomeComponent,
     ],
     providers: [
-        AuthenicationControl,
+        AdminAuthGuard,
+        AuthenicationControl
     ]
 })
 export class AdminDashboardLazyModule { }
