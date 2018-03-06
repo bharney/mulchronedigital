@@ -40,19 +40,19 @@ export class RegisterComponent implements OnInit {
   private createFormGroup(): void {
     this.userRegistrationForm = this.formBuilder.group({
       username: [
-        "",
+        "asdasdasd",
         [Validators.required, Validators.minLength(4), Validators.maxLength(12)]
       ],
       email: [
-        "",
+        "mtmulch@gmail.com",
         [Validators.required, UserAuthenicationValidator.emailValidation]
       ],
       password: [
-        "",
+        "Esforces0191!@",
         [Validators.required, UserAuthenicationValidator.passwordValidation]
       ],
       confirmPassword: [
-        "",
+        "Esforces0191!@",
         [
           Validators.required,
           UserAuthenicationValidator.confirmPasswordValidation
@@ -63,7 +63,6 @@ export class RegisterComponent implements OnInit {
 
   private subscrbeToUserRegistrationEmitter() {
     this.userRegisterEmitter.changeEmitted$.subscribe(response => {
-      console.log(response);
       switch (response.type) {
         case "user accepted disclaimer":
           this.hasUserAccpectedDisclaimer = true;
@@ -74,8 +73,14 @@ export class RegisterComponent implements OnInit {
   }
 
   public handleRegisterUserSubmit(event): void {
-    if (event.keyCode === 13 || event.type === "click" && !this.hasUserAccpectedDisclaimer) {
+    console.log(this.hasUserAccpectedDisclaimer);
+    if (event.keyCode === 13 && !this.hasUserAccpectedDisclaimer) {
       $("#disclaimer-modal").modal();
+      return;
+    }
+    if (event.type === "click" && !this.hasUserAccpectedDisclaimer) {
+      $("#disclaimer-modal").modal();
+      return;
     }
     if (event.type === "click" || event.keyCode === 13 && this.hasUserAccpectedDisclaimer) {
       this.toggleRegisterUserService();
