@@ -67,6 +67,17 @@ export class ResponseMessages {
     });
   }
 
+  public static userIsNotAdmin(): Promise<object> {
+    return new Promise(resolve => {
+      const messaage = {
+        "status": false,
+        "message": "The user account is not an admin, if you previously had admin access your access maybe have been revoked",
+        "relogin": true
+      };
+      resolve(messaage);
+    });
+  }
+
   public static emailIsNotValid(): Promise<object> {
     return new Promise(resolve => {
       const message = {
@@ -320,6 +331,16 @@ export class ResponseMessages {
       const message = {
         "status": true,
         "message": `The message you entered was not long enough`
+      };
+      resolve(message);
+    });
+  }
+
+  public static successfulGetUsersForAdminDashboard(users: User[]): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "users": users
       };
       resolve(message);
     });

@@ -10,6 +10,7 @@ import { AdminAuthGuard } from "../../../shared/authenication/AdminAuthGuard";
 import { AdminDashboardNavigationComponent } from "./components/admin-dashboard-navigation/admin-dashboard-navigation.component";
 import { AdminDashboardEmitter } from "../../../shared/services/emitters/admin-dashboard-emitter.service";
 import { AdminDashboardUsersComponent } from "./components/admin-dashboard-users/admin-dashboard-users.component";
+import { UsersAdministrationService } from "../../../shared/services/users-administration.service";
 
 @NgModule({
     imports: [
@@ -27,7 +28,8 @@ import { AdminDashboardUsersComponent } from "./components/admin-dashboard-users
     providers: [
         AdminAuthGuard,
         AuthenicationControl, 
-        AdminDashboardEmitter
+        AdminDashboardEmitter,
+        UsersAdministrationService
     ]
 })
 export class AdminDashboardLazyModule { }

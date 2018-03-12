@@ -3,6 +3,14 @@ import { User } from "../../models/user";
 import { UserIpAddress } from "../../routes/classes/UserIpAddress";
 
 export class DataAccessObjects {
+
+  public static blankQuery(): Promise<object> {
+    return new Promise(resolve => {
+      const query = {};
+      resolve(query);
+    });
+  }
+
   public static findUserByIdQuery(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userId === undefined) {
@@ -150,7 +158,7 @@ export class DataAccessObjects {
 
   public static jsonWebTokenInfoThatIsActiveProjection(): Promise<object> {
     return new Promise(resolve => {
-      const projection = { jsonToken: 1, jsonWebTokenPublicKey: 1, isActive: 1 };
+      const projection = { jsonToken: 1, jsonWebTokenPublicKey: 1, isActive: 1, isAdmin: 1 };
       resolve(projection);
     });
   }
@@ -221,6 +229,13 @@ export class DataAccessObjects {
   public static updateUserProfileToActiveProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { $set: { isActive: true } };
+      resolve(projection);
+    });
+  }
+
+  public static getUsersForAdminDashboardProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { _id: 1, username: 1, isAdmin: 1, isActive: 1, createdAt: 1 };
       resolve(projection);
     });
   }

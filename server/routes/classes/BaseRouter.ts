@@ -44,6 +44,18 @@ export abstract class BaseRouter {
     }
   }
 
+  public async checkForAdminJsonWebToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!res.locals.token.isAdmin) {
+        return res.status(503).json(await ResponseMessages.userIsNotAdmin());
+      }
+      next();
+    } catch (error) {
+      res.status(503).json(await ResponseMessages.generalError());
+      return next(error);
+    }
+  }
+
   public async decryptRequestBody(req: Request, res: Response, next: NextFunction) {
     try {
       if (await !Encryption.verifiyUniqueSymmetricKey(req.body.key)) {
