@@ -73,7 +73,10 @@ export class RegisterComponent implements OnInit {
   }
 
   public handleRegisterUserSubmit(event): void {
-    console.log(this.hasUserAccpectedDisclaimer);
+    if (!this.userRegistrationForm.valid) {
+      this.hasTheFormBeenSubmitted = true;
+      return;
+    }
     if (event.keyCode === 13 && !this.hasUserAccpectedDisclaimer) {
       $("#disclaimer-modal").modal();
       return;
