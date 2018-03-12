@@ -9,6 +9,7 @@ import { CommonModule } from "@angular/common";
 import { AdminAuthGuard } from "../../../shared/authenication/AdminAuthGuard";
 import { AdminDashboardNavigationComponent } from "./components/admin-dashboard-navigation/admin-dashboard-navigation.component";
 import { AdminDashboardEmitter } from "../../../shared/services/emitters/admin-dashboard-emitter.service";
+import { AdminDashboardUsersComponent } from "./components/admin-dashboard-users/admin-dashboard-users.component";
 
 @NgModule({
     imports: [
@@ -20,7 +21,8 @@ import { AdminDashboardEmitter } from "../../../shared/services/emitters/admin-d
     declarations: [
         AdminDashboardComponent,
         AdminDashboardHomeComponent,
-        AdminDashboardNavigationComponent
+        AdminDashboardNavigationComponent,
+        AdminDashboardUsersComponent
     ],
     providers: [
         AdminAuthGuard,

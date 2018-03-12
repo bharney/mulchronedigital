@@ -1,8 +1,8 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed, inject } from "@angular/core/testing";
 
-import { UserDashboardNavigationComponent } from './user-dashboard-navigation.component';
+import { UserDashboardNavigationComponent } from "./user-dashboard-navigation.component";
 
-describe('a dashboard-navigation component', () => {
+describe("a dashboard-navigation component", () => {
 	let component: UserDashboardNavigationComponent;
 
 	// register all needed dependencies
@@ -19,7 +19,7 @@ describe('a dashboard-navigation component', () => {
 		component = UserDashboardNavigationComponent;
 	}));
 
-	it('should have an instance', () => {
+	it("should have an instance", () => {
 		expect(component).toBeDefined();
 	});
 });

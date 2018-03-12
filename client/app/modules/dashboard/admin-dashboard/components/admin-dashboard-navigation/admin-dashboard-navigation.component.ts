@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { JsonWebToken } from "../../../../../../../shared/JsonWebToken";
 import { AuthenicationControl } from "../../../../../shared/authenication/AuthenicationControl";
+import { AdminDashboardEmitter } from "../../../../../shared/services/emitters/admin-dashboard-emitter.service";
 
 @Component({
   selector: "app-admin-dashboard-navigation",
@@ -15,25 +16,17 @@ export class AdminDashboardNavigationComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private authControl: AuthenicationControl
+    private authControl: AuthenicationControl,
+    private adminDashboardEmitter: AdminDashboardEmitter
   ) { }
 
   ngOnInit() {
 
   }
 
-  private isUserAuthorizedToBeHere(): void {
-    this.parentRouter = this.router;
-    const token: JsonWebToken = this.authControl.getDecodedToken();
-    this.authControl.dashboardInitCompareParamIdWithTokenId(this.route, this.router, token);
-    this.id = token.id;
-  }
-
   public toggleAdminDashboardNavigation(event: any): void {
-    switch (event.target.id) {
-      case "admin-dashboard-home-navlink":
-        this.router.navigate(["../../admin-dashboard/user", { id: this.id }, { outlets: { admindashboard: ["home"] } }]);
-        break;
-    }
+    const emitterObject = { "type": "Update admin dashboard navigation", "event": event };
+    this.adminDashboardEmitter.emitChange(emitterObject);
+    
   }
 }
