@@ -318,7 +318,7 @@ export class ResponseMessages {
   public static contactMeMessageNotLongEnough(): Promise<object> {
     return new Promise(resolve => {
       const message = {
-        "status": true,
+        "status": false,
         "message": `The message you entered was not long enough`
       };
       resolve(message);

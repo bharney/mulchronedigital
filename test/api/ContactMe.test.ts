@@ -86,4 +86,25 @@ describe("Contact Me Router Test", () => {
                     });
             });
     });
+
+    it("it should return a status code of 422, return application/json, text status of false, message should say message was not long enough", (done) => {
+        const userName = "Michael Mulchrone";
+        const userEmail = "mtmulch2@gmail.com";
+        const message = "Thi";
+        encryptContactMeObject(userName, userEmail, message)
+            .then(encrypted => {
+                chai.request(host)
+                    .post(path)
+                    .set("Content-Type", "application/json")
+                    .send(encrypted)
+                    .end((error, response) => {
+                        assert.equal(response.status, 422);
+                        assert.equal(response.type, "application/json");
+                        const responseText = JSON.parse(response.text);
+                        assert.equal(responseText.status, false);
+                        assert.equal(responseText.message.includes("message you entered was not long enough"), true);
+                        done();
+                    });
+            });
+    });
 });
