@@ -65,4 +65,25 @@ describe("Contact Me Router Test", () => {
                     });
             });
     });
+
+    it("it should return a status code of 422, return application/json, text status of false, message should say email is not valid email", (done) => {
+        const userName = "Michael Mulchrone";
+        const userEmail = "mtmulch2@gmail";
+        const message = "This is a test message for the contact me api route.";
+        encryptContactMeObject(userName, userEmail, message)
+            .then(encrypted => {
+                chai.request(host)
+                    .post(path)
+                    .set("Content-Type", "application/json")
+                    .send(encrypted)
+                    .end((error, response) => {
+                        assert.equal(response.status, 422);
+                        assert.equal(response.type, "application/json");
+                        const responseText = JSON.parse(response.text);
+                        assert.equal(responseText.status, false);
+                        assert.equal(responseText.message.includes("enter a valid email address"), true);
+                        done();
+                    });
+            });
+    });
 });
