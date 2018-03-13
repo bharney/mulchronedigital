@@ -46,6 +46,14 @@ export abstract class BaseRouter {
 
   public async decryptRequestBody(req: Request, res: Response, next: NextFunction) {
     try {
+      if (!req.body.key) {
+        // TODO: validate somehow that this came from a trusted application? If not block that IP.
+        return res.status(503).json(await ResponseMessages.noSymmetricKeyProvidedError());
+      }
+      if (!req.body.encryptedText) {
+        // TODO: validate some how that this came from a trusted application? If not block that IP.
+        return res.status(503).json(await ResponseMessages.noEncrypteRequestBodyTextError());
+      }
       if (await !Encryption.verifiyUniqueSymmetricKey(req.body.key)) {
         return res.status(503).json(await ResponseMessages.generalError());
       }

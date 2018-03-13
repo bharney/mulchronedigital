@@ -118,6 +118,26 @@ export class ResponseMessages {
     });
   }
 
+  public static noSymmetricKeyProvidedError(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "There was no symmetric key provided for the request body."
+      };  
+      resolve(message);
+    });
+  }
+
+  public static noEncrypteRequestBodyTextError(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "There was no encrypted text body provided"
+      };  
+      resolve(message);
+    });
+  }
+
   public static noUserFound(): Promise<object> {
     return new Promise(resolve => {
       const message = {
