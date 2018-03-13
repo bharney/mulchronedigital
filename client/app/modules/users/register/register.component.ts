@@ -73,7 +73,7 @@ export class RegisterComponent implements OnInit {
   }
 
   public handleRegisterUserSubmit(event): void {
-    if (!this.userRegistrationForm.valid) {
+    if (!this.userRegistrationForm.valid && event.keyCode === 13) {
       this.hasTheFormBeenSubmitted = true;
       return;
     }
