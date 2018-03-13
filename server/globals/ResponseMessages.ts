@@ -129,6 +129,26 @@ export class ResponseMessages {
     });
   }
 
+  public static noSymmetricKeyProvidedError(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "There was no symmetric key provided for the request body."
+      };  
+      resolve(message);
+    });
+  }
+
+  public static noEncrypteRequestBodyTextError(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "There was no encrypted text body provided"
+      };  
+      resolve(message);
+    });
+  }
+
   public static noUserFound(): Promise<object> {
     return new Promise(resolve => {
       const message = {
@@ -319,7 +339,7 @@ export class ResponseMessages {
   public static contactMeNameNotLongEnough(): Promise<object> {
     return new Promise(resolve => {
       const message = {
-        "status": true,
+        "status": false,
         "message": `The name you entered in the contact me form was not long enough`
       };
       resolve(message);
@@ -329,7 +349,7 @@ export class ResponseMessages {
   public static contactMeMessageNotLongEnough(): Promise<object> {
     return new Promise(resolve => {
       const message = {
-        "status": true,
+        "status": false,
         "message": `The message you entered was not long enough`
       };
       resolve(message);
