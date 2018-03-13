@@ -308,7 +308,7 @@ export class ResponseMessages {
   public static contactMeNameNotLongEnough(): Promise<object> {
     return new Promise(resolve => {
       const message = {
-        "status": true,
+        "status": false,
         "message": `The name you entered in the contact me form was not long enough`
       };
       resolve(message);
