@@ -1,7 +1,8 @@
 import { User } from "../../models/user";
 import { DataAccessObjects } from "../objects/DataAccessObjects";
-import { UsersCollection } from "../../config/master";
+import { UsersCollection, usersCollectionIsFalsy } from "../../config/master";
 import errorLogger from "../../logging/ErrorLogger";
+import { Database } from "../../globals/Database";
 
 export class DataAccess {
 
@@ -9,6 +10,9 @@ export class DataAccess {
         try {
             const query = await DataAccessObjects.findUserByUsernameQuery(userName);
             const projection = await DataAccessObjects.userObjectIdProjection();
+            if (!UsersCollection) {
+                await usersCollectionIsFalsy();
+            }
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             errorLogger.error(error);
@@ -23,6 +27,9 @@ export class DataAccess {
             }
             const query = await DataAccessObjects.findUserByIdQuery(userId);
             const projection = await DataAccessObjects.updateUserPasswordProjection(user.password, user.modifiedAt);
+            if (!UsersCollection) {
+                await usersCollectionIsFalsy();
+            }
             return await UsersCollection.updateOne(query, projection);
         } catch (error) {
             errorLogger.error(error);
@@ -34,6 +41,9 @@ export class DataAccess {
         try {
             const query = await DataAccessObjects.findUserByEmailAndIsActiveQuery(userEmail);
             const projection = await DataAccessObjects.userLoginProjection();
+            if (!UsersCollection) {
+                await usersCollectionIsFalsy();
+            }
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             errorLogger.error(error);
@@ -43,12 +53,15 @@ export class DataAccess {
 
     public static async getUserPassword(userId: string): Promise<User[]> {
         try {
-          const query = await DataAccessObjects.findUserByIdQuery(userId);
-          const projection = await DataAccessObjects.usernamePasswordAndIdProjection();
-          return await UsersCollection.find(query, projection).toArray();
+            const query = await DataAccessObjects.findUserByIdQuery(userId);
+            const projection = await DataAccessObjects.usernamePasswordAndIdProjection();
+            if (!UsersCollection) {
+                await usersCollectionIsFalsy();
+            }
+            return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
-          errorLogger.error(error);
-          return [];
+            errorLogger.error(error);
+            return [];
         }
-      }
+    }
 }
