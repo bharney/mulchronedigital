@@ -98,4 +98,23 @@ describe("Login User Route Test", () => {
                 assert.equal(body.message, "Your password must be atleast 8 characters with one upper case letter, one lower case letter, one number, and one special character");
             });
     });
+
+    it("it should return a response of user is not active", async () => {
+        const userPassword = "Password1234!@#$";
+        const userEmail = "basicinactiveuser@gmail.com";
+        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        return chai.request(host)
+            .post(path)
+            .set("Content-Type", "application/json")
+            .send(encryptedLoginInfo)
+            .then(response => {
+                // nothing here this is suppose to return and HTTP error status code.
+            })
+            .catch(error => {
+                assert.equal(error.status, 401);
+                const body = JSON.parse(error.response.text);
+                assert.equal(body.status, false);
+                assert.equal(body.message.includes("currently isn't active."), true);
+            });
+    });
 });

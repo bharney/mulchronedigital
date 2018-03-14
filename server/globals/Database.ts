@@ -158,16 +158,18 @@ export class Database {
 
   private async CreateUserObjects(collection: Collection<User>): Promise<boolean> {
     try {
-      const usernames: string[] = ["admin", "basicuser"];
-      const emails: string[] = ["admin@gmail.com", "basicuser@gmail.com"];
+      const usernames: string[] = ["admin", "basicuser", "basicinactiveuser"];
+      const emails: string[] = ["admin@gmail.com", "basicuser@gmail.com", "basicinactiveuser@gmail.com"];
       const newUsers: User[] = [];
       for (let i = 0; i < usernames.length; i++) {
         const newUser: User = new User(usernames[i], emails[i], "Password1234!@#$");
         if (i === 0) {
           newUser.isAdmin = true;
         }
-        if (await newUser.SetupNewUser()) {
+        if (!newUser.username.includes("inactive")) {
           newUser.isActive = true;
+        }
+        if (await newUser.SetupNewUser()) {
           newUsers.push(newUser);
         }
       }

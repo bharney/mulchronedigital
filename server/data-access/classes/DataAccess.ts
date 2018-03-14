@@ -39,7 +39,7 @@ export class DataAccess {
 
     public static async findUserLoginDetailsByEmail(userEmail: string) {
         try {
-            const query = await DataAccessObjects.findUserByEmailAndIsActiveQuery(userEmail);
+            const query = await DataAccessObjects.findUserByEmailQuery(userEmail);
             const projection = await DataAccessObjects.userLoginProjection();
             if (!UsersCollection) {
                 await usersCollectionIsFalsy();
