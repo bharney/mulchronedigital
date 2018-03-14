@@ -60,4 +60,42 @@ describe("Login User Route Test", () => {
                 assert.equal(decodedToken.isAdmin, false);
             });
     });
+
+    it("it should return a response message of invalid email", async () => {
+        const userPassword = "Password1234!@#$";
+        const userEmail = "basicuser";
+        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        return chai.request(host)
+            .post(path)
+            .set("Content-Type", "application/json")
+            .send(encryptedLoginInfo)
+            .then(response => {
+                // nothing here this is suppose to return and HTTP error status code.
+            })
+            .catch(error => {
+                assert.equal(error.status, 401);
+                const body = JSON.parse(error.response.text);
+                assert.equal(body.status, false);
+                assert.equal(body.message, "You must enter a valid email address");
+            });
+    });
+
+    it("it should return a response of invalid password", async () => {
+        const userPassword = "Pass$";
+        const userEmail = "basicuser@gmail.com";
+        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        return chai.request(host)
+            .post(path)
+            .set("Content-Type", "application/json")
+            .send(encryptedLoginInfo)
+            .then(response => {
+                // nothing here this is suppose to return and HTTP error status code.
+            })
+            .catch(error => {
+                assert.equal(error.status, 401);
+                const body = JSON.parse(error.response.text);
+                assert.equal(body.status, false);
+                assert.equal(body.message, "Your password must be atleast 8 characters with one upper case letter, one lower case letter, one number, and one special character");
+            });
+    });
 });
