@@ -19,6 +19,7 @@ async function makeDbConnectionHelper(database: Database, connectionAttempts: nu
   try {
     if (connectionAttempts < 25) {
       db = await database.CreateDatabaseConnection();
+      await database.SeedDatabase();
       UsersCollection = db.collection("Users");
       UserActionsCollection = db.collection("UserActions");
       ForgotPasswordCollection = db.collection("UserForgotPasswordTokens");
