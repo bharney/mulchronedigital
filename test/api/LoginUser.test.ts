@@ -117,4 +117,23 @@ describe("Login User Route Test", () => {
                 assert.equal(body.message.includes("currently isn't active."), true);
             });
     });
+
+    it("it should return a response of password do not match", async () => {
+        const userPassword = "Password1234!@#$@!";
+        const userEmail = "basicuser@gmail.com";
+        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        return chai.request(host)
+            .post(path)
+            .set("Content-Type", "application/json")
+            .send(encryptedLoginInfo)
+            .then(response => {
+                // nothing here this is suppose to return and HTTP error status code.
+            })
+            .catch(error => {
+                assert.equal(error.status, 401);
+                const body = JSON.parse(error.response.text);
+                assert.equal(body.status, false);
+                assert.equal(body.message, "Sorry the password you entered does not match the one stored.");
+            });
+    });
 });
