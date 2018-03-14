@@ -23,7 +23,7 @@ describe("Login User Route Test", () => {
     const host = "http://localhost:8080";
     const path = "/api/userauth/loginuser";
 
-    it("it should return a valid Admin JSON Web Token in the http headers", async () => {
+    it("it should return a valid Admin JSON Web Token in the response body", async () => {
         const userPassword = "Password1234!@#$";
         const userEmail = "admin@gmail.com";
         const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
@@ -39,6 +39,25 @@ describe("Login User Route Test", () => {
                 const databaseUsers: User[] = await UserAuthenicationDataAccess.getJSONWebTokenInfoOfActiveUserByUserId(decodedToken.id);
                 assert.equal(await JsonWebTokenWorkers.verifiyJsonWebToken(responseBody.token, databaseUsers[0].jsonWebTokenPublicKey), true);
                 assert.equal(decodedToken.isAdmin, true);
+            });
+    });
+
+    it("it should return a valid user token JSON Web Token in the response header", async () => {
+        const userPassword = "Password1234!@#$";
+        const userEmail = "basicuser@gmail.com";
+        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        return chai.request(host)
+            .post(path)
+            .set("Content-Type", "application/json")
+            .send(encryptedLoginInfo)
+            .then(async response => {
+                const body = response.body;
+                assert.equal(body.status, true);
+                assert.equal(typeof body.token, typeof "");
+                const decodedToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(body.token);
+                const databaseUsers: User[] = await UserAuthenicationDataAccess.getJSONWebTokenInfoOfActiveUserByUserId(decodedToken.id);
+                assert.equal(await JsonWebTokenWorkers.verifiyJsonWebToken(body.token, databaseUsers[0].jsonWebTokenPublicKey), true);
+                assert.equal(decodedToken.isAdmin, false);
             });
     });
 });
