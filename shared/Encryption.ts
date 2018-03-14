@@ -41,7 +41,7 @@ export class Encryption {
                 return false;
             }
             const splitKey = symmetricKey.split(" ");
-            if (await !UniqueIdentifier.testUniqueIdentifer(splitKey[0])) {
+            if (!await UniqueIdentifier.testUniqueIdentifer(splitKey[1])) {
                 return false;
             }
             return true;
