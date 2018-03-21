@@ -1,6 +1,7 @@
 import * as mocha from "mocha";
 import * as chai from "chai";
 import { ServerEncryption, RSA2048PrivateKeyCreationResult, RSA2048PublicKeyCreationResult } from '../../server/security/ServerEncryption';
+import { executeCommand } from "../helpers/FileSystemHelpers";
 const assert = chai.assert;
 const exec = require("child_process").exec;
 
@@ -20,17 +21,6 @@ const verifyRsaPublicKey = async (keyFileName: string): Promise<string> => {
     } catch (error) {
         return null;
     }
-};
-
-const executeCommand = (cmd: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        exec(cmd, (err, stdout, stderr) => {
-            if (err) {
-                reject(err);
-            }
-            resolve(stdout.toString("base64"));
-        });
-    });
 };
 
 describe("ServerEncryption class tests", () => {
