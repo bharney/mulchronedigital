@@ -56,4 +56,11 @@ describe("ServerEncryption class tests", () => {
             await executeCommand(cmdTwo);
         });
     });
+
+    it("it should delete the public and private keys from the file system", async () => {
+        const privateKey: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
+        const publicKey: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKey.fileName, privateKey.guid);
+        const deleteKeysResult = await ServerEncryption.deleteKeysFromFileSystem(privateKey.fileName, publicKey.fileName);
+        assert.equal(deleteKeysResult, true);
+    });
 });
