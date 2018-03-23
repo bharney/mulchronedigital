@@ -62,10 +62,6 @@ export class JsonWebTokenWorkers {
     }
   }
 
-  public static createDecodedTokenUserObject(id: string, isAdmin: boolean, exp): object {
-    return {};
-  }
-
   public static comparedHeaderTokenWithDbToken(headerToken: JsonWebToken, dbToken: JsonWebToken): Promise<boolean> {
     return new Promise((resolve, reject) => {
       for (const key in headerToken) {
