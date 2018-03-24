@@ -57,6 +57,9 @@ export class ServerEncryption {
 
     public static HashPassword(password: string): Promise<string> {
         return new Promise((resolve, reject) => {
+            if (!password) {
+                reject(new Error("Error: The password string passed into the HashPassword(password: string) function was a falsy value"));
+            }
             bcrypt.genSalt(10)
                 .then(salt => {
                     return bcrypt.hash(password, salt);
@@ -66,6 +69,18 @@ export class ServerEncryption {
                 })
                 .catch(error => {
                     reject(error);
+                });
+        });
+    }
+
+    public static comparedStoredHashPasswordWithLoginPassword(loginPassword: string, hashedPassword: string): Promise<boolean> {
+        return new Promise(resolve => {
+            if (!loginPassword || !hashedPassword) {
+                resolve(false);
+            }
+            bcrypt.compare(loginPassword, hashedPassword)
+                .then(result => {
+                    (result) ? resolve(true) : resolve(false);
                 });
         });
     }

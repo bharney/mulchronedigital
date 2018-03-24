@@ -59,15 +59,6 @@ export class UserAuthenicationValidator {
     });
   }
 
-  public static comparedStoredHashPasswordWithLoginPassword(loginPassword: string, hashedPassword: string): Promise<boolean> {
-    return new Promise(resolve => {
-      bcrypt.compare(loginPassword, hashedPassword)
-        .then(result => {
-          (result) ? resolve(true) : resolve(false);
-        });
-    });
-  }
-
   public static isThisAValidMongoObjectId(id: string): Promise<boolean> {
     return new Promise(resolve => {
       const hexRegExp = new RegExp("^[0-9a-fA-F]{24}$");

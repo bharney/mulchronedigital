@@ -14,6 +14,7 @@ import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenication
 import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";
 import { DataAccess } from "../../data-access/classes/DataAccess";
+import { ServerEncryption } from "../../security/ServerEncryption";
 
 export class UserAuthenicationRouter extends BaseRouter {
   public router: Router;
@@ -124,7 +125,7 @@ export class UserAuthenicationRouter extends BaseRouter {
       if (databaseUsers.length === 1) {
         if (!databaseUsers[0].isActive) {
           return res.status(401).json(await ResponseMessages.userAccountNotActive(databaseUsers[0].username));
-        } else if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(userPassword, databaseUsers[0].password)) {
+        } else if (!await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(userPassword, databaseUsers[0].password)) {
           return res.status(401).json(await ResponseMessages.passwordsDoNotMatch());
         } else {
           res.status(200).json(await ResponseMessages.successfulUserLogin(databaseUsers[0]));
@@ -253,7 +254,7 @@ export class UserAuthenicationRouter extends BaseRouter {
         // TODO: log non matching IP addresses somewhere???
         return res.status(401).json(await ResponseMessages.resetPasswordTokenIpAddressDoNotMatch());
       }
-      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(tokenPassword, resetTokens[0].tokenPassword)) {
+      if (!await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(tokenPassword, resetTokens[0].tokenPassword)) {
         return res.status(401).json(await ResponseMessages.tokenPasswordNotValid());
       }
       const userId = resetTokens[0].userId;
