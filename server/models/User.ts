@@ -41,7 +41,7 @@ export class User {
   public async SetupNewUser(): Promise<boolean> {
     try {
       this.createdAt = new Date();
-      this.password = await this.HashPassword();
+      this.password = await ServerEncryption.HashPassword(this.password);
       const privateKeyResultPairOne: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
       const publicKeyResultPairOne: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKeyResultPairOne.fileName, privateKeyResultPairOne.guid);
       await ServerEncryption.deleteKeysFromFileSystem(privateKeyResultPairOne.fileName, publicKeyResultPairOne.fileName);
@@ -63,29 +63,13 @@ export class User {
 
   public async updateUserPassword(): Promise<boolean> {
     try {
-      this.password = await this.HashPassword();
+      this.password = await ServerEncryption.HashPassword(this.password);
       this.modifiedAt = new Date();
       return true;
     } catch (error) {
-      // TODO: error handling? Logging?
+      errorLogger.error(error);
       return false;
     }
-  }
-
-  // TODO: throw this in a helper class or something
-  private HashPassword(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      bcrypt.genSalt(10)
-        .then(salt => {
-          return bcrypt.hash(this.password, salt);
-        })
-        .then(hashedPassword => {
-          resolve(hashedPassword);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
   }
 }
 

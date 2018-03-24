@@ -1,4 +1,5 @@
 import { UniqueIdentifier } from "../../shared/UniqueIdentifer";
+import bcrypt = require("bcryptjs");
 const exec = require("child_process").exec;
 
 export class ServerEncryption {
@@ -51,6 +52,21 @@ export class ServerEncryption {
                     reject(false);
                 }
             });
+        });
+    }
+
+    public static HashPassword(password: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            bcrypt.genSalt(10)
+                .then(salt => {
+                    return bcrypt.hash(password, salt);
+                })
+                .then(hashedPassword => {
+                    resolve(hashedPassword);
+                })
+                .catch(error => {
+                    reject(error);
+                });
         });
     }
 }
