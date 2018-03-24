@@ -1,7 +1,7 @@
 import { UserActionHelper } from "../../helpers/UserActionHelper";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 import { Database } from "../../globals/Database";
 import { BaseRouter } from "../classes/BaseRouter";
 import { Router, Request, Response, NextFunction } from "express";

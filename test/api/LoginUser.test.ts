@@ -5,7 +5,7 @@ import { LoginUser } from "../../client/app/shared/models/user-authenication.mod
 import { JsonWebTokenWorkers } from "../../server/security/JsonWebTokenWorkers";
 import chaiHttp = require("chai-http");
 import { UserAuthenicationDataAccess } from "../../server/data-access/UserAuthenicationDataAccess";
-import { User } from "../../server/models/user";
+import { User } from "../../server/models/User";
 const assert = chai.assert;
 chai.use(chaiHttp);
 

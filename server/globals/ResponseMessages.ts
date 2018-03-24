@@ -1,5 +1,5 @@
 import { JsonWebTokenWorkers, CreateJsonWebTokenKeyPairResult } from "../security/JsonWebTokenWorkers";
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { UsersCollection } from "../config/master";
 import { ObjectId } from "mongodb";
 import errorLogger from "../logging/ErrorLogger";

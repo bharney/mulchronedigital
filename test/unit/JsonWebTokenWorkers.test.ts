@@ -1,7 +1,7 @@
 import * as mocha from "mocha";
 import * as chai from "chai";
 import jwt = require("jsonwebtoken");
-import { User } from "../../server/models/user";
+import { User } from "../../server/models/User";
 import { DataAccess } from "../../server/data-access/classes/DataAccess";
 import { JsonWebTokenWorkers } from "../../server/security/JsonWebTokenWorkers";
 import { ServerEncryption, RSA2048PrivateKeyCreationResult } from "../../server/security/ServerEncryption";

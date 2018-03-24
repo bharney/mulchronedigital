@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 import { UserIpAddress } from "../../routes/classes/UserIpAddress";
 
 export class DataAccessObjects {

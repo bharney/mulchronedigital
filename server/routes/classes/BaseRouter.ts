@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { JsonWebTokenWorkers } from "../../security/JsonWebTokenWorkers";
 import { JsonWebToken } from "../../../shared/JsonWebToken";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 import { Encryption } from "../../../shared/Encryption";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 

@@ -2,7 +2,7 @@ import { Router, NextFunction, Request, Response } from "express";
 import { BaseRouter } from "../classes/BaseRouter";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { AdminDashboardDataAccess } from "../../data-access/AdminDashboardDataAccess";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 
 export class AdminDashboardRouter extends BaseRouter {
     public router: Router;

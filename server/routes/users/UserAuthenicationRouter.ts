@@ -3,7 +3,7 @@ import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationVal
 import { Router, Request, NextFunction, Response } from "express";
 import { BaseRouter } from "../classes/BaseRouter";
 import { Database } from "../../globals/Database";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UserIpAddress } from "../classes/UserIpAddress";
 import { HttpHelpers } from "../../globals/HttpHelpers";

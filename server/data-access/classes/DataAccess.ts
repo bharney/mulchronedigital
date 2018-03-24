@@ -1,4 +1,4 @@
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 import { DataAccessObjects } from "../objects/DataAccessObjects";
 import { UsersCollection, usersCollectionIsFalsy } from "../../config/master";
 import errorLogger from "../../logging/ErrorLogger";

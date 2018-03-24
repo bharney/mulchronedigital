@@ -1,7 +1,7 @@
 import { UserAction } from "../models/UserAction";
 import { Resolve } from "@angular/router";
 import { MongoClient, Db, Collection } from "mongodb";
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { ForgotPasswordToken } from "../models/ForgotPasswordToken";
 
 export class Database {
