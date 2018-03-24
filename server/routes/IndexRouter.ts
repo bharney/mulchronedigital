@@ -6,10 +6,10 @@ import { AdminDashboardRouter } from "./users/AdminDashboardRouter";
 
 export class IndexRouter {
   public router: Router;
-  private userAuthenicationRouter: Router;
-  private userDashboardRouter: Router;
-  private homeRouter: Router;
-  private adminDashboardRouter: Router;
+  public userAuthenicationRouter: Router;
+  public userDashboardRouter: Router;
+  public homeRouter: Router;
+  public adminDashboardRouter: Router;
 
   constructor() {
     this.router = Router();
