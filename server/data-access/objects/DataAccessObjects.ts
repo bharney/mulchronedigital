@@ -57,10 +57,10 @@ export class DataAccessObjects {
   public static findUserByEmailQuery(userEmail: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (userEmail === undefined) {
-        resolve(new Error("No email address was provided at findUserByEmailQuery(userEmail: string)"));
+        reject(new Error("No email address was provided at findUserByEmailQuery(userEmail: string)"));
       }
       const query = { email: userEmail };
-      reject(query);
+      resolve(query);
     });
   }
 

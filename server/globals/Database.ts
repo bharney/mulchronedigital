@@ -27,7 +27,7 @@ export class Database {
     try {
       const userCollection = await db.listCollections({ "name": "Users" }).toArray();
       if (userCollection.length <= 0) {
-        if (!await this.CreateUsersCollection(db)) {
+        if (!await this.CreateCollections(db)) {
           throw new Error("seed failed");
         }
       }
@@ -39,7 +39,7 @@ export class Database {
     }
   }
 
-  private async CreateUsersCollection(db: Db): Promise<boolean> {
+  private async CreateCollections(db: Db): Promise<boolean> {
     try {
       const usersCollection: Collection<User> = await db.createCollection<User>("Users");
       if (!await this.CreateUserCollectionIndexes(usersCollection)) {
@@ -158,11 +158,17 @@ export class Database {
 
   private async CreateUserObjects(collection: Collection<User>): Promise<boolean> {
     try {
-      const usernames: string[] = ["admin", "basicuser"];
-      const emails: string[] = ["admin@gmail.com", "basicuser@gmail.com"];
+      const usernames: string[] = ["admin", "basicuser", "basicinactiveuser"];
+      const emails: string[] = ["admin@gmail.com", "basicuser@gmail.com", "basicinactiveuser@gmail.com"];
       const newUsers: User[] = [];
       for (let i = 0; i < usernames.length; i++) {
         const newUser: User = new User(usernames[i], emails[i], "Password1234!@#$");
+        if (i === 0) {
+          newUser.isAdmin = true;
+        }
+        if (!newUser.username.includes("inactive")) {
+          newUser.isActive = true;
+        }
         if (await newUser.SetupNewUser()) {
           newUsers.push(newUser);
         }

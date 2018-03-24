@@ -66,7 +66,7 @@ export abstract class BaseRouter {
         // TODO: validate some how that this came from a trusted application? If not block that IP.
         return res.status(503).json(await ResponseMessages.noEncrypteRequestBodyTextError());
       }
-      if (await !Encryption.verifiyUniqueSymmetricKey(req.body.key)) {
+      if (!await Encryption.verifiyUniqueSymmetricKey(req.body.key)) {
         return res.status(503).json(await ResponseMessages.generalError());
       }
       const newRequestBody = await Encryption.AESDecrypt(req.body.encryptedText, req.body.key);

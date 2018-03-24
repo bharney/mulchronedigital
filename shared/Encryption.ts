@@ -6,9 +6,12 @@ export class Encryption {
 
     public static async AESEncrypt(textToEncrypt: string): Promise<AESEncryptionResult> {
         try {
-            const key = await this.generateUniqueSymmetricKey();
-            const cipherText = AES.encrypt(textToEncrypt, key);
-            return new AESEncryptionResult(true, cipherText.toString(), key);
+            if (textToEncrypt) {
+                const key = await this.generateUniqueSymmetricKey();
+                const cipherText = AES.encrypt(textToEncrypt, key);
+                return new AESEncryptionResult(true, cipherText.toString(), key);
+            }
+            return new AESEncryptionResult(false, null, null);
         } catch (error) {
             // TODO: log it somewhere.
             console.log(error);
@@ -16,7 +19,7 @@ export class Encryption {
         }
     }
 
-    public static async AESDecrypt(textToDecrypt: string, symmetricKey: string) {
+    public static async AESDecrypt(textToDecrypt: string, symmetricKey: string): Promise<string> {
         try {
             const decryptedBytes = AES.decrypt(textToDecrypt, symmetricKey);
             return decryptedBytes.toString(CryptoJS.enc.Utf8);
@@ -41,7 +44,7 @@ export class Encryption {
                 return false;
             }
             const splitKey = symmetricKey.split(" ");
-            if (await !UniqueIdentifier.testUniqueIdentifer(splitKey[0])) {
+            if (!await UniqueIdentifier.testUniqueIdentifer(splitKey[1])) {
                 return false;
             }
             return true;

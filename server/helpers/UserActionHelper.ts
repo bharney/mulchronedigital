@@ -1,5 +1,5 @@
 import { UserAction, UserChangedPasswordAction, UserChangedUsernameAction, UserForgotPasswordAction, UserLoggedInAction } from "../models/UserAction";
-import { UserActionsCollection } from "../config/master";
+import { UserActionsCollection, usersActionCollectionIsFalsy } from "../config/master";
 import errorLogger from "../logging/ErrorLogger";
 
 export class UserActionHelper {
@@ -50,6 +50,9 @@ export class UserActionHelper {
 
     private async insertUserAction(action: UserAction): Promise<any> {
         try {
+            if (!UserActionsCollection) {
+                await usersActionCollectionIsFalsy();
+            }
             await UserActionsCollection.insertOne(action);
         } catch (error) {
             errorLogger.error(error);
