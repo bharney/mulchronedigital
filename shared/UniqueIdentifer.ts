@@ -33,10 +33,7 @@ export class UniqueIdentifier {
     static async testUniqueIdentifer(uniqueIdentifer: string): Promise<boolean> {
         try {  
             const guidRegex: RegExp = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-            if (!guidRegex.test(uniqueIdentifer)) {
-                return false;
-            }
-            return true;
+            return guidRegex.test(uniqueIdentifer);
         } catch (error) {
             // TODO: Log it.
             console.log(error);
