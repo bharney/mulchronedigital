@@ -80,4 +80,11 @@ describe("ServerEncryption class tests", () => {
             assert.equal(error.toString().includes(errorMessageToTest), true);
         }
     });
+
+    it("it should create a RSA 4096 key pair and delete them from the file system", async () => {
+        const privateKey: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
+        const publicKey: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKey.fileName, privateKey.guid);
+        const deleteResult = await ServerEncryption.deleteKeysFromFileSystem(privateKey.fileName, publicKey.fileName);
+        assert.equal(deleteResult, true);
+    });
 });
