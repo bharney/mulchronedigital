@@ -4,12 +4,13 @@ import jwt = require("jsonwebtoken");
 import { User } from "../../server/models/User";
 import { DataAccess } from "../../server/data-access/classes/DataAccess";
 import { JsonWebTokenWorkers } from "../../server/security/JsonWebTokenWorkers";
-import { ServerEncryption, RSA2048PrivateKeyCreationResult } from "../../server/security/ServerEncryption";
+import { ServerEncryption, RSA2048PrivateKeyCreationResult, RSA2048PublicKeyCreationResult } from "../../server/security/ServerEncryption";
 import { executeCommand } from "../helpers/FileSystemHelpers";
 import { JsonWebToken } from "../../shared/JsonWebToken";
+import { UserAuthenicationDataAccess } from "../../server/data-access/UserAuthenicationDataAccess";
 const assert = chai.assert;
 
-const deletePrivateKey = async (filename) => {
+const deleteKey = async (filename) => {
     const cmd = `rm -f ${filename}`;
     await executeCommand(cmd);
 };
@@ -19,6 +20,7 @@ describe("JsonWebTokenWorker class tests", () => {
     let databaseUsers: User[];
     let decodedToken: JsonWebToken;
     let token: string;
+    let publicKey: RSA2048PublicKeyCreationResult;
     before(async () => {
         databaseUsers = await DataAccess.findUserLoginDetailsByEmail(userEmail);
     });
@@ -33,18 +35,19 @@ describe("JsonWebTokenWorker class tests", () => {
 
     it("it should sign a json webtoken", async () => {
         const privateKey: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
+        publicKey = await ServerEncryption.createRSA2048PublicKey(privateKey.fileName, privateKey.guid);
         token = await JsonWebTokenWorkers.signWebToken(databaseUsers[0]._id, databaseUsers[0].isAdmin, databaseUsers[0].publicKeyPairOne, databaseUsers[0].privateKeyPairTwo, privateKey.key);
         assert.equal(typeof (token), typeof (""));
         after(async () => {
-            await deletePrivateKey(privateKey.fileName);
+            const promises = [deleteKey(privateKey.fileName), deleteKey(publicKey.fileName)];
+            await Promise.all(promises);
         });
     });
 
-    // TODO: this needs to verify 
-    // it("it should verify a jsonwebtoken with a result of true", async () => {
-    //     const result = await JsonWebTokenWorkers.verifiyJsonWebToken(token, databaseUsers[0].jsonWebTokenPublicKey);
-    //     assert.equal(result, true);
-    // });
+    it("it should verify a jsonwebtoken with a result of true", async () => {
+        const result = await JsonWebTokenWorkers.verifiyJsonWebToken(token, publicKey.key);
+        assert.equal(result, true);
+    });
 
     it("it should verify a jsonwebtoken with a result of false", async () => {
         const result = await JsonWebTokenWorkers.verifiyJsonWebToken(token, null);
@@ -72,7 +75,7 @@ describe("JsonWebTokenWorker class tests", () => {
         } catch (error) {
             assert.equal(error, false);
             after(async () => {
-                await deletePrivateKey(secondUserPrivateKey.fileName);
+                await deleteKey(secondUserPrivateKey.fileName);
             });
         }
     });
