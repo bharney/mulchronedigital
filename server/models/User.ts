@@ -1,6 +1,7 @@
 import bcrypt = require("bcryptjs");
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
 import errorLogger from "../logging/ErrorLogger";
+import ProfileImage from "./ProfileImage";
 import { RSA2048PrivateKeyCreationResult, RSA2048PublicKeyCreationResult, ServerEncryption } from "../security/ServerEncryption";
 
 export class User {
@@ -71,23 +72,4 @@ export class User {
       return false;
     }
   }
-}
-
-class ProfileImage {
-  public public_id: string;
-  public version: number;
-  public signature: string;
-  public width: number;
-  public height: number;
-  public format: string;
-  public resource_type: string;
-  public created_at: string;
-  public tags: string[];
-  public bytes: number;
-  public type: string;
-  public etag: string;
-  public placeholder: boolean;
-  public url: string;
-  public secure_url: string;
-  public original_filename: string;
 }
