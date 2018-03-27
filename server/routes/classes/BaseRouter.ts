@@ -21,11 +21,10 @@ export abstract class BaseRouter {
       }
       const databaseUsers: User[] = await UserAuthenicationDataAccess.getJSONWebTokenInfoOfActiveUserByUserId(res.locals.token.id);
       if (databaseUsers.length <= 0) {
-        // send user message and redirect them client side to login screen or whatever.
-        return res.status(503).json(await ResponseMessages.generalError());
+        return res.status(401).json(await ResponseMessages.noUserFoundThatIsActive());
       }
       const isUserActive = databaseUsers[0].isActive;
-      if (isUserActive === undefined || !isUserActive) {
+      if (!isUserActive) {
         return res.status(503).json(await ResponseMessages.userIsNotActive());
       }
       const jsonToken = databaseUsers[0].jsonToken;
