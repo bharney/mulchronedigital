@@ -12,7 +12,7 @@ export abstract class BaseRouter {
     try {
       // TODO: this looks god awful. FIX IT!
       const headerToken = req.headers["mulchronedigital-token"];
-      if (headerToken === null) {
+      if (!headerToken) {
         return res.status(401).json(await ResponseMessages.noJsonWebTokenInHeader());
       }
       res.locals.token = await JsonWebTokenWorkers.getDecodedJsonWebToken(headerToken);
