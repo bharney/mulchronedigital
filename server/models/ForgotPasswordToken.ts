@@ -18,9 +18,10 @@ export class ForgotPasswordToken {
         this.validUntil = tomorrow;
     }
 
-    public async securePassword(newPassword: string): Promise<boolean> {
+    public async securePassword(): Promise<boolean> {
         try {
-            this.tokenPassword = await ServerEncryption.HashPassword(newPassword);
+            const randomPassword = Math.random().toString(36).slice(-12);
+            this.tokenPassword = await ServerEncryption.HashPassword(randomPassword);
             return true;
         } catch (error) {
             errorLogger.error(error);

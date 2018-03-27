@@ -212,13 +212,14 @@ export class UserAuthenicationRouter extends BaseRouter {
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const forgotPasswordToken = new ForgotPasswordToken(userId, ip);
-      const tokenPassword = Math.random().toString(36).slice(-12);
-      await forgotPasswordToken.securePassword(tokenPassword);
+      if (!await forgotPasswordToken.securePassword()) {
+        return res.status(503).json(await ResponseMessages.generalError());
+      }
       const tokenId = await UserAuthenicationDataAccess.insertForgotPasswordToken(forgotPasswordToken);
       if (tokenId.length === 0) {
         return res.status(503).json(await ResponseMessages.generalError());
       }
-      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, tokenPassword)) {
+      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, forgotPasswordToken.tokenPassword)) {
         return res.status(503).json(await ResponseMessages.generalError());
       }
       res.status(200).json(await ResponseMessages.forgotPasswordSuccess(userEmail));
