@@ -4,6 +4,7 @@ import chaiHttp = require("chai-http");
 const assert = chai.assert;
 chai.use(chaiHttp);
 import { createLoginUserObject } from "../helpers/LoginHelpers";
+import { AESEncryptionResult } from "../../shared/Encryption";
 
 const host = "http://localhost:8080";
 const loginUserPath = "/api/userauth/loginuser";
@@ -46,7 +47,7 @@ const getAdminUserToken = () => {
     });
 };
 
-describe("BaseRouter Tests", () => {
+describe("BaseRouter Abstract Class Tests", () => {
     // I suppose it really doesnt matter the exact route we test, I'm just testing the methods the other routers in inherit from the abstract class BaseRouter.
     const path = "/api/admindashboard/getusers";
     let regularUserToken;
@@ -84,18 +85,66 @@ describe("BaseRouter Tests", () => {
 
     it("it should return a response body of true and some users in an array", async () => {
         return chai.request(host)
-        .get(path)
-        .set("mulchronedigital-token", regularUserToken)
-        .then(response => {
-            assert.equal(response.status, 200);
-            const body = JSON.parse(response.body.text);
-            assert.equal(body.status, true);
-            assert.isArray(body.users);
-            const lengthOfUsers = body.users.length;
-            assert.equal((lengthOfUsers > 0), true);
-        })
-        .catch(error => {
+            .get(path)
+            .set("mulchronedigital-token", regularUserToken)
+            .then(response => {
+                assert.equal(response.status, 200);
+                const body = JSON.parse(response.body.text);
+                assert.equal(body.status, true);
+                assert.isArray(body.users);
+                const lengthOfUsers = body.users.length;
+                assert.equal((lengthOfUsers > 0), true);
+            })
+            .catch(error => {
 
-        });
+            });
+    });
+
+    it("it should say there is no symmetric key in the request body", async () => {
+        const userPassword = "Password1234!@#$";
+        const userEmail = "basicuser@gmail.com";
+        const loginObject: AESEncryptionResult = await createLoginUserObject(userPassword, userEmail);
+        loginObject.key = null;
+        return chai.request(host)
+            .post(loginUserPath)
+            .send(loginObject)
+            .catch(error => {
+                assert.equal(error.status, 503);
+                const body = JSON.parse(error.response.text);
+                assert.equal(body.status, false);
+                assert.equal(body.message, "There was no symmetric key provided for the request body.");
+            });
+    });
+
+    it("it should say there is encrypted body text in the request body", async () => {
+        const userPassword = "Password1234!@#$";
+        const userEmail = "basicuser@gmail.com";
+        const loginObject: AESEncryptionResult = await createLoginUserObject(userPassword, userEmail);
+        loginObject.encryptedText = null;
+        return chai.request(host)
+            .post(loginUserPath)
+            .send(loginObject)
+            .catch(error => {
+                assert.equal(error.status, 503);
+                const body = JSON.parse(error.response.text);
+                assert.equal(body.status, false);
+                assert.equal(body.message, "There was no encrypted text body provided");
+            });
+    });
+
+    it("it should say the symmetric key provided was invalid", async () => {
+        const userPassword = "Password1234!@#$";
+        const userEmail = "basicuser@gmail.com";
+        const loginObject: AESEncryptionResult = await createLoginUserObject(userPassword, userEmail);
+        loginObject.key = loginObject.key.substring(3, 6);
+        return chai.request(host)
+            .post(loginUserPath)
+            .send(loginObject)
+            .catch(error => {
+                assert.equal(error.status, 503);
+                const body = JSON.parse(error.response.text);
+                assert.equal(body.status, false);
+                assert.equal(body.message, "The symmetric key provided did not pass the validation process");
+            });
     });
 });

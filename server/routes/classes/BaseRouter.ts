@@ -66,7 +66,7 @@ export abstract class BaseRouter {
         return res.status(503).json(await ResponseMessages.noEncrypteRequestBodyTextError());
       }
       if (!await Encryption.verifiyUniqueSymmetricKey(req.body.key)) {
-        return res.status(503).json(await ResponseMessages.generalError());
+        return res.status(503).json(await ResponseMessages.invalidSymmetricKeyProvidedError());
       }
       const newRequestBody = await Encryption.AESDecrypt(req.body.encryptedText, req.body.key);
       req.body = JSON.parse(newRequestBody);

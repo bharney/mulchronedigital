@@ -149,6 +149,16 @@ export class ResponseMessages {
     });
   }
 
+  public static invalidSymmetricKeyProvidedError(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+          "status": false,
+          "message": "The symmetric key provided did not pass the validation process"
+      };
+      resolve(message);
+    });
+  }
+
   public static noUserFound(): Promise<object> {
     return new Promise(resolve => {
       const message = {
