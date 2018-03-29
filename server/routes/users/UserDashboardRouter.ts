@@ -15,6 +15,7 @@ import { Cloudinary } from "../../apis/Cloudinary";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { UserIpAddress } from "../classes/UserIpAddress";
 import { ServerEncryption } from "../../security/ServerEncryption";
+import { DnsHelpers } from "../../globals/DnsHelpers";
 
 export class UserDashboardRouter extends BaseRouter {
   public router: Router;
@@ -214,7 +215,8 @@ export class UserDashboardRouter extends BaseRouter {
         return res.status(200);
       }
       // if there was no ip address object to update, attempt to create a new one.
-      const ipAdressObject = new UserIpAddress(ip, userAgent, latitude, longitude);
+      const domain = await DnsHelpers.reverseDNSLookup(ip);
+      const ipAdressObject = new UserIpAddress(ip, userAgent, domain, latitude, longitude);
       UserAuthenicationDataAccess.updateUserProfileIpAddresses(userId, ipAdressObject);
     } catch (error) {
       res.status(503).json(await ResponseMessages.generalError());

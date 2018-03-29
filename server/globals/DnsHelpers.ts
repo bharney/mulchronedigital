@@ -2,13 +2,13 @@ import dns = require("dns");
 
 export class DnsHelpers {
     public static reverseDNSLookup(ipAddress: string): Promise<string> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             if (!ipAddress){ 
-                reject(null);
+                resolve(null);
             }
             dns.reverse(ipAddress, (err, hostnames) => {
                 if (err) {
-                    reject(err);
+                    resolve(null);
                 }
                 (!hostnames) ? resolve(null) : resolve(hostnames[0]);
             });
