@@ -31,15 +31,15 @@ export class DataAccessObjects {
     });
   }
 
-  public static findUserByIdQueryMatchingIp(userId: string, ip: string): Promise<object> {
+  public static findUserByIdQueryMatchingIpAndDomain(userId: string, ip: string, domain: string): Promise<object> {
     return new Promise((resolve, reject) => {
-      if (userId === undefined) {
+      if (!userId) {
         reject(new Error("No user ID was provided at findUserIpAdressObject(userId: string, ip: string)"));
       }
-      if (ip === undefined) {
+      if (!ip) {
         reject(new Error("No ip address object was provided at findUserIpAdressObject(userId: string, ip: string)"));
       }
-      const query = { _id: new ObjectId(userId), ipAddresses: { $elemMatch: { ipAddress: ip } } };
+      const query = { _id: new ObjectId(userId), ipAddresses: { $elemMatch: { ipAddress: ip, domain: domain } } };
       resolve(query);
     });
   }

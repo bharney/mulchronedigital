@@ -208,14 +208,14 @@ export class UserDashboardRouter extends BaseRouter {
       }
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      const domain = await DnsHelpers.reverseDNSLookup(ip);
       const userAgent = await httpHelpers.getUserAgentFromRequestObject(req.headers);
       const userId = res.locals.token.id;
-      const updatedProfile = await UserDashboardDataAccess.updateUserLocationForIpAddress(userId, ip, latitude, longitude, userAgent);
+      const updatedProfile = await UserDashboardDataAccess.updateUserLocationForIpAddress(userId, ip, domain, latitude, longitude, userAgent);
       if (updatedProfile.result.n === 1) {
         return res.status(200);
       }
       // if there was no ip address object to update, attempt to create a new one.
-      const domain = await DnsHelpers.reverseDNSLookup(ip);
       const ipAdressObject = new UserIpAddress(ip, userAgent, domain, latitude, longitude);
       UserAuthenicationDataAccess.updateUserProfileIpAddresses(userId, ipAdressObject);
     } catch (error) {
