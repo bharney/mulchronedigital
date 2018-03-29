@@ -1,0 +1,29 @@
+<div class="card">
+  <div class="card-title text-center">
+    <h4>Users Administration</h4>
+  </div>
+  <div class="card-block">
+    <div class="col-sm-12 offset-sm-1">
+      <table class="table table-responsive" *ngIf="users?.length > 0">
+        <tr>
+          <th class="text-center">Username</th>
+          <th class="text-center">Activation Status</th>
+          <th class="text-center">Admin Status</th>
+          <th class="text-center">Joined At</th>
+        </tr>
+        <tr class="text-center" *ngFor="let user of users">
+          <td>{{user.username}}</td>
+          <td>
+            <button *ngIf="user.isActive" class="btn btn-primary">Deactive</button>
+            <button *ngIf="!user.isActive" class="btn btn-danger">Active</button>
+          </td>
+          <td>
+            <button *ngIf="user.isAdmin" class="btn btn-primary">Revoke Admin</button>
+            <button *ngIf="!user.isAdmin" class="btn btn-danger">Make Admin</button>
+          </td>
+          <td>{{user.createdAt}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

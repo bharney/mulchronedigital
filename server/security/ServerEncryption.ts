@@ -1,4 +1,5 @@
 import { UniqueIdentifier } from "../../shared/UniqueIdentifer";
+import bcrypt = require("bcryptjs");
 const exec = require("child_process").exec;
 
 export class ServerEncryption {
@@ -51,6 +52,36 @@ export class ServerEncryption {
                     reject(false);
                 }
             });
+        });
+    }
+
+    public static HashPassword(password: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            if (!password) {
+                reject(new Error("Error: The password string passed into the HashPassword(password: string) function was a falsy value"));
+            }
+            bcrypt.genSalt(10)
+                .then(salt => {
+                    return bcrypt.hash(password, salt);
+                })
+                .then(hashedPassword => {
+                    resolve(hashedPassword);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    }
+
+    public static comparedStoredHashPasswordWithLoginPassword(loginPassword: string, hashedPassword: string): Promise<boolean> {
+        return new Promise(resolve => {
+            if (!loginPassword || !hashedPassword) {
+                resolve(false);
+            }
+            bcrypt.compare(loginPassword, hashedPassword)
+                .then(result => {
+                    (result) ? resolve(true) : resolve(false);
+                });
         });
     }
 }

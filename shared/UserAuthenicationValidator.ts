@@ -35,12 +35,18 @@ export class UserAuthenicationValidator {
 
   public static isUserNameValid(username: string): Promise<boolean> {
     return new Promise(resolve => {
+      if (!username) {
+        resolve(false);
+      }
       (username.length < 4 || username.length > 12) ? resolve(false) : resolve(true);
     });
   }
 
   public static isPasswordValid(password: string): Promise<boolean> {
     return new Promise(resolve => {
+      if (!password) {
+        resolve(false);
+      }
       const passwordRegex: RegExp = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
       (passwordRegex.test(password)) ? resolve(true) : resolve(false);
     });
@@ -48,28 +54,28 @@ export class UserAuthenicationValidator {
 
   public static isTokenPasswordValid(tokenPassword: string): Promise<boolean> {
     return new Promise(resolve => {
+      if (!tokenPassword) {
+        resolve(false);
+      }
       (tokenPassword.length === 12) ? resolve(true) : resolve(false);
     });
   }
 
   public static isEmailValid(email: string): Promise<boolean> {
     return new Promise(resolve => {
+      if (!email) {
+        resolve(false);
+      }
       const emailRegex: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       (emailRegex.test(email)) ? resolve(true) : resolve(false);
     });
   }
 
-  public static comparedStoredHashPasswordWithLoginPassword(loginPassword: string, hashedPassword: string): Promise<boolean> {
-    return new Promise(resolve => {
-      bcrypt.compare(loginPassword, hashedPassword)
-        .then(result => {
-          (result) ? resolve(true) : resolve(false);
-        });
-    });
-  }
-
   public static isThisAValidMongoObjectId(id: string): Promise<boolean> {
     return new Promise(resolve => {
+      if (!id) {
+        resolve(false);
+      }
       const hexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
       (hexRegExp.test(id)) ? resolve(true) : resolve(false);
     });

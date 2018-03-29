@@ -1,23 +1,12 @@
 import * as mocha from "mocha";
 import * as chai from "chai";
-import { AESEncryptionResult, Encryption } from "../../shared/Encryption";
-import { LoginUser } from "../../client/app/shared/models/user-authenication.model";
 import { JsonWebTokenWorkers } from "../../server/security/JsonWebTokenWorkers";
 import chaiHttp = require("chai-http");
 import { UserAuthenicationDataAccess } from "../../server/data-access/UserAuthenicationDataAccess";
-import { User } from "../../server/models/user";
+import { User } from "../../server/models/User";
+import { createLoginUserObject } from "../helpers/LoginHelpers";
 const assert = chai.assert;
 chai.use(chaiHttp);
-
-const createLoginUserObject = async (userPassword: string, userEmail: string): Promise<AESEncryptionResult> => {
-    try {
-        const loginUserObject: string = JSON.stringify(new LoginUser(userPassword, userEmail));
-        const encryptedObject: AESEncryptionResult = await Encryption.AESEncrypt(loginUserObject);
-        return encryptedObject;
-    } catch (error) {
-        return new AESEncryptionResult(false, null, null);
-    }
-};
 
 describe("Login User Route Test", () => {
     const host = "http://localhost:8080";

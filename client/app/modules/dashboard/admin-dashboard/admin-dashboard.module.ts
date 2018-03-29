@@ -6,6 +6,11 @@ import { SharedModule } from "../../../shared/modules/shared.module";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { AdminAuthGuard } from "../../../shared/authenication/AdminAuthGuard";
+import { AdminDashboardNavigationComponent } from "./components/admin-dashboard-navigation/admin-dashboard-navigation.component";
+import { AdminDashboardEmitter } from "../../../shared/services/emitters/admin-dashboard-emitter.service";
+import { AdminDashboardUsersComponent } from "./components/admin-dashboard-users/admin-dashboard-users.component";
+import { UsersAdministrationService } from "../../../shared/services/users-administration.service";
 
 @NgModule({
     imports: [
@@ -17,9 +22,14 @@ import { CommonModule } from "@angular/common";
     declarations: [
         AdminDashboardComponent,
         AdminDashboardHomeComponent,
+        AdminDashboardNavigationComponent,
+        AdminDashboardUsersComponent
     ],
     providers: [
-        AuthenicationControl,
+        AdminAuthGuard,
+        AuthenicationControl, 
+        AdminDashboardEmitter,
+        UsersAdministrationService
     ]
 })
 export class AdminDashboardLazyModule { }

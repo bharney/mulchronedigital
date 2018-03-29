@@ -1,7 +1,7 @@
 import { UserActionHelper } from "../../helpers/UserActionHelper";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 import { Database } from "../../globals/Database";
 import { BaseRouter } from "../classes/BaseRouter";
 import { Router, Request, Response, NextFunction } from "express";
@@ -14,6 +14,7 @@ import { ResponseMessages } from "../../globals/ResponseMessages";
 import { Cloudinary } from "../../apis/Cloudinary";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { UserIpAddress } from "../classes/UserIpAddress";
+import { ServerEncryption } from "../../security/ServerEncryption";
 
 export class UserDashboardRouter extends BaseRouter {
   public router: Router;
@@ -74,7 +75,7 @@ export class UserDashboardRouter extends BaseRouter {
       if (databaseUsers.length <= 0) {
         return res.status(422).json(await ResponseMessages.noUserFound());
       }
-      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
+      if (!await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
         return res.status(401).json(await ResponseMessages.passwordsDoNotMatch());
       }
       const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
@@ -113,7 +114,7 @@ export class UserDashboardRouter extends BaseRouter {
       if (databaseUsers.length <= 0) {
         return res.status(422).json(await ResponseMessages.noUserFound());
       }
-      if (!await UserAuthenicationValidator.comparedStoredHashPasswordWithLoginPassword(password, databaseUsers[0].password)) {
+      if (!await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(password, databaseUsers[0].password)) {
         return res.status(401).json(await ResponseMessages.passwordsDoNotMatch());
       }
       const oldUsername = databaseUsers[0].username;

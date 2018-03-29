@@ -1,5 +1,5 @@
 import open = require("amqplib");
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { QueueMessages } from "./QueueMessages";
 import errorLogger from "../logging/ErrorLogger";
 import { ContactMe } from "../../shared/ContactMe";

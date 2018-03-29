@@ -1,7 +1,7 @@
 import { DataAccess } from "./classes/DataAccess";
 import { DataAccessObjects } from "./objects/DataAccessObjects";
 import { UsersCollection, usersCollectionIsFalsy } from "../config/master";
-import { User } from "../models/user";
+import { User } from "../models/User";
 import errorLogger from "../logging/ErrorLogger";
 
 export class UserDashboardDataAccess extends DataAccess {

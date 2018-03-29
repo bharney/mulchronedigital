@@ -1,11 +1,9 @@
-const promise = require("bluebird");
-const fs = promise.promisifyAll(require("fs"));
 import path = require("path");
 import jwt = require("jsonwebtoken");
 import { JsonWebToken } from "../../shared/JsonWebToken";
 import { UsersCollection } from "../config/master";
 import { RSA2048PrivateKeyCreationResult, ServerEncryption, RSA2048PublicKeyCreationResult } from "./ServerEncryption";
-import { User } from "../models/user";
+import { User } from "../models/User";
 import errorLogger from "../logging/ErrorLogger";
 
 export class JsonWebTokenWorkers {

@@ -1,6 +1,7 @@
 import bcrypt = require("bcryptjs");
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
 import errorLogger from "../logging/ErrorLogger";
+import ProfileImage from "./ProfileImage";
 import { RSA2048PrivateKeyCreationResult, RSA2048PublicKeyCreationResult, ServerEncryption } from "../security/ServerEncryption";
 
 export class User {
@@ -41,7 +42,7 @@ export class User {
   public async SetupNewUser(): Promise<boolean> {
     try {
       this.createdAt = new Date();
-      this.password = await this.HashPassword();
+      this.password = await ServerEncryption.HashPassword(this.password);
       const privateKeyResultPairOne: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
       const publicKeyResultPairOne: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKeyResultPairOne.fileName, privateKeyResultPairOne.guid);
       await ServerEncryption.deleteKeysFromFileSystem(privateKeyResultPairOne.fileName, publicKeyResultPairOne.fileName);
@@ -63,47 +64,12 @@ export class User {
 
   public async updateUserPassword(): Promise<boolean> {
     try {
-      this.password = await this.HashPassword();
+      this.password = await ServerEncryption.HashPassword(this.password);
       this.modifiedAt = new Date();
       return true;
     } catch (error) {
-      // TODO: error handling? Logging?
+      errorLogger.error(error);
       return false;
     }
   }
-
-  // TODO: throw this in a helper class or something
-  private HashPassword(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      bcrypt.genSalt(10)
-        .then(salt => {
-          return bcrypt.hash(this.password, salt);
-        })
-        .then(hashedPassword => {
-          resolve(hashedPassword);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  }
-}
-
-class ProfileImage {
-  public public_id: string;
-  public version: number;
-  public signature: string;
-  public width: number;
-  public height: number;
-  public format: string;
-  public resource_type: string;
-  public created_at: string;
-  public tags: string[];
-  public bytes: number;
-  public type: string;
-  public etag: string;
-  public placeholder: boolean;
-  public url: string;
-  public secure_url: string;
-  public original_filename: string;
 }

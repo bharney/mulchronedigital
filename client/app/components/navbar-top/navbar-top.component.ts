@@ -39,7 +39,7 @@ export class NavbarTopComponent implements OnInit {
   public toggleNavigateToAdminDashboardClick(): void {
     const token: JsonWebToken = this.authControl.getDecodedToken();
     if (token !== null) {
-      this.router.navigate(["../../admin-dashboard/user", { id: token.id }]);
+      this.router.navigate(["../../admin-dashboard/user", { id: token.id }, { outlets: { admindashboard: ["home"] } }]);
     }
   }
 

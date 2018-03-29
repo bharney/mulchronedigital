@@ -1,4 +1,4 @@
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { ContactMe } from "../../shared/ContactMe";
 
 export class QueueMessages {

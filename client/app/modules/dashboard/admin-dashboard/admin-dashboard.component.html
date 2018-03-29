@@ -1,24 +1,10 @@
-<!-- Start main row -->
 <div class="main-row row">
-  <div class="col-sm-12">
+  <div class="col-sm-3">
     <div class="card">
-      
+      <app-admin-dashboard-navigation></app-admin-dashboard-navigation>
     </div>
   </div>
+  <div class="col-sm-9">
+    <router-outlet name="admindashboard"></router-outlet>
+  </div>
 </div>
-<!-- End main row -->
-
-
-
-<!-- 
-
-
-<div class="second-row row">
-    <div class="col-sm-3">
-      <div class="card text-center">
-        <h1>Admin Dashboard component</h1>
-      </div>
-    </div>
-    <div class="col-sm-9">
-      <!-- <router-outlet name="dashboard"></router-outlet> 
-    </div> -->

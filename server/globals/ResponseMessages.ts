@@ -1,5 +1,5 @@
 import { JsonWebTokenWorkers, CreateJsonWebTokenKeyPairResult } from "../security/JsonWebTokenWorkers";
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { UsersCollection } from "../config/master";
 import { ObjectId } from "mongodb";
 import errorLogger from "../logging/ErrorLogger";
@@ -64,6 +64,17 @@ export class ResponseMessages {
         "relogin": true,
       };
       resolve(message);
+    });
+  }
+
+  public static userIsNotAdmin(): Promise<object> {
+    return new Promise(resolve => {
+      const messaage = {
+        "status": false,
+        "message": "The user account is not an admin, if you previously had admin access your access maybe have been revoked",
+        "relogin": true
+      };
+      resolve(messaage);
     });
   }
 
@@ -340,6 +351,16 @@ export class ResponseMessages {
       const message = {
         "status": false,
         "message": `The message you entered was not long enough`
+      };
+      resolve(message);
+    });
+  }
+
+  public static successfulGetUsersForAdminDashboard(users: User[]): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+        "users": users
       };
       resolve(message);
     });

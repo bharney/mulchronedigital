@@ -17,7 +17,6 @@ export class UserDashboardComponent implements OnInit {
   public id: string;
   public username: string;
   public profileImage: string;
-  private parentRouter: Router;
 
   constructor(
     private mainDashboardService: MainDashboardService,
@@ -46,7 +45,6 @@ export class UserDashboardComponent implements OnInit {
   }
 
   private isUserAuthorizedToBeHere(): void {
-    this.parentRouter = this.router;
     const token: JsonWebToken = this.authControl.getDecodedToken();
     this.authControl.dashboardInitCompareParamIdWithTokenId(this.route, this.router, token);
     this.id = token.id;

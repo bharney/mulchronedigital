@@ -53,4 +53,38 @@ describe("ServerEncryption class tests", () => {
         const deleteKeysResult = await ServerEncryption.deleteKeysFromFileSystem(privateKey.fileName, publicKey.fileName);
         assert.equal(deleteKeysResult, true);
     });
+
+    const passwordToHash = "Password1234!@#$";
+    let hashedPassword;
+    it("it should hash a password", async () => {
+        hashedPassword = await ServerEncryption.HashPassword(passwordToHash);
+        assert.equal(passwordToHash.includes("Error:"), false);
+    });
+
+    it("it should compare the hashed password with the unhashed password as true", async () => {
+        const result = await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(passwordToHash, hashedPassword);
+        assert.equal(result, true);
+    });
+
+    it("it should compare the hashed pasword with the unhashed password as false", async () => {
+        const badPassword = "klasdkjdsajklasdjkl";
+        const result = await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(badPassword, hashedPassword);
+        assert.equal(result, false);
+    });
+
+    it("it should throw an error when attempting to hash an empty string", async () => {
+        try {
+            hashedPassword = await ServerEncryption.HashPassword("");
+        } catch (error) {
+            const errorMessageToTest = "Error: The password string passed into the HashPassword(password: string) function was a falsy value";
+            assert.equal(error.toString().includes(errorMessageToTest), true);
+        }
+    });
+
+    it("it should create a RSA 4096 key pair and delete them from the file system", async () => {
+        const privateKey: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
+        const publicKey: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKey.fileName, privateKey.guid);
+        const deleteResult = await ServerEncryption.deleteKeysFromFileSystem(privateKey.fileName, publicKey.fileName);
+        assert.equal(deleteResult, true);
+    });
 });
