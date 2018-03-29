@@ -3,8 +3,8 @@ import * as chai from "chai";
 import chaiHttp = require("chai-http");
 const assert = chai.assert;
 chai.use(chaiHttp);
-import { createLoginUserObject } from "../helpers/LoginHelpers";
 import { AESEncryptionResult } from "../../shared/Encryption";
+import LoginHelpers from "../helpers/LoginHelpers";
 
 const host = "http://localhost:8080";
 const loginUserPath = "/api/userauth/loginuser";
@@ -15,7 +15,7 @@ const getRegularUserToken = () => {
         const loginUserPath = "/api/userauth/loginuser";
         const userPassword = "Password1234!@#$";
         const userEmail = "basicuser@gmail.com";
-        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        const encryptedLoginInfo = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         chai.request(host)
             .post(loginUserPath)
             .set("Content-Type", "application/json")
@@ -33,7 +33,7 @@ const getAdminUserToken = () => {
     return new Promise(async (resolve, reject) => {
         const userPassword = "Password1234!@#$";
         const userEmail = "admin@gmail.com";
-        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        const encryptedLoginInfo = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         chai.request(host)
             .post(loginUserPath)
             .set("Content-Type", "application/json")
@@ -103,7 +103,7 @@ describe("BaseRouter Abstract Class Tests", () => {
     it("it should say there is no symmetric key in the request body", async () => {
         const userPassword = "Password1234!@#$";
         const userEmail = "basicuser@gmail.com";
-        const loginObject: AESEncryptionResult = await createLoginUserObject(userPassword, userEmail);
+        const loginObject: AESEncryptionResult = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         loginObject.key = null;
         return chai.request(host)
             .post(loginUserPath)
@@ -119,7 +119,7 @@ describe("BaseRouter Abstract Class Tests", () => {
     it("it should say there is encrypted body text in the request body", async () => {
         const userPassword = "Password1234!@#$";
         const userEmail = "basicuser@gmail.com";
-        const loginObject: AESEncryptionResult = await createLoginUserObject(userPassword, userEmail);
+        const loginObject: AESEncryptionResult = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         loginObject.encryptedText = null;
         return chai.request(host)
             .post(loginUserPath)
@@ -135,7 +135,7 @@ describe("BaseRouter Abstract Class Tests", () => {
     it("it should say the symmetric key provided was invalid", async () => {
         const userPassword = "Password1234!@#$";
         const userEmail = "basicuser@gmail.com";
-        const loginObject: AESEncryptionResult = await createLoginUserObject(userPassword, userEmail);
+        const loginObject: AESEncryptionResult = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         loginObject.key = loginObject.key.substring(3, 6);
         return chai.request(host)
             .post(loginUserPath)
