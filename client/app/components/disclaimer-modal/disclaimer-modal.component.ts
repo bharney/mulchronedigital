@@ -9,7 +9,9 @@ declare const $: any;
 })
 export class DisclaimerModalComponent implements OnInit {
 
-  constructor(private userRegisterEmitter: UserRegisterEmitter) { }
+  constructor(
+    private userRegisterEmitter: UserRegisterEmitter
+  ) { }
 
   ngOnInit() {
   }
@@ -19,7 +21,7 @@ export class DisclaimerModalComponent implements OnInit {
   }
 
   public handleAccpectModalDisclaimer() {
-    const emitterObject = {"type": "user accepted disclaimer", "event": event};
+    const emitterObject = { "type": "user accepted disclaimer", "event": event };
     this.userRegisterEmitter.emitChange(emitterObject);
     $("#disclaimer-modal").modal("hide");
   }
