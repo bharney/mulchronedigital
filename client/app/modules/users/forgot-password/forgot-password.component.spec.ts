@@ -4,6 +4,15 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { ForgotPasswordComponent } from './forgot-password.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { CommonModule } from '@angular/common';
+import { ErrorModalComponent } from '../../../components/error-modal/error-modal.component';
+import { ApiRequests } from '../../../shared/http/ApiRequests';
+import { AuthenicationControl } from '../../../shared/authenication/AuthenicationControl';
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { GoogleAnalytics } from '../../../shared/services/google-analytics.service';
 
 describe('ForgotPasswordComponent', () => {
   let component: ForgotPasswordComponent;
@@ -11,7 +20,20 @@ describe('ForgotPasswordComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ForgotPasswordComponent ]
+      imports: [
+        HttpModule,
+        ReactiveFormsModule,
+        RouterTestingModule
+      ],
+      declarations: [ 
+        ForgotPasswordComponent, 
+        ErrorModalComponent
+      ],
+      providers: [
+        ApiRequests,
+        AuthenicationControl,
+        GoogleAnalytics
+      ]
     })
     .compileComponents();
   }));

@@ -4,25 +4,24 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { DisclaimerModalComponent } from './disclaimer-modal.component';
+import { UserRegisterEmitter } from '../../shared/services/emitters/user-register-emitter.service';
 
 describe('DisclaimerModalComponent', () => {
   let component: DisclaimerModalComponent;
   let fixture: ComponentFixture<DisclaimerModalComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ DisclaimerModalComponent ]
-    })
-    .compileComponents();
-  }));
-
   beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [DisclaimerModalComponent],
+      providers: [UserRegisterEmitter]
+    });
     fixture = TestBed.createComponent(DisclaimerModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("it should create an instance", () => {
     expect(component).toBeTruthy();
   });
+
 });

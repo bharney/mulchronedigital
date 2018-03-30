@@ -6,17 +6,32 @@ import "rxjs/Rx";
 import { LoginComponent } from "./login.component";
 import { LoginService } from "../../../shared/services/user-authenication.service";
 import { LoginUser } from "../../../shared/models/user-authenication.model";
+import { ApiRequests } from "../../../shared/http/ApiRequests";
+import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
+import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
+import { BrowserModule } from "@angular/platform-browser";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { RouterTestingModule } from "@angular/router/testing";
 
-describe("a login component", () => {
+describe("LoginComponent", () => {
   let component: LoginComponent;
 
   // register all needed dependencies
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpModule],
+      imports: [
+        HttpModule,
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterTestingModule
+      ],
       providers: [
         { provide: LoginService, useClass: MockLoginService },
-        LoginComponent
+        LoginComponent,
+        ApiRequests,
+        GoogleAnalytics,
+        AuthenicationControl
       ]
     });
   });
