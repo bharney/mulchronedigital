@@ -60,4 +60,21 @@ describe("Register User Route Path Tests", () => {
                 assert.equal(body.message, "Your password must be atleast 8 characters with one upper case letter, one lower case letter, one number, and one special character");
             });
     });
+
+    it("it should say the username is already taken", async () => {
+        const username = "admin";
+        const email = "admin@gmail.com";
+        const password = "Password1234!@#$";
+        const encryptedRegisterUserObject: AESEncryptionResult = await LoginHelpers.createRegisterUserObject(username, email, password);
+        return chai.request(host)
+            .post(path)
+            .set("Content-Type", "application/json")
+            .send(encryptedRegisterUserObject)
+            .catch(error => {
+                assert.equal(error.status, 409);
+                const body = JSON.parse(error.response.text);
+                assert.equal(body.status, false);
+                assert.equal(body.message, `The username ${username} is already taken`);
+            });
+    });
 });
