@@ -23,16 +23,19 @@ export abstract class BaseRouter {
       if (databaseUsers.length <= 0) {
         return res.status(401).json(await ResponseMessages.noUserFoundThatIsActive());
       }
+      const databaseJsonToken = databaseUsers[0].jsonToken;
+      const jsonTokenPublicKey = databaseUsers[0].jsonWebTokenPublicKey;
+      if (!await JsonWebTokenWorkers.verifiyJsonWebToken(headerToken.toString(), jsonTokenPublicKey)) {
+        return res.status(409).json(await ResponseMessages.jsonWebTokenExpired());
+      }
       const isUserActive = databaseUsers[0].isActive;
       if (!isUserActive) {
         return res.status(503).json(await ResponseMessages.userIsNotActive());
       }
-      const jsonToken = databaseUsers[0].jsonToken;
-      const jsonTokenPublicKey = databaseUsers[0].jsonWebTokenPublicKey;
-      if (!await JsonWebTokenWorkers.verifiyJsonWebToken(jsonToken, jsonTokenPublicKey)) {
+      if (!await JsonWebTokenWorkers.verifiyJsonWebToken(databaseJsonToken, jsonTokenPublicKey)) {
         return res.status(409).json(await ResponseMessages.jsonWebTokenExpired());
       }
-      const decodedDbToken: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(jsonToken);
+      const decodedDbToken: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseJsonToken);
       if (!await JsonWebTokenWorkers.comparedHeaderTokenWithDbToken(res.locals.token, decodedDbToken)) {
         return res.status(409).json(await ResponseMessages.jsonWebTokenDoesntMatchStoredToken());
       }
