@@ -14,7 +14,7 @@ export default class LoginHelpers {
 
     public static async createRegisterUserObject(username: string, email: string, password: string): Promise<AESEncryptionResult> {
         try {
-            const registerUserObject: string = JSON.stringify(new RegisterUser(username, email, password));
+            const registerUserObject: string = JSON.stringify(new RegisterUser(username, password, email));
             const encryptedObject: AESEncryptionResult = await Encryption.AESEncrypt(registerUserObject);
             return encryptedObject;
         } catch (error) {

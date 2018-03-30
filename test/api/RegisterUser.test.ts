@@ -43,4 +43,21 @@ describe("Register User Route Path Tests", () => {
                 assert.equal(body.message, "You must enter a valid email address");
             });
     });
+
+    it("it should say the password is invalid", async () => {
+        const username = "testuser";
+        const email = "testuser@gmail.com";
+        const password = "Password1234";
+        const encryptedRegisterUserObject: AESEncryptionResult = await LoginHelpers.createRegisterUserObject(username, email, password);
+        return chai.request(host)
+            .post(path)
+            .set("Content-Type", "application/json")
+            .send(encryptedRegisterUserObject)
+            .catch(error => {
+                assert.equal(error.status, 422);
+                const body = JSON.parse(error.response.text);
+                assert.equal(body.status, false);
+                assert.equal(body.message, "Your password must be atleast 8 characters with one upper case letter, one lower case letter, one number, and one special character");
+            });
+    });
 });
