@@ -1,15 +1,21 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { UserDashboardHomeComponent } from './user-dashboard-home.component';
+import { GoogleAnalytics } from '../../../../../shared/services/google-analytics.service';
+import { RouterTestingModule } from '@angular/router/testing';
 
-describe('a user-dashboard-home component', () => {
+describe('UserDashboardHomeComponent', () => {
 	let component: UserDashboardHomeComponent;
 
 	// register all needed dependencies
 	beforeEach(() => {
 		TestBed.configureTestingModule({
+			imports: [
+				RouterTestingModule
+			],
 			providers: [
-				UserDashboardHomeComponent
+				UserDashboardHomeComponent,
+				GoogleAnalytics
 			]
 		});
 	});
