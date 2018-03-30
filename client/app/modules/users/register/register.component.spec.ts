@@ -6,17 +6,34 @@ import "rxjs/Rx";
 import { RegisterComponent } from "./register.component";
 import { RegisterService } from "../../../shared/services/user-authenication.service";
 import { RegisterUser } from "../../../shared/models/user-authenication.model";
+import { BrowserModule } from "@angular/platform-browser";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { ApiRequests } from "../../../shared/http/ApiRequests";
+import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
+import { RouterTestingModule } from "@angular/router/testing";
+import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
+import { UserRegisterEmitter } from "../../../shared/services/emitters/user-register-emitter.service";
 
-describe("a register component", () => {
+describe("RegisterComponent", () => {
   let component: RegisterComponent;
 
   // register all needed dependencies
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpModule],
+      imports: [
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpModule,
+        RouterTestingModule
+      ],
       providers: [
         { provide: RegisterService, useClass: MockRegisterService },
-        RegisterComponent
+        RegisterComponent,
+        ApiRequests,
+        AuthenicationControl,
+        GoogleAnalytics,
+        UserRegisterEmitter
       ]
     });
   });
