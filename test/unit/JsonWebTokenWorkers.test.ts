@@ -4,7 +4,7 @@ import jwt = require("jsonwebtoken");
 import { User } from "../../server/models/User";
 import { DataAccess } from "../../server/data-access/classes/DataAccess";
 import { JsonWebTokenWorkers } from "../../server/security/JsonWebTokenWorkers";
-import { ServerEncryption, RSA2048PrivateKeyCreationResult, RSA2048PublicKeyCreationResult } from "../../server/security/ServerEncryption";
+import { ServerEncryption, RSA4096PrivateKeyCreationResult, RSA4096PublicKeyCreationResult } from "../../server/security/ServerEncryption";
 import { executeCommand } from "../helpers/FileSystemHelpers";
 import { JsonWebToken } from "../../shared/JsonWebToken";
 import { UserAuthenicationDataAccess } from "../../server/data-access/UserAuthenicationDataAccess";
@@ -20,7 +20,7 @@ describe("JsonWebTokenWorker class tests", () => {
     let databaseUsers: User[];
     let decodedToken: JsonWebToken;
     let token: string;
-    let publicKey: RSA2048PublicKeyCreationResult;
+    let publicKey: RSA4096PublicKeyCreationResult;
     before(async () => {
         databaseUsers = await DataAccess.findUserLoginDetailsByEmail(userEmail);
     });
@@ -34,8 +34,8 @@ describe("JsonWebTokenWorker class tests", () => {
     });
 
     it("it should sign a json webtoken", async () => {
-        const privateKey: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
-        publicKey = await ServerEncryption.createRSA2048PublicKey(privateKey.fileName, privateKey.guid);
+        const privateKey: RSA4096PrivateKeyCreationResult = await ServerEncryption.createRSA4096PrivateKey();
+        publicKey = await ServerEncryption.createRSA4096PublicKey(privateKey.fileName, privateKey.guid);
         token = await JsonWebTokenWorkers.signWebToken(databaseUsers[0]._id, databaseUsers[0].isAdmin, databaseUsers[0].publicKeyPairOne, databaseUsers[0].privateKeyPairTwo, privateKey.key);
         assert.equal(typeof (token), typeof (""));
         after(async () => {
@@ -68,7 +68,7 @@ describe("JsonWebTokenWorker class tests", () => {
         try {
             const secondUserEmail: string = "basicuser@gmail.com";
             const secondUsers: User[] = await DataAccess.findUserLoginDetailsByEmail(secondUserEmail);
-            var secondUserPrivateKey: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
+            var secondUserPrivateKey: RSA4096PrivateKeyCreationResult = await ServerEncryption.createRSA4096PrivateKey();
             const secondUserToken = await JsonWebTokenWorkers.signWebToken(secondUsers[0]._id, secondUsers[0].isAdmin, secondUsers[0].publicKeyPairOne, secondUsers[0].privateKeyPairTwo, secondUserPrivateKey.key);
             const decodedSecondUserToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(secondUserToken);
             const result = await JsonWebTokenWorkers.comparedHeaderTokenWithDbToken(decodedToken, decodedSecondUserToken);

@@ -3,7 +3,7 @@ import bcrypt = require("bcryptjs");
 const exec = require("child_process").exec;
 
 export class ServerEncryption {
-    public static createRSA2048PrivateKey(): Promise<RSA2048PrivateKeyCreationResult> {
+    public static createRSA4096PrivateKey(): Promise<RSA4096PrivateKeyCreationResult> {
         return new Promise((resolve, reject) => {
             UniqueIdentifier.createGuid()
                 .then(guid => {
@@ -13,7 +13,7 @@ export class ServerEncryption {
                         if (err) {
                             reject(err);
                         }
-                        resolve(new RSA2048PrivateKeyCreationResult(guid, fileName, stdout.toString("base64")));
+                        resolve(new RSA4096PrivateKeyCreationResult(guid, fileName, stdout.toString("base64")));
                     });
                 })
                 .catch(error => {
@@ -22,7 +22,7 @@ export class ServerEncryption {
         });
     }
 
-    public static createRSA2048PublicKey(fileName: string, guid: string): Promise<RSA2048PublicKeyCreationResult> {
+    public static createRSA4096PublicKey(fileName: string, guid: string): Promise<RSA4096PublicKeyCreationResult> {
         return new Promise((resolve, reject) => {
             const publicKeyFileName = `rsa_4096_${guid}_pub.pem`;
             const cmd = `openssl rsa -pubout -in ${fileName} -out ${publicKeyFileName} && cat ${publicKeyFileName}`;
@@ -30,7 +30,7 @@ export class ServerEncryption {
                 if (err) {
                     reject(err);
                 }
-                resolve(new RSA2048PublicKeyCreationResult(stdout.toString("base64"), publicKeyFileName));
+                resolve(new RSA4096PublicKeyCreationResult(stdout.toString("base64"), publicKeyFileName));
             });
         });
     }
@@ -86,7 +86,7 @@ export class ServerEncryption {
     }
 }
 
-export class RSA2048PrivateKeyCreationResult {
+export class RSA4096PrivateKeyCreationResult {
     public guid: string;
     public fileName: string;
     public key: string;
@@ -98,7 +98,7 @@ export class RSA2048PrivateKeyCreationResult {
     }
 }
 
-export class RSA2048PublicKeyCreationResult {
+export class RSA4096PublicKeyCreationResult {
     public key: string;
     public fileName: string;
 
