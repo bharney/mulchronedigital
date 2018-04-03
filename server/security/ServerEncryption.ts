@@ -1,5 +1,7 @@
 import { UniqueIdentifier } from "../../shared/UniqueIdentifer";
 import bcrypt = require("bcryptjs");
+import { RSA4096PrivateKeyCreationResult } from "./RSA4096PrivateKeyCreationResult";
+import { RSA4096PublicKeyCreationResult } from "./RSA4096PublicKeyCreationResult";
 const exec = require("child_process").exec;
 
 export class ServerEncryption {
@@ -83,27 +85,5 @@ export class ServerEncryption {
                     (result) ? resolve(true) : resolve(false);
                 });
         });
-    }
-}
-
-export class RSA4096PrivateKeyCreationResult {
-    public guid: string;
-    public fileName: string;
-    public key: string;
-
-    constructor(guid: string, fileName: string, key: string) {
-        this.guid = guid;
-        this.fileName = fileName;
-        this.key = key;
-    }
-}
-
-export class RSA4096PublicKeyCreationResult {
-    public key: string;
-    public fileName: string;
-
-    constructor(key: string, publicKeyFileName: string) {
-        this.key = key;
-        this.fileName = publicKeyFileName;
     }
 }

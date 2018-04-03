@@ -2,9 +2,11 @@ import path = require("path");
 import jwt = require("jsonwebtoken");
 import { JsonWebToken } from "../../shared/JsonWebToken";
 import { UsersCollection } from "../config/master";
-import { RSA4096PrivateKeyCreationResult, ServerEncryption, RSA4096PublicKeyCreationResult } from "./ServerEncryption";
+import { ServerEncryption } from "./ServerEncryption";
 import { User } from "../models/User";
 import errorLogger from "../logging/ErrorLogger";
+import { RSA4096PrivateKeyCreationResult } from "./RSA4096PrivateKeyCreationResult";
+import { RSA4096PublicKeyCreationResult } from "./RSA4096PublicKeyCreationResult";
 
 export class JsonWebTokenWorkers {
 

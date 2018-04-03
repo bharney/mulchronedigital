@@ -2,7 +2,9 @@ import bcrypt = require("bcryptjs");
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
 import errorLogger from "../logging/ErrorLogger";
 import ProfileImage from "./ProfileImage";
-import { RSA4096PrivateKeyCreationResult, RSA4096PublicKeyCreationResult, ServerEncryption } from "../security/ServerEncryption";
+import { ServerEncryption } from "../security/ServerEncryption";
+import { RSA4096PrivateKeyCreationResult } from "../security/RSA4096PrivateKeyCreationResult";
+import { RSA4096PublicKeyCreationResult } from "../security/RSA4096PublicKeyCreationResult";
 
 export class User {
   public _id?: string;

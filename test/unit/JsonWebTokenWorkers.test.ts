@@ -4,10 +4,12 @@ import jwt = require("jsonwebtoken");
 import { User } from "../../server/models/User";
 import { DataAccess } from "../../server/data-access/classes/DataAccess";
 import { JsonWebTokenWorkers } from "../../server/security/JsonWebTokenWorkers";
-import { ServerEncryption, RSA4096PrivateKeyCreationResult, RSA4096PublicKeyCreationResult } from "../../server/security/ServerEncryption";
+import { ServerEncryption } from "../../server/security/ServerEncryption";
 import { executeCommand } from "../helpers/FileSystemHelpers";
 import { JsonWebToken } from "../../shared/JsonWebToken";
 import { UserAuthenicationDataAccess } from "../../server/data-access/UserAuthenicationDataAccess";
+import { RSA4096PublicKeyCreationResult } from "../../server/security/RSA4096PublicKeyCreationResult";
+import { RSA4096PrivateKeyCreationResult } from "../../server/security/RSA4096PrivateKeyCreationResult";
 const assert = chai.assert;
 
 const deleteKey = async (filename) => {
