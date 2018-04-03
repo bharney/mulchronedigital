@@ -15,6 +15,7 @@ import { ForgotPasswordToken } from "../../models/ForgotPasswordToken";
 import { Encryption } from "../../../shared/Encryption";
 import { DataAccess } from "../../data-access/classes/DataAccess";
 import { ServerEncryption } from "../../security/ServerEncryption";
+import { DnsHelpers } from "../../globals/DnsHelpers";
 
 export class UserAuthenicationRouter extends BaseRouter {
   public router: Router;
@@ -90,8 +91,9 @@ export class UserAuthenicationRouter extends BaseRouter {
     try {
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+      const domain = await DnsHelpers.reverseDNSLookup(ip);
       const userAgent = await httpHelpers.getUserAgentFromRequestObject(req.headers);
-      const ipAddressObject = new UserIpAddress(ip, userAgent);
+      const ipAddressObject = new UserIpAddress(ip, userAgent, domain);
       const newUser = new User(req.body.username, req.body.email, req.body.password, ipAddressObject);
       // TODO: split this up into seperate functions. little messy;
       if (await newUser.SetupNewUser()) {
@@ -134,8 +136,9 @@ export class UserAuthenicationRouter extends BaseRouter {
           const httpHelpers = new HttpHelpers();
           const userId = databaseUsers[0]._id;
           const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
+          const domain = await DnsHelpers.reverseDNSLookup(ip);
           const userAgent = await httpHelpers.getUserAgentFromRequestObject(req.headers);
-          const ipAddressObject = new UserIpAddress(ip, userAgent);
+          const ipAddressObject = new UserIpAddress(ip, userAgent, domain);
           const matchingUserIpAddresses = await UserAuthenicationDataAccess.findMatchingIpAddressbyUserId(userId, ip);
           if (matchingUserIpAddresses[0].ipAddresses === undefined) {
             // TODO: we are now associating a new or unknown IP address to the user.

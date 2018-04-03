@@ -2,16 +2,18 @@ import path = require("path");
 import jwt = require("jsonwebtoken");
 import { JsonWebToken } from "../../shared/JsonWebToken";
 import { UsersCollection } from "../config/master";
-import { RSA2048PrivateKeyCreationResult, ServerEncryption, RSA2048PublicKeyCreationResult } from "./ServerEncryption";
+import { ServerEncryption } from "./ServerEncryption";
 import { User } from "../models/User";
 import errorLogger from "../logging/ErrorLogger";
+import { RSA4096PrivateKeyCreationResult } from "./RSA4096PrivateKeyCreationResult";
+import { RSA4096PublicKeyCreationResult } from "./RSA4096PublicKeyCreationResult";
 
 export class JsonWebTokenWorkers {
 
   public static async createJsonWebTokenKeyPairForUser(databaseUser: User): Promise<CreateJsonWebTokenKeyPairResult> {
     try {
-      const privateKey: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
-      const publicKey: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKey.fileName, privateKey.guid);
+      const privateKey: RSA4096PrivateKeyCreationResult = await ServerEncryption.createRSA4096PrivateKey();
+      const publicKey: RSA4096PublicKeyCreationResult = await ServerEncryption.createRSA4096PublicKey(privateKey.fileName, privateKey.guid);
       await ServerEncryption.deleteKeysFromFileSystem(privateKey.fileName, publicKey.fileName);
       const token = await this.signWebToken(databaseUser._id, databaseUser.isAdmin, databaseUser.publicKeyPairOne, databaseUser.privateKeyPairTwo, privateKey.key);
       return new CreateJsonWebTokenKeyPairResult(privateKey.key, publicKey.key, token);

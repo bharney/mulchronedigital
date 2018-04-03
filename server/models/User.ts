@@ -2,7 +2,9 @@ import bcrypt = require("bcryptjs");
 import { UserIpAddress } from "../routes/classes/UserIpAddress";
 import errorLogger from "../logging/ErrorLogger";
 import ProfileImage from "./ProfileImage";
-import { RSA2048PrivateKeyCreationResult, RSA2048PublicKeyCreationResult, ServerEncryption } from "../security/ServerEncryption";
+import { ServerEncryption } from "../security/ServerEncryption";
+import { RSA4096PrivateKeyCreationResult } from "../security/RSA4096PrivateKeyCreationResult";
+import { RSA4096PublicKeyCreationResult } from "../security/RSA4096PublicKeyCreationResult";
 
 export class User {
   public _id?: string;
@@ -43,13 +45,13 @@ export class User {
     try {
       this.createdAt = new Date();
       this.password = await ServerEncryption.HashPassword(this.password);
-      const privateKeyResultPairOne: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
-      const publicKeyResultPairOne: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKeyResultPairOne.fileName, privateKeyResultPairOne.guid);
+      const privateKeyResultPairOne: RSA4096PrivateKeyCreationResult = await ServerEncryption.createRSA4096PrivateKey();
+      const publicKeyResultPairOne: RSA4096PublicKeyCreationResult = await ServerEncryption.createRSA4096PublicKey(privateKeyResultPairOne.fileName, privateKeyResultPairOne.guid);
       await ServerEncryption.deleteKeysFromFileSystem(privateKeyResultPairOne.fileName, publicKeyResultPairOne.fileName);
       this.privateKeyPairOne = privateKeyResultPairOne.key;
       this.publicKeyPairOne = publicKeyResultPairOne.key;
-      const privateKeyResultPairTwo: RSA2048PrivateKeyCreationResult = await ServerEncryption.createRSA2048PrivateKey();
-      const publicKeyResultPairTwo: RSA2048PublicKeyCreationResult = await ServerEncryption.createRSA2048PublicKey(privateKeyResultPairTwo.fileName, privateKeyResultPairTwo.guid);
+      const privateKeyResultPairTwo: RSA4096PrivateKeyCreationResult = await ServerEncryption.createRSA4096PrivateKey();
+      const publicKeyResultPairTwo: RSA4096PublicKeyCreationResult = await ServerEncryption.createRSA4096PublicKey(privateKeyResultPairTwo.fileName, privateKeyResultPairTwo.guid);
       await ServerEncryption.deleteKeysFromFileSystem(privateKeyResultPairTwo.fileName, publicKeyResultPairTwo.fileName);
       this.privateKeyPairTwo = privateKeyResultPairTwo.key;
       this.publicKeyPairTwo = publicKeyResultPairTwo.key;

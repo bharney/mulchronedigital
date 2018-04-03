@@ -4,6 +4,11 @@ import { By } from "@angular/platform-browser";
 import { DebugElement } from "@angular/core";
 
 import { AdminDashboardUsersComponent } from "./admin-dashboard-users.component";
+import { RouterTestingModule } from "@angular/router/testing";
+import { UsersAdministrationService } from "../../../../../shared/services/users-administration.service";
+import { HttpModule } from "@angular/http";
+import { AuthenicationControl } from "../../../../../shared/authenication/AuthenicationControl";
+import { ApiRequests } from "../../../../../shared/http/ApiRequests";
 
 describe("AdminDashboardUsersComponent", () => {
   let component: AdminDashboardUsersComponent;
@@ -11,9 +16,19 @@ describe("AdminDashboardUsersComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AdminDashboardUsersComponent ]
-    })
-    .compileComponents();
+      imports: [
+        RouterTestingModule, 
+        HttpModule
+      ],
+      declarations: [
+        AdminDashboardUsersComponent
+      ],
+      providers: [
+        UsersAdministrationService,
+        AuthenicationControl,
+        ApiRequests
+      ]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

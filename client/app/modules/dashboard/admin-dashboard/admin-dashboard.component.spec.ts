@@ -1,6 +1,8 @@
 import { TestBed, inject } from "@angular/core/testing";
-
 import { AdminDashboardComponent } from "./admin-dashboard.component";
+import { AuthenicationControl } from "../../../shared/authenication/AuthenicationControl";
+import { RouterTestingModule } from "@angular/router/testing";
+import { AdminDashboardEmitter } from "../../../shared/services/emitters/admin-dashboard-emitter.service";
 
 describe("a admin-dashboard component", () => {
   let component: AdminDashboardComponent;
@@ -8,8 +10,13 @@ describe("a admin-dashboard component", () => {
   // register all needed dependencies
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule
+      ],
       providers: [
-        AdminDashboardComponent
+        AdminDashboardComponent,
+        AuthenicationControl,
+        AdminDashboardEmitter
       ]
     });
   });
