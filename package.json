@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "test:client": "ng test",
-    "test:server": "rm -r ./dist && webpack && concurrently \"mongod\" \"node dist/server.js\" \"mocha --timeout 20000 --reporter spec --full-trace --require ts-node/register test/**/*.test.ts\"",
+    "test:server": "webpack && concurrently \"mongod\" \"node dist/server.js\" \"mocha --timeout 20000 --reporter spec --full-trace --require ts-node/register test/**/*.test.ts\"",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "dev": "concurrently \"ng serve --proxy-config proxy.conf.json\" \"webpack --watch\" \"nodemon dist/server.js\" \"mongod\"",
