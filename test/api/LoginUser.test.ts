@@ -4,7 +4,7 @@ import { JsonWebTokenWorkers } from "../../server/security/JsonWebTokenWorkers";
 import chaiHttp = require("chai-http");
 import { UserAuthenicationDataAccess } from "../../server/data-access/UserAuthenicationDataAccess";
 import { User } from "../../server/models/User";
-import { createLoginUserObject } from "../helpers/LoginHelpers";
+import LoginHelpers from "../helpers/LoginHelpers";
 const assert = chai.assert;
 chai.use(chaiHttp);
 
@@ -15,7 +15,7 @@ describe("Login User Route Test", () => {
     it("it should return a valid Admin JSON Web Token in the response body", async () => {
         const userPassword = "Password1234!@#$";
         const userEmail = "admin@gmail.com";
-        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        const encryptedLoginInfo = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         return chai.request(host)
             .post(path)
             .set("Content-Type", "application/json")
@@ -34,7 +34,7 @@ describe("Login User Route Test", () => {
     it("it should return a valid user token JSON Web Token in the response header", async () => {
         const userPassword = "Password1234!@#$";
         const userEmail = "basicuser@gmail.com";
-        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        const encryptedLoginInfo = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         return chai.request(host)
             .post(path)
             .set("Content-Type", "application/json")
@@ -53,7 +53,7 @@ describe("Login User Route Test", () => {
     it("it should return a response message of invalid email", async () => {
         const userPassword = "Password1234!@#$";
         const userEmail = "basicuser";
-        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        const encryptedLoginInfo = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         return chai.request(host)
             .post(path)
             .set("Content-Type", "application/json")
@@ -72,7 +72,7 @@ describe("Login User Route Test", () => {
     it("it should return a response of invalid password", async () => {
         const userPassword = "Pass$";
         const userEmail = "basicuser@gmail.com";
-        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        const encryptedLoginInfo = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         return chai.request(host)
             .post(path)
             .set("Content-Type", "application/json")
@@ -91,7 +91,7 @@ describe("Login User Route Test", () => {
     it("it should return a response of user is not active", async () => {
         const userPassword = "Password1234!@#$";
         const userEmail = "basicinactiveuser@gmail.com";
-        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        const encryptedLoginInfo = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         return chai.request(host)
             .post(path)
             .set("Content-Type", "application/json")
@@ -110,7 +110,7 @@ describe("Login User Route Test", () => {
     it("it should return a response of password do not match", async () => {
         const userPassword = "Password1234!@#$@!";
         const userEmail = "basicuser@gmail.com";
-        const encryptedLoginInfo = await createLoginUserObject(userPassword, userEmail);
+        const encryptedLoginInfo = await LoginHelpers.createLoginUserObject(userPassword, userEmail);
         return chai.request(host)
             .post(path)
             .set("Content-Type", "application/json")

@@ -1,6 +1,6 @@
 import * as mocha from "mocha";
 import * as chai from "chai";
-import { ServerEncryption } from '../../server/security/ServerEncryption';
+import { ServerEncryption } from "../../server/security/ServerEncryption";
 import { executeCommand } from "../helpers/FileSystemHelpers";
 import { RSA4096PrivateKeyCreationResult } from "../../server/security/RSA4096PrivateKeyCreationResult";
 import { RSA4096PublicKeyCreationResult } from "../../server/security/RSA4096PublicKeyCreationResult";
