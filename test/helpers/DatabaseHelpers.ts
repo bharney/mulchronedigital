@@ -20,13 +20,29 @@ export class DatabaseHelpers {
 
     public static async getUsersJsonWebTokenByUsername(username: string): Promise<string> {
         try {
-            if (!username)
+            if (!username) {
                 return null;
+            }
             if (!UsersCollection) {
                 await usersCollectionIsFalsy();
             }
             const result = await UsersCollection.findOne({ username: username }, { _id: 0, jsonToken: 1 });
             return result.jsonToken;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    public static async getUsersDatabaseIdByUsername(username: string): Promise<string> {
+        try {
+            if (!username) {
+                return null;
+            }
+            if (!UsersCollection) {
+                await usersCollectionIsFalsy();
+            }
+            const result = await UsersCollection.findOne({username: username}, {_id: 1});
+            return result._id;
         } catch (error) {
             return null;
         }
