@@ -75,7 +75,6 @@ export class Database {
             userId: 1
           },
           "name": "userId",
-          unique: true,
           background: true
         },
         {
@@ -83,7 +82,6 @@ export class Database {
             actionType: 1
           },
           "name": "actionType",
-          unique: true,
           background: true
         },
         {
@@ -91,7 +89,6 @@ export class Database {
             happenedAt: 1
           },
           "name": "happenedAt",
-          unique: true,
           background: true
         },
       ];

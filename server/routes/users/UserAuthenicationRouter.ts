@@ -38,6 +38,7 @@ export class UserAuthenicationRouter extends BaseRouter {
     this.router.post("/loginuser", this.validateLoginUserRequest);
 
     // RefreshJsonWebToken
+    this.router.use("/refreshtoken", this.checkForUserJsonWebToken);
     this.router.get("/refreshtoken", this.validateRefreshJsonWebToken);
 
     this.router.patch("/activateuser", this.validateActivateUser);
@@ -160,17 +161,10 @@ export class UserAuthenicationRouter extends BaseRouter {
     try {
       // here we are not going to check to see if the user session expired.
       // what if the user was logged out for like 5 days?
-      const token: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(req.headers["mulchronedigital-token"]);
-      if (token === null) {
-        return res.status(401).json(await ResponseMessages.noJsonWebTokenInHeader());
-      }
+      const token = res.locals.token;
       const databaseUsers: User[] = await UserAuthenicationDataAccess.findUserJsonWebTokenRefreshInformationById(token.id);
       if (databaseUsers.length <= 0) {
         return res.status(401).json(await ResponseMessages.noUserFound());
-      }
-      const dbToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseUsers[0].jsonToken);
-      if (!await JsonWebTokenWorkers.comparedHeaderTokenWithDbToken(token, dbToken)) {
-        return res.status(401).json(await ResponseMessages.jsonWebTokenDoesntMatchStoredToken());
       }
       return res.status(200).json(await ResponseMessages.successfulUserLogin(databaseUsers[0]));
     } catch (error) {

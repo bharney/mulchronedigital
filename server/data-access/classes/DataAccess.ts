@@ -37,8 +37,11 @@ export class DataAccess {
         }
     }
 
-    public static async findUserLoginDetailsByEmail(userEmail: string) {
+    public static async findUserLoginDetailsByEmail(userEmail: string): Promise<User[]> {
         try {
+            if (!userEmail) {
+                return [];
+            }
             const query = await DataAccessObjects.findUserByEmailQuery(userEmail);
             const projection = await DataAccessObjects.userLoginProjection();
             if (!UsersCollection) {
@@ -47,12 +50,15 @@ export class DataAccess {
             return await UsersCollection.find(query, projection).toArray();
         } catch (error) {
             errorLogger.error(error);
-            console.log(error);
+            return [];
         }
     }
 
     public static async getUserPassword(userId: string): Promise<User[]> {
         try {
+            if (!userId) {
+                return [];
+            }
             const query = await DataAccessObjects.findUserByIdQuery(userId);
             const projection = await DataAccessObjects.usernamePasswordAndIdProjection();
             if (!UsersCollection) {
