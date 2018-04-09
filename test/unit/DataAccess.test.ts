@@ -5,11 +5,28 @@ import { DnsHelpers } from "../../server/globals/DnsHelpers";
 import { DataAccess } from "../../server/data-access/classes/DataAccess";
 import { DatabaseHelpers } from "../helpers/DatabaseHelpers";
 import { User } from "../../server/models/User";
+import { UserAuthenicationValidator } from "../../shared/UserAuthenicationValidator";
 const assert = chai.assert;
 
 describe("DataAccess Base Class Test", () => {
     it("it should have a method of findIfUserExistsByUsername(userName: string)", () => {
         assert.equal(DataAccess.hasOwnProperty("findIfUserExistsByUsername"), true);
+    });
+
+    it("it should say the admin user exists", async () => {
+        const userName = "admin";
+        const result = await DataAccess.findIfUserExistsByUsername(userName);
+        assert.equal(typeof(result), typeof([]));
+        assert.equal(result.length, 1);
+        assert.equal(typeof(result[0]._id), typeof({}));
+        assert.equal(await UserAuthenicationValidator.isThisAValidMongoObjectId(result[0]._id), true);
+    });
+
+    it("it should return an empty array because there was an invalid username password", async () => {
+        const userName = "";
+        const result = await DataAccess.findIfUserExistsByUsername(userName);
+        assert.equal(typeof(result), typeof([]));
+        assert.equal(result.length, 0);
     });
 
     it("it should have a method of updateUserPassword(userId: string, user: User)", () => {
@@ -40,12 +57,12 @@ describe("DataAccess Base Class Test", () => {
 
     it("it should have a method of findUserLoginDetailsByEmail(userEmail: string)", () => {
         assert.equal(DataAccess.hasOwnProperty("findUserLoginDetailsByEmail"), true);
-    }); 
+    });
 
     it("it should return an empty array because there is not a user with this email", async () => {
         const badUserEmail = "welcome@gmail.com";
         const databaseUsers: User[] = await DataAccess.findUserLoginDetailsByEmail(badUserEmail);
-        assert.equal(typeof(databaseUsers), typeof([]));
+        assert.equal(typeof (databaseUsers), typeof ([]));
         assert.equal(databaseUsers.length, 0);
     });
 
@@ -66,7 +83,7 @@ describe("DataAccess Base Class Test", () => {
         const email = null;
         const result = await DataAccess.findUserLoginDetailsByEmail(email);
         assert.equal(result.length, 0);
-        assert.equal(typeof(result), typeof([]));
+        assert.equal(typeof (result), typeof ([]));
     });
 
     it("it should have a method of getUserPassword(userId: string)", () => {
@@ -77,18 +94,18 @@ describe("DataAccess Base Class Test", () => {
         const username = "admin";
         const adminDatabaseId = await DatabaseHelpers.getUsersDatabaseIdByUsername(username);
         const userPassword: User[] = await DataAccess.getUserPassword(adminDatabaseId);
-        assert.equal(typeof(userPassword[0].password), typeof (""));
+        assert.equal(typeof (userPassword[0].password), typeof (""));
         const passwordToComapre = "Password1234!@#$";
         bcrypt.compare(passwordToComapre, userPassword[0].password)
-        .then(result => {
-            assert.equal(result, true);
-        });
+            .then(result => {
+                assert.equal(result, true);
+            });
     });
 
     it("it should return any empty array because an invalid parameter was passed to getUserPassword(userId: string)", async () => {
         const badUserId = null;
         const userName = await DataAccess.getUserPassword(badUserId);
-        assert.equal(typeof(userName), typeof([]));
+        assert.equal(typeof (userName), typeof ([]));
         assert.equal(userName.length, 0);
-    }); 
+    });
 });

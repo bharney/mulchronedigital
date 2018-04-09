@@ -8,6 +8,9 @@ export class DataAccess {
 
     public static async findIfUserExistsByUsername(userName: string): Promise<User[]> {
         try {
+            if (!userName) {
+                return [];
+            }
             const query = await DataAccessObjects.findUserByUsernameQuery(userName);
             const projection = await DataAccessObjects.userObjectIdProjection();
             if (!UsersCollection) {
