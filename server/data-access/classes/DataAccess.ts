@@ -22,6 +22,9 @@ export class DataAccess {
 
     public static async updateUserPassword(userId: string, user: User): Promise<any> {
         try {
+            if (!userId || !user) {
+                return null;
+            }
             if (!await user.updateUserPassword()) {
                 throw new Error("new password failed at updateUserPassword(user: User)");
             }

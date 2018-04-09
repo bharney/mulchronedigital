@@ -16,6 +16,28 @@ describe("DataAccess Base Class Test", () => {
         assert.equal(DataAccess.hasOwnProperty("updateUserPassword"), true);
     });
 
+    it("it should update the admin users password successfully", async () => {
+        const username = "admin";
+        const userId = await DatabaseHelpers.getUsersDatabaseIdByUsername(username);
+        const user: User = new User("admin", null, "Password1234!@#$");
+        const updateResult = await DataAccess.updateUserPassword(userId, user);
+        assert.equal(updateResult.result.n, 1);
+        assert.equal(updateResult.result.nModified, 1);
+        assert.equal(updateResult.result.ok, 1);
+    });
+
+    it("it should return null because of a bad userId value at updateUserPassword(userId: string, user: User)", async () => {
+        const user: User = new User("admin");
+        const userId = null;
+        assert.equal(await DataAccess.updateUserPassword(userId, user), null);
+    });
+
+    it("it should return null because of a bad user parameter at  updateUserPassword(userId: string, user: User)", async () => {
+        const user = null;
+        const userId = "123879Zmnk89";
+        assert.equal(await DataAccess.updateUserPassword(userId, user), null);
+    });
+
     it("it should have a method of findUserLoginDetailsByEmail(userEmail: string)", () => {
         assert.equal(DataAccess.hasOwnProperty("findUserLoginDetailsByEmail"), true);
     }); 
