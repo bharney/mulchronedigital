@@ -16,9 +16,11 @@ import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenication
 import { UserIpAddress } from "../classes/UserIpAddress";
 import { ServerEncryption } from "../../security/ServerEncryption";
 import { DnsHelpers } from "../../globals/DnsHelpers";
+import GetUserInformationRouter from "./GetUserInformationRouter";
 
-export class UserDashboardRouter extends BaseRouter {
+export class UserDashboardRouterIndex extends BaseRouter {
   public router: Router;
+  public getUserInformationRouter: Router;
 
   constructor() {
     super();
@@ -27,9 +29,10 @@ export class UserDashboardRouter extends BaseRouter {
   }
 
   private configureRouter(): void {
+    this.getUserInformationRouter = new GetUserInformationRouter().router;
+
     // Register user
-    this.router.use("/getuserinformation", this.checkForUserJsonWebToken);
-    this.router.get("/getuserinformation", this.getUserInformation);
+    this.router.use("/getuserinformation", this.getUserInformationRouter);
 
     // change user password
     this.router.use("/changepassword", this.checkForUserJsonWebToken);
@@ -50,20 +53,6 @@ export class UserDashboardRouter extends BaseRouter {
     // update users geolocation image
     this.router.use("/updateuserlocation", this.checkForUserJsonWebToken);
     this.router.patch("/updateuserlocation", this.updateUserLocationInformation);
-  }
-
-  private async getUserInformation(req: Request, res: Response, next: NextFunction) {
-    try {
-      const databaseUsers: User[] = await UserDashboardDataAccess.getUserDashboardInformation(res.locals.token.id);
-      if (databaseUsers.length <= 0) {
-        return res.status(503).json(await ResponseMessages.generalError());
-      }
-      // we are looking by object id there should only be one user in this array.
-      return res.status(200).json(await ResponseMessages.dashboardUserFound(databaseUsers[0]));
-    } catch (error) {
-      res.status(503).json(await ResponseMessages.generalError());
-      return next(error);
-    }
   }
 
   private async validateUserChangePassword(req: Request, res: Response, next: NextFunction) {
