@@ -4,8 +4,9 @@ import chaiHttp = require("chai-http");
 const assert = chai.assert;
 chai.use(chaiHttp);
 
-import { Encryption, AESEncryptionResult } from "../../shared/Encryption";
+import { Encryption } from "../../shared/Encryption";
 import { ContactMe } from "../../shared/ContactMe";
+import { AESEncryptionResult } from "../../shared/AESEncryptionResult";
 
 const encryptContactMeObject = (userName: string, userEmail: string, message: string): Promise<AESEncryptionResult> => {
     return new Promise((resolve, reject) => {

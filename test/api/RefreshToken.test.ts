@@ -1,7 +1,6 @@
 import * as mocha from "mocha";
 import * as chai from "chai";
 import chaiHttp = require("chai-http");
-import { AESEncryptionResult } from "../../shared/Encryption";
 import LoginHelpers from "../helpers/LoginHelpers";
 import { DatabaseHelpers } from "../helpers/DatabaseHelpers";
 import { JsonWebTokenWorkers } from "../../server/security/JsonWebTokenWorkers";
