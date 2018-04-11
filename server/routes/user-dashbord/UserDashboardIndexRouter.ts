@@ -6,7 +6,7 @@ import ChangeUsernameRouter from "./ChangeUsernameRouter";
 import ChangeProfileImageRouter from "./ChangeProfileImageRouter";
 import UpdateUserLocationRouter from "./UpdateUserLocationRouter";
 
-export class UserDashboardRouterIndex extends BaseRouter {
+export default class UserDashboardRouterIndex extends BaseRouter {
   public router: Router;
   private getUserInformationRouter: Router;
   private changePasswordRouter: Router;
