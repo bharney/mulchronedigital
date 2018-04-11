@@ -6,8 +6,8 @@ import { Dashboard, UserChangePassword, UserChangeUsername } from "../models/das
 import { AuthenicationControl } from "../authenication/AuthenicationControl";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
-import { AESEncryptionResult } from "../../../../shared/Encryption";
 import { UserLocation } from "../../../../shared/UserLocation";
+import { AESEncryptionResult } from "../../../../shared/AESEncryptionResult";
 
 
 // TODO: Make all of these calls into seperate injectables.

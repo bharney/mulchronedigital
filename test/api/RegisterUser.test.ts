@@ -2,8 +2,8 @@ import * as mocha from "mocha";
 import * as chai from "chai";
 import chaiHttp = require("chai-http");
 import LoginHelpers from "../helpers/LoginHelpers";
-import { AESEncryptionResult } from "../../shared/Encryption";
 import { DatabaseHelpers } from "../helpers/DatabaseHelpers";
+import { AESEncryptionResult } from "../../shared/AESEncryptionResult";
 const assert = chai.assert;
 chai.use(chaiHttp);
 

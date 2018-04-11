@@ -4,9 +4,10 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { RegisterService } from "../../../shared/services/user-authenication.service";
 import { RegisterUser, IUserRegisterResponse } from "../../../shared/models/user-authenication.model";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
-import { AESEncryptionResult, Encryption } from "../../../../../shared/Encryption";
+import { Encryption } from "../../../../../shared/Encryption";
 import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
 import { UserRegisterEmitter } from "../../../shared/services/emitters/user-register-emitter.service";
+import { AESEncryptionResult } from "../../../../../shared/AESEncryptionResult";
 declare const $: any;
 
 @Component({

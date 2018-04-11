@@ -3,8 +3,8 @@ import * as chai from "chai";
 import chaiHttp = require("chai-http");
 const assert = chai.assert;
 chai.use(chaiHttp);
-import { AESEncryptionResult } from "../../shared/Encryption";
 import LoginHelpers from "../helpers/LoginHelpers";
+import { AESEncryptionResult } from "../../shared/AESEncryptionResult";
 
 const host = "http://localhost:8080";
 const loginUserPath = "/api/userauth/loginuser";

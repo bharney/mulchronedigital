@@ -1,8 +1,9 @@
-import { AESEncryptionResult, Encryption } from "../../shared/Encryption";
+import { Encryption } from "../../shared/Encryption";
 import { LoginUser, RegisterUser } from "../../client/app/shared/models/user-authenication.model";
+import { AESEncryptionResult } from "../../shared/AESEncryptionResult";
 
 export default class LoginHelpers {
-    public static async createLoginUserObject (userPassword: string, userEmail: string): Promise<AESEncryptionResult>  {
+    public static async createLoginUserObject(userPassword: string, userEmail: string): Promise<AESEncryptionResult> {
         try {
             const loginUserObject: string = JSON.stringify(new LoginUser(userPassword, userEmail));
             const encryptedObject: AESEncryptionResult = await Encryption.AESEncrypt(loginUserObject);
