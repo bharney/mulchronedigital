@@ -1,6 +1,7 @@
 import { AES } from "crypto-js";
 import { UniqueIdentifier } from "./UniqueIdentifer";
 import * as CryptoJS from "crypto-js";
+import { AESEncryptionResult } from "./AESEncryptionResult";
 
 export class Encryption {
 
@@ -52,17 +53,5 @@ export class Encryption {
             console.log(error);
             return false;
         }
-    }
-}
-
-export class AESEncryptionResult {
-    public success: boolean;
-    public encryptedText: string;
-    public key: string;
-
-    constructor(success: boolean, encryptedText: string, key: string) {
-        this.success = success;
-        this.encryptedText = encryptedText;
-        this.key = key;
     }
 }

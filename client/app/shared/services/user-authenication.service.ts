@@ -7,7 +7,7 @@ import "rxjs/add/operator/catch";
 import { LoginUser, RegisterUser, IUserRegisterResponse, ILoginUserResponse } from "../models/user-authenication.model";
 import { ApiRequests } from "../http/ApiRequests";
 import { AuthenicationControl } from "../authenication/AuthenicationControl";
-import { AESEncryptionResult } from "../../../../shared/Encryption";
+import { AESEncryptionResult } from "../../../../shared/AESEncryptionResult";
 
 @Injectable()
 export class LoginService {

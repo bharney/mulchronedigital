@@ -4,8 +4,9 @@ import { ChangeUsernameService } from "../../../../../shared/services/user-dashb
 import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
 import { UserChangeUsername } from "../../../../../shared/models/dashboard.model";
 import { UserDashboardEmitter } from "../../../../../shared/services/emitters/user-dashboard-emitter.service";
-import { Encryption, AESEncryptionResult } from "../../../../../../../shared/Encryption";
+import { Encryption } from "../../../../../../../shared/Encryption";
 import { GoogleAnalytics } from "../../../../../shared/services/google-analytics.service";
+import { AESEncryptionResult } from "../../../../../../../shared/AESEncryptionResult";
 declare const $: any;
 
 @Component({
