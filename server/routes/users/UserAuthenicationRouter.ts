@@ -198,7 +198,7 @@ export class UserAuthenicationRouter extends BaseRouter {
         return res.status(422).json(await ResponseMessages.emailIsNotValid());
       }
       const databaseUsers: User[] = await UserAuthenicationDataAccess.userForgotPasswordFindUserByEmail(userEmail);
-      if (databaseUsers.length <= 0) {
+      if (databaseUsers.length < 0) {
         return res.status(401).json(await ResponseMessages.noUserFoundThatIsActive());
       }
       const userId = databaseUsers[0]._id;
@@ -209,14 +209,15 @@ export class UserAuthenicationRouter extends BaseRouter {
       const httpHelpers = new HttpHelpers();
       const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
       const forgotPasswordToken = new ForgotPasswordToken(userId, ip);
-      if (!await forgotPasswordToken.securePassword()) {
+      const randomPassword = Math.random().toString(36).slice(-12);
+      if (!await forgotPasswordToken.securePassword(randomPassword)) {
         return res.status(503).json(await ResponseMessages.generalError());
       }
       const tokenId = await UserAuthenicationDataAccess.insertForgotPasswordToken(forgotPasswordToken);
       if (tokenId.length === 0) {
         return res.status(503).json(await ResponseMessages.generalError());
       }
-      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, forgotPasswordToken.tokenPassword)) {
+      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, randomPassword)) {
         return res.status(503).json(await ResponseMessages.generalError());
       }
       res.status(200).json(await ResponseMessages.forgotPasswordSuccess(userEmail));
