@@ -141,13 +141,14 @@ export class UserDashboardRouter extends BaseRouter {
       const parseFile = multer({
         limits: { fileSize: 5000000, files: 1 }
       }).single("image");
-      parseFile(async (req, res, err) => {
+      parseFile(req, res, async (err) => {
         if (err) {
           // file size too large. The client side validation SHOULD keep this route clean of any files that are not an image.
-          res.status(413).json(await ResponseMessages.generalError());
+          return res.status(413).json(await ResponseMessages.generalError());
+        } else {
+          res.locals.image = req.file;
+          next();
         }
-        res.locals.image = req.file;
-        next();
       });
     } catch (error) {
       res.status(503).json(await ResponseMessages.generalError());
@@ -166,7 +167,7 @@ export class UserDashboardRouter extends BaseRouter {
           const cloudinary = new Cloudinary();
           const profileImage = await cloudinary.uploadCloudinaryImage(res.locals.image.buffer);
           if (profileImage) {
-            if (typeof (user.profileImage) !== "undefined" && typeof (user.profileImage.secure_url) !== "undefined" && typeof (user.profileImage.public_id) !== "undefined") {
+            if (!user.profileImage || !user.profileImage.secure_url || !user.profileImage.public_id) {
               cloudinary.deleteCloudinaryImage(user.profileImage.public_id);
             }
             res.locals.image = profileImage;

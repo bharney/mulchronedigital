@@ -13,7 +13,7 @@ export class DataAccessObjects {
 
   public static findUserByIdQuery(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
-      if (userId === undefined) {
+      if (!userId) {
         reject(new Error("No user ID was provided at findUserByIdQuery(userId: string)"));
       }
       const query = { _id: new ObjectId(userId) };
@@ -23,7 +23,7 @@ export class DataAccessObjects {
 
   public static findInactiveUserAccountByIdQuery(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
-      if (userId === undefined) {
+      if (!userId) {
         reject(new Error("No user ID was provided at findInactiveUserAccountByIdQuery(userId: string)"));
       }
       const query = { _id: new ObjectId(userId), isActive: false };
