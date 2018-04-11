@@ -16,26 +16,32 @@ import { Encryption } from "../../../shared/Encryption";
 import { DataAccess } from "../../data-access/classes/DataAccess";
 import { ServerEncryption } from "../../security/ServerEncryption";
 import { DnsHelpers } from "../../globals/DnsHelpers";
+import LoginUserRouter from "./LoginUserRouter";
 
 export default class UserAuthenicationIndexRouter extends BaseRouter {
   public router: Router;
+  private loginUserRouter: Router;
 
   constructor() {
     super();
     this.router = Router();
+    this.createSubRouters();
     this.configureRouter();
   }
 
+  private createSubRouters(): void {
+      this.loginUserRouter = new LoginUserRouter().router;
+  }
+
   private configureRouter(): void {
+    this.router.use("/loginuser", this.loginUserRouter);
+
+
     // Register user
     this.router.use("/registeruser", this.decryptRequestBody);
     this.router.use("/registeruser", this.validateRegisterUserRequest);
     this.router.use("/registeruser", this.doesUsernameOrEmailExistAlready);
     this.router.post("/registeruser", this.insertNewUser);
-
-    // Login User
-    this.router.use("/loginuser", this.decryptRequestBody);
-    this.router.post("/loginuser", this.validateLoginUserRequest);
 
     // RefreshJsonWebToken
     this.router.use("/refreshtoken", this.checkForUserJsonWebToken);
@@ -106,50 +112,6 @@ export default class UserAuthenicationIndexRouter extends BaseRouter {
         }
       } else {
         return res.status(503).json(await ResponseMessages.generalError());
-      }
-    } catch (error) {
-      res.status(503).json(await ResponseMessages.generalError());
-      return next(error);
-    }
-  }
-
-  private async validateLoginUserRequest(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userEmail = req.body.email;
-      const userPassword = req.body.password;
-      if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
-        return res.status(401).json(await ResponseMessages.emailIsNotValid());
-      }
-      if (!await UserAuthenicationValidator.isPasswordValid(userPassword)) {
-        return res.status(401).json(await ResponseMessages.passwordIsNotValid());
-      }
-      const databaseUsers: User[] = await DataAccess.findUserLoginDetailsByEmail(userEmail);
-      // should only be one user with this email
-      if (databaseUsers.length === 1) {
-        if (!databaseUsers[0].isActive) {
-          return res.status(401).json(await ResponseMessages.userAccountNotActive(databaseUsers[0].username));
-        } else if (!await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(userPassword, databaseUsers[0].password)) {
-          return res.status(401).json(await ResponseMessages.passwordsDoNotMatch());
-        } else {
-          res.status(200).json(await ResponseMessages.successfulUserLogin(databaseUsers[0]));
-          // TODO: MAKE A FUNCTION!!!!
-          const httpHelpers = new HttpHelpers();
-          const userId = databaseUsers[0]._id;
-          const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-          const domain = await DnsHelpers.reverseDNSLookup(ip);
-          const userAgent = await httpHelpers.getUserAgentFromRequestObject(req.headers);
-          const ipAddressObject = new UserIpAddress(ip, userAgent, domain);
-          const matchingUserIpAddresses = await UserAuthenicationDataAccess.findMatchingIpAddressbyUserId(userId, ip);
-          if (matchingUserIpAddresses[0].ipAddresses === undefined) {
-            // TODO: we are now associating a new or unknown IP address to the user.
-            // we probably dont have to await this, but here is where we can pass something out to RabbitMQ... maybe????
-            await UserAuthenicationDataAccess.updateUserProfileIpAddresses(userId, ipAddressObject);
-          }
-          const userActions = new UserActionHelper();
-          await userActions.userLoggedIn(userId, ip);
-        }
-      } else {
-        return res.status(401).json(await ResponseMessages.noUserFound());
       }
     } catch (error) {
       res.status(503).json(await ResponseMessages.generalError());
