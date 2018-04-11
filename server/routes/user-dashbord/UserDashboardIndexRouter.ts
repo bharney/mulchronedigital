@@ -6,7 +6,7 @@ import ChangeUsernameRouter from "./ChangeUsernameRouter";
 import ChangeProfileImageRouter from "./ChangeProfileImageRouter";
 import UpdateUserLocationRouter from "./UpdateUserLocationRouter";
 
-export default class UserDashboardRouterIndex extends BaseRouter {
+export default class UserDashboardRouterIndex {
   public router: Router;
   private getUserInformationRouter: Router;
   private changePasswordRouter: Router;
@@ -15,7 +15,6 @@ export default class UserDashboardRouterIndex extends BaseRouter {
   private updateUserLocationRouter: Router;
 
   constructor() {
-    super();
     this.router = Router();
     this.createSubRouters();
     this.configureRouter();
