@@ -1,6 +1,6 @@
 # Mulchronedigital Project Template
 
-This is a project template that is intended to be a plug and play system for any business solution. Emphasis has been placed on a user experience that is simple, responsive, and secure. You are free to come and go as you please and use the template for your own experiments. I imagine if you are coming in to this its going to be crazy confusing. Just post a question in the GitHub issues, and I will try my best to answer them. If you have any ideas samething goes, just post a ticket and we can all discuss. Try to have fun, just don't be an asshat.
+This is a project template that is intended to be a plug and play system for any business solution. Emphasis has been placed on a user experience that is simple, responsive, and secure. You are free to come and go as you please and use the template for your own experiments. I imagine if you are coming in to this its going to be crazy confusing. Just post a question in the GitHub issues, and I will try my best to answer them. If you have any ideas samething goes, just post a ticket and we can all discuss. Try to have fun, just don't be an jerk.
 
 # Rules for contributions
 * Please take a look at existing issues and post a message to see where people are at.

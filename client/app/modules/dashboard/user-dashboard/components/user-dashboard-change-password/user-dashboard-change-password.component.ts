@@ -3,8 +3,9 @@ import { FormGroup, Validators, FormBuilder } from "@angular/forms";
 import { UserAuthenicationValidator } from "../../../../../../../shared/UserAuthenicationValidator";
 import { UserChangePassword, IUserChangePasswordResponse } from "../../../../../shared/models/dashboard.model";
 import { ChangeUserPasswordService } from "../../../../../shared/services/user-dashboard.service";
-import { Encryption, AESEncryptionResult } from "../../../../../../../shared/Encryption";
+import { Encryption } from "../../../../../../../shared/Encryption";
 import { GoogleAnalytics } from "../../../../../shared/services/google-analytics.service";
+import { AESEncryptionResult } from "../../../../../../../shared/AESEncryptionResult";
 declare const $: any;
 
 @Component({

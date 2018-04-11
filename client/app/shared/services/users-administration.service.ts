@@ -3,7 +3,6 @@ import { Headers, Http, RequestOptions, Response } from "@angular/http";
 import { Observable } from "rxjs/Rx";
 import { ApiRequests } from "../http/ApiRequests";
 import { AuthenicationControl } from "../authenication/AuthenicationControl";
-import { AESEncryptionResult } from "../../../../shared/Encryption";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 

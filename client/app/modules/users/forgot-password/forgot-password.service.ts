@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Http, RequestOptions, Response } from "@angular/http";
 import { ApiRequests } from "../../../shared/http/ApiRequests";
-import { AESEncryptionResult } from "../../../../../shared/Encryption";
 
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
+import { AESEncryptionResult } from "../../../../../shared/AESEncryptionResult";
 
 @Injectable()
 export class ForgotPasswordService {

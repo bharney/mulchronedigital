@@ -6,8 +6,9 @@ import { LoginService } from "../../../shared/services/user-authenication.servic
 import { ILoginUserResponse, IUserRegisterResponse, LoginUser } from "../../../shared/models/user-authenication.model";
 import { JsonWebToken } from "../../../../../shared/JsonWebToken";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
-import { Encryption, AESEncryptionResult } from "../../../../../shared/Encryption";
+import { Encryption } from "../../../../../shared/Encryption";
 import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
+import { AESEncryptionResult } from "../../../../../shared/AESEncryptionResult";
 declare const $: any;
 
 @Component({
