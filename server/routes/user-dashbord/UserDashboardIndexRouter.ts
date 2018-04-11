@@ -18,11 +18,13 @@ import { ServerEncryption } from "../../security/ServerEncryption";
 import { DnsHelpers } from "../../globals/DnsHelpers";
 import GetUserInformationRouter from "./GetUserInformationRouter";
 import ChangePasswordRouter from "./ChangePasswordRouter";
+import ChangeUsernameRouter from "./ChangeUsernameRouter";
 
 export class UserDashboardRouterIndex extends BaseRouter {
   public router: Router;
   private getUserInformationRouter: Router;
   private changePasswordRouter: Router;
+  private changeUserNameRouter: Router;
 
   constructor() {
     super();
@@ -34,16 +36,13 @@ export class UserDashboardRouterIndex extends BaseRouter {
   private createSubRouters() {
     this.getUserInformationRouter = new GetUserInformationRouter().router;
     this.changePasswordRouter = new ChangePasswordRouter().router;
+    this.changeUserNameRouter = new ChangeUsernameRouter().router;
   }
 
   private configureRouter(): void {
     this.router.use("/getuserinformation", this.getUserInformationRouter);
     this.router.use("/changepassword", this.changePasswordRouter);
-
-    // change username
-    this.router.use("/changeusername", this.checkForUserJsonWebToken);
-    this.router.use("/changeusername", this.decryptRequestBody);
-    this.router.patch("/changeusername", this.validateUserChangeUsername);
+    this.router.use("/changeusername", this.changeUserNameRouter);
 
     // upload profile image
     this.router.use("/changeprofileimage", this.checkForUserJsonWebToken);
@@ -55,49 +54,6 @@ export class UserDashboardRouterIndex extends BaseRouter {
     this.router.use("/updateuserlocation", this.checkForUserJsonWebToken);
     this.router.patch("/updateuserlocation", this.updateUserLocationInformation);
   }
-
-  
-
-  private async validateUserChangeUsername(req: Request, res: Response, next: NextFunction) {
-    try {
-      const newUsername = req.body.newUsername;
-      const password = req.body.password;
-      const userId = res.locals.token.id;
-      if (!await UserAuthenicationValidator.isUserNameValid(newUsername)) {
-        return res.status(422).json(await ResponseMessages.userNameIsNotValid());
-      }
-      if (!await UserAuthenicationValidator.isPasswordValid(password)) {
-        return res.status(422).json(await ResponseMessages.passwordIsNotValid());
-      }
-      const existingUsers: User[] = await UserDashboardDataAccess.findIfUserExistsByUsername(newUsername);
-      if (existingUsers.length > 0) {
-        return res.status(409).json(await ResponseMessages.usernameIsTaken(newUsername));
-      }
-      const databaseUsers: User[] = await UserDashboardDataAccess.findUserPasswordAndUsernameById(userId);
-      if (databaseUsers.length <= 0) {
-        return res.status(422).json(await ResponseMessages.noUserFound());
-      }
-      if (!await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(password, databaseUsers[0].password)) {
-        return res.status(401).json(await ResponseMessages.passwordsDoNotMatch());
-      }
-      const oldUsername = databaseUsers[0].username;
-      const user = new User(req.body.newUsername);
-      const updateResult = await UserDashboardDataAccess.modifiyUsernameByUserId(userId, user);
-      if (updateResult.modifiedCount === 1) {
-        res.status(200).json(await ResponseMessages.usernameChangeSuccessful(user.username));
-        const httpHelpers = new HttpHelpers();
-        const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-        const actionHelpers = new UserActionHelper();
-        await actionHelpers.userChangedUsername(userId, ip, oldUsername);
-      } else {
-        throw new Error("Nothing was modified");
-      }
-    } catch (error) {
-      res.status(503).json(await ResponseMessages.generalError());
-      return next(error);
-    }
-  }
-
   private async parseImageUpload(req: any, res: Response, next: NextFunction) {
     try {
       const parseFile = multer({
