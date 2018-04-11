@@ -17,27 +17,28 @@ import { UserIpAddress } from "../classes/UserIpAddress";
 import { ServerEncryption } from "../../security/ServerEncryption";
 import { DnsHelpers } from "../../globals/DnsHelpers";
 import GetUserInformationRouter from "./GetUserInformationRouter";
+import ChangePasswordRouter from "./ChangePasswordRouter";
 
 export class UserDashboardRouterIndex extends BaseRouter {
   public router: Router;
-  public getUserInformationRouter: Router;
+  private getUserInformationRouter: Router;
+  private changePasswordRouter: Router;
 
   constructor() {
     super();
     this.router = Router();
+    this.createSubRouters();
     this.configureRouter();
   }
 
-  private configureRouter(): void {
+  private createSubRouters() {
     this.getUserInformationRouter = new GetUserInformationRouter().router;
+    this.changePasswordRouter = new ChangePasswordRouter().router;
+  }
 
-    // Register user
+  private configureRouter(): void {
     this.router.use("/getuserinformation", this.getUserInformationRouter);
-
-    // change user password
-    this.router.use("/changepassword", this.checkForUserJsonWebToken);
-    this.router.use("/changepassword", this.decryptRequestBody);
-    this.router.patch("/changepassword", this.validateUserChangePassword);
+    this.router.use("/changepassword", this.changePasswordRouter);
 
     // change username
     this.router.use("/changeusername", this.checkForUserJsonWebToken);
@@ -55,35 +56,7 @@ export class UserDashboardRouterIndex extends BaseRouter {
     this.router.patch("/updateuserlocation", this.updateUserLocationInformation);
   }
 
-  private async validateUserChangePassword(req: Request, res: Response, next: NextFunction) {
-    try {
-      if (!await UserAuthenicationValidator.isPasswordValid(req.body.currentPassword) || !await UserAuthenicationValidator.isPasswordValid(req.body.newPassword)) {
-        return res.status(422).json(await ResponseMessages.passwordIsNotValid());
-      }
-      // TODO: abstract this chunk of code, it is going to be come extremely redundant.
-      const databaseUsers: User[] = await UserDashboardDataAccess.getUserPassword(res.locals.token.id);
-      if (databaseUsers.length <= 0) {
-        return res.status(422).json(await ResponseMessages.noUserFound());
-      }
-      if (!await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
-        return res.status(401).json(await ResponseMessages.passwordsDoNotMatch());
-      }
-      const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
-      const updatePasswordResult = await UserDashboardDataAccess.updateUserPassword(databaseUsers[0]._id, user);
-      if (updatePasswordResult.modifiedCount === 1) {
-        res.status(200).json(await ResponseMessages.userChangedPasswordSuccessfully());
-        const httpHelpers = new HttpHelpers();
-        const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-        const userActions = new UserActionHelper();
-        await userActions.userChangedPassword(databaseUsers[0]._id, ip, databaseUsers[0].password);
-      } else {
-        throw new Error("There was nothing updated when attemtping to update the users password");
-      }
-    } catch (error) {
-      res.status(503).json(await ResponseMessages.generalError());
-      return next(error);
-    }
-  }
+  
 
   private async validateUserChangeUsername(req: Request, res: Response, next: NextFunction) {
     try {
