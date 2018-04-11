@@ -1,14 +1,18 @@
 import open = require("amqplib");
-import { User } from "../models/User";
-import { QueueMessages } from "./QueueMessages";
-import errorLogger from "../logging/ErrorLogger";
-import { ContactMe } from "../../shared/ContactMe";
+import { EmailQueueMessagesFactory } from "./EmailQueueMessagesFactory";
+import ActivateUserEmailMessage from "./messages/ActivateUserEmailMessage";
+import { User } from "../../models/User";
+import errorLogger from "../../logging/ErrorLogger";
+import { ContactMe } from "../../../shared/ContactMe";
+import ForgotPasswordMessage from "./messages/ForgotPasswordMessage";
+import ContactMeMessage from "./messages/ContactMeMessage";
 
 export class EmailQueue {
   private emailQueueChannel = "email_queue";
   private connectionString;
   private badConnectionAttempts = null;
   private channel;
+  private emailQueueMessagesFactory: EmailQueueMessagesFactory;
 
   constructor() { }
 
@@ -22,6 +26,7 @@ export class EmailQueue {
         .then(ch => {
           ch.assertQueue(this.emailQueueChannel, { durable: true });
           this.channel = ch;
+          this.emailQueueMessagesFactory = new EmailQueueMessagesFactory();
           resolve(true);
         })
         .catch(async (error) => {
@@ -32,9 +37,11 @@ export class EmailQueue {
 
   public async sendUserActivationEmailToQueue(user: User): Promise<boolean> {
     try {
-      const messages = new QueueMessages();
-      const userDetails = await messages.userActivationDetailsMessage(user);
-      if (await this.sendMessageToEmailQueue(userDetails)) {
+      const activateUserEmailMessage: ActivateUserEmailMessage = await this.emailQueueMessagesFactory.getEmailQueueMessage("activate_user_email");
+      activateUserEmailMessage.username = user.username;
+      activateUserEmailMessage.email = user.email;
+      activateUserEmailMessage._id = user._id;
+      if (await this.sendMessageToEmailQueue(activateUserEmailMessage)) {
         return true;
       }
       return false;
@@ -44,11 +51,13 @@ export class EmailQueue {
   }
 
   public async sendUserForgotPasswordToQueue(email: string, userId: string, tokenId: string, newPassword: string): Promise<boolean> {
-
     try {
-      const messages = new QueueMessages();
-      const userForgotPassword = await messages.userForgotPasswordMessage(email, userId, tokenId, newPassword);
-      if (await this.sendMessageToEmailQueue(userForgotPassword)) {
+      const userForgotPasswordMessage: ForgotPasswordMessage = await this.emailQueueMessagesFactory.getEmailQueueMessage("user_forgot_password");
+      userForgotPasswordMessage.email = email;
+      userForgotPasswordMessage.tokenId = tokenId;
+      userForgotPasswordMessage.newPassword = newPassword;
+      // TODO: assign the userID that needs to be sent in the email and checked as well as the tokenId
+      if (await this.sendMessageToEmailQueue(userForgotPasswordMessage)) {
         return true;
       }
       return false;
@@ -60,8 +69,10 @@ export class EmailQueue {
 
   public async sendContactMeMessageToQueue(contactMeObject: ContactMe): Promise<boolean> {
     try {
-      const messages = new QueueMessages();
-      const contactMeMessage = await messages.contactMeFormMessage(contactMeObject);
+      const contactMeMessage: ContactMeMessage = await this.emailQueueMessagesFactory.getEmailQueueMessage("contact_me_message");
+      contactMeMessage.message = contactMeObject.message;
+      contactMeMessage.userEmail = contactMeObject.userEmail;
+      contactMeMessage.userName = contactMeObject.userName;
       if (await this.sendMessageToEmailQueue(contactMeMessage)) {
         return true;
       }

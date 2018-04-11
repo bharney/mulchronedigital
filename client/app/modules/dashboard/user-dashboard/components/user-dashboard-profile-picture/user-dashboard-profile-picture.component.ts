@@ -53,6 +53,7 @@ export class UserDashboardProfilePictureComponent {
       }
     }, (error) => {
       this.modalBody = error.message;
+      this.hasSubmitButtonBeenClicked = false;
       this.fileInput.nativeElement.value = null;
       $("#error-modal").modal();
     });

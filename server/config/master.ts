@@ -1,7 +1,7 @@
 import { Database } from "../globals/Database";
 import Server from "./server";
-import { EmailQueue } from "../queues/EmailQueue";
 import errorLogger from "../logging/ErrorLogger";
+import { EmailQueue } from "../queues/email/EmailQueue";
 
 let db;
 let UsersCollection;
