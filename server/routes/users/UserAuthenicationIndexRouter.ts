@@ -17,7 +17,7 @@ import { DataAccess } from "../../data-access/classes/DataAccess";
 import { ServerEncryption } from "../../security/ServerEncryption";
 import { DnsHelpers } from "../../globals/DnsHelpers";
 
-export class UserAuthenicationRouter extends BaseRouter {
+export default class UserAuthenicationIndexRouter extends BaseRouter {
   public router: Router;
 
   constructor() {
