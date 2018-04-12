@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { BaseRouter } from "../classes/BaseRouter";
+import BaseSubRouter from "../classes/BaseSubRouter";
 import { ContactMe } from "../../../shared/ContactMe";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import { EmailQueueExport } from "../../config/master";
 
-export default class ContactMeRouter extends BaseRouter {
+export default class ContactMeRouter extends BaseSubRouter {
     public router: Router;
 
     constructor() {
@@ -14,7 +14,7 @@ export default class ContactMeRouter extends BaseRouter {
         this.configureRouter();
     }
 
-    private configureRouter(): void {
+    public configureRouter(): void {
         this.router.use("/", this.decryptRequestBody);
         this.router.post("/", this.validateContactMe);
     }

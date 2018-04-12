@@ -1,10 +1,10 @@
+import BaseSubRouter from "../classes/BaseSubRouter";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
-import { BaseRouter } from "../classes/BaseRouter";
 import { Router, Request, Response, NextFunction } from "express";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 
-export default class ActivateUserRouter extends BaseRouter {
+export default class ActivateUserRouter extends BaseSubRouter {
     public router: Router;
 
     constructor() {
@@ -13,7 +13,7 @@ export default class ActivateUserRouter extends BaseRouter {
         this.configureRouter();
     }
 
-    private configureRouter(): void {
+    public configureRouter(): void {
         this.router.use("/", this.decryptRequestBody);
         this.router.patch("/", this.validateActivateUser);
     }

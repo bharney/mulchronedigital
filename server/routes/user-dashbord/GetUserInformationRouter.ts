@@ -1,10 +1,10 @@
-import { BaseRouter } from "../classes/BaseRouter";
+import BaseSubRouter from "../classes/BaseSubRouter";
 import { Router, Request, Response, NextFunction } from "express";
 import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { User } from "../../models/User";
 
-export default class GetUserInformationRouter extends BaseRouter {
+export default class GetUserInformationRouter extends BaseSubRouter {
     public router: Router;
 
     constructor() {
@@ -13,7 +13,7 @@ export default class GetUserInformationRouter extends BaseRouter {
         this.configureRouter();
     }
 
-    private configureRouter(): void {
+    public configureRouter(): void {
         this.router.use("/", this.checkForUserJsonWebToken);
         this.router.get("/", this.getUserInformation);
     }

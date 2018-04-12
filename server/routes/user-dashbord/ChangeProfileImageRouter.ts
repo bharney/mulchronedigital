@@ -1,12 +1,12 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { BaseRouter } from "../classes/BaseRouter";
+import BaseSubRouter from "../classes/BaseSubRouter";
 import * as multer from "multer";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { UserDashboardDataAccess } from "../../data-access/UserDashboardDataAccess";
 import { User } from "../../models/User";
 import { Cloudinary } from "../../apis/Cloudinary";
 
-export default class ChangeProfileImageRouter extends BaseRouter {
+export default class ChangeProfileImageRouter extends BaseSubRouter {
     public router: Router;
 
     constructor() {
@@ -15,7 +15,7 @@ export default class ChangeProfileImageRouter extends BaseRouter {
         this.configureRouter();
     }
 
-    private configureRouter(): void {
+    public configureRouter(): void {
         this.router.use("/", this.checkForUserJsonWebToken);
         this.router.use("/", this.parseImageUpload);
         this.router.use("/", this.validateImageUpload);
