@@ -17,4 +17,7 @@ This is a project template that is intended to be a plug and play system for any
 * [Angular v5](https://angular.io/)
 * [RabbitMQ v3.5.7](https://www.rabbitmq.com/)
 
+# Architectural Vision
+![image](https://res.cloudinary.com/dqukwohgi/image/upload/v1523511260/Capture_aowevx.png)
+
 # Wiki Links
