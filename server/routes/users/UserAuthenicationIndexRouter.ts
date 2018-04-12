@@ -20,6 +20,7 @@ import LoginUserRouter from "./LoginUserRouter";
 import RegisterUserRouter from "./RegisterUserRouter";
 import RefreshTokenRouter from "./RefreshTokenRouter";
 import ActivateUserRouter from "./ActivateUserRouter";
+import ForgotPasswordRouter from "./ForgotPasswordRouter";
 
 export default class UserAuthenicationIndexRouter extends BaseRouter {
   public router: Router;
@@ -42,6 +43,7 @@ export default class UserAuthenicationIndexRouter extends BaseRouter {
       this.registerUserRouter = new RegisterUserRouter().router;
       this.refreshTokenRouter = new RefreshTokenRouter().router;
       this.activateUserRouter = new ActivateUserRouter().router;
+      this.forgotPasswordRouter = new ForgotPasswordRouter().router;
   }
 
   private configureRouter(): void {
@@ -49,53 +51,12 @@ export default class UserAuthenicationIndexRouter extends BaseRouter {
     this.router.use("/registeruser", this.registerUserRouter);
     this.router.use("/refreshtoken", this.refreshTokenRouter);
     this.router.use("/activateuser", this.activateUserRouter);
-
-
-    // Forgot password
-    this.router.use("/forgotpassword", this.decryptRequestBody);
-    this.router.patch("/forgotpassword", this.validateUserForgotPassword);
+    this.router.use("/forgotpassword", this.forgotPasswordRouter);
+    // this.router.use("/resetpassword", this.resetPasswordRouter);
 
     // Reset password
     this.router.use("/resetpassword", this.decryptRequestBody);
     this.router.use("/resetpassword", this.validateResetPassword);
-  }
-
-  private async validateUserForgotPassword(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userEmail = req.body.email;
-      if (!await UserAuthenicationValidator.isEmailValid(userEmail)) {
-        return res.status(422).json(await ResponseMessages.emailIsNotValid());
-      }
-      const databaseUsers: User[] = await UserAuthenicationDataAccess.userForgotPasswordFindUserByEmail(userEmail);
-      if (databaseUsers.length < 0) {
-        return res.status(401).json(await ResponseMessages.noUserFoundThatIsActive());
-      }
-      const userId = databaseUsers[0]._id;
-      const resetPasswordTokens: ForgotPasswordToken[] = await UserAuthenicationDataAccess.findRecentForgotPasswordTokensByUserId(userId);
-      if (resetPasswordTokens.length > 0) {
-        return res.status(429).json(await ResponseMessages.tooManyForgotPasswordRequests());
-      }
-      const httpHelpers = new HttpHelpers();
-      const ip = await httpHelpers.getIpAddressFromRequestObject(req.ip);
-      const forgotPasswordToken = new ForgotPasswordToken(userId, ip);
-      const randomPassword = Math.random().toString(36).slice(-12);
-      if (!await forgotPasswordToken.securePassword(randomPassword)) {
-        return res.status(503).json(await ResponseMessages.generalError());
-      }
-      const tokenId = await UserAuthenicationDataAccess.insertForgotPasswordToken(forgotPasswordToken);
-      if (tokenId.length === 0) {
-        return res.status(503).json(await ResponseMessages.generalError());
-      }
-      if (!await EmailQueueExport.sendUserForgotPasswordToQueue(userEmail, databaseUsers[0]._id, tokenId, randomPassword)) {
-        return res.status(503).json(await ResponseMessages.generalError());
-      }
-      res.status(200).json(await ResponseMessages.forgotPasswordSuccess(userEmail));
-      const userActions = new UserActionHelper();
-      await userActions.userForgotPassword(userId, ip, tokenId);
-    } catch (error) {
-      res.status(503).json(await ResponseMessages.generalError());
-      return next(error);
-    }
   }
 
   private async validateResetPassword(req: Request, res: Response, next: NextFunction) {
