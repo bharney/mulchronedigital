@@ -4,6 +4,8 @@ import { ActivateUser } from "../../../shared/models/user-authenication.model";
 import { ActivateUserService } from "../../../shared/services/activate-user.service";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
 import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
+import { Encryption } from "../../../../../shared/Encryption";
+import { AESEncryptionResult } from "../../../../../shared/AESEncryptionResult";
 
 @Component({
   selector: "app-activate-user",
@@ -24,13 +26,15 @@ export class ActivateUserComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe(async params => {
       if (!this.validateParameters(params)) {
         this.router.navigate(["../../users/register"]);
       }
       this.username = params["username"];
       const activateUser = new ActivateUser(params["id"]);
-      this.activateUserService.makeUserActive(activateUser).subscribe(response => {
+      const stringData = JSON.stringify(activateUser);
+      const encryptedUserObject: AESEncryptionResult = await Encryption.AESEncrypt(stringData);
+      this.activateUserService.makeUserActive(encryptedUserObject).subscribe(response => {
         this.isActivationProcessHappening = false;
         this.activationSuccessful = true;
       }, (error) => {

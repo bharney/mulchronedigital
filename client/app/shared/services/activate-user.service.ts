@@ -5,6 +5,7 @@ import { Observable } from "rxjs/Observable";
 import { ActivateUser } from "../models/user-authenication.model";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
+import { AESEncryptionResult } from "../../../../shared/AESEncryptionResult";
 
 @Injectable()
 export class ActivateUserService {
@@ -14,9 +15,9 @@ export class ActivateUserService {
         private apiRequests: ApiRequests,
     ) { }
 
-    public makeUserActive(userObject: ActivateUser) {
+    public makeUserActive(encryptedUserObject: AESEncryptionResult) {
         const headers = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
-        return this.http.patch("/api/userauth/activateuser", userObject, headers)
+        return this.http.patch("/api/userauth/activateuser", encryptedUserObject, headers)
         .map(this.apiRequests.parseResponse)
         .catch(this.apiRequests.errorCatcher);
     }

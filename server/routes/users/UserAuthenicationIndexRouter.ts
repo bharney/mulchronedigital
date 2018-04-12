@@ -19,6 +19,7 @@ import { DnsHelpers } from "../../globals/DnsHelpers";
 import LoginUserRouter from "./LoginUserRouter";
 import RegisterUserRouter from "./RegisterUserRouter";
 import RefreshTokenRouter from "./RefreshTokenRouter";
+import ActivateUserRouter from "./ActivateUserRouter";
 
 export default class UserAuthenicationIndexRouter extends BaseRouter {
   public router: Router;
@@ -40,14 +41,15 @@ export default class UserAuthenicationIndexRouter extends BaseRouter {
       this.loginUserRouter = new LoginUserRouter().router;
       this.registerUserRouter = new RegisterUserRouter().router;
       this.refreshTokenRouter = new RefreshTokenRouter().router;
+      this.activateUserRouter = new ActivateUserRouter().router;
   }
 
   private configureRouter(): void {
     this.router.use("/loginuser", this.loginUserRouter);
     this.router.use("/registeruser", this.registerUserRouter);
     this.router.use("/refreshtoken", this.refreshTokenRouter);
+    this.router.use("/activateuser", this.activateUserRouter);
 
-    this.router.patch("/activateuser", this.validateActivateUser);
 
     // Forgot password
     this.router.use("/forgotpassword", this.decryptRequestBody);
@@ -56,26 +58,6 @@ export default class UserAuthenicationIndexRouter extends BaseRouter {
     // Reset password
     this.router.use("/resetpassword", this.decryptRequestBody);
     this.router.use("/resetpassword", this.validateResetPassword);
-  }
-
-  
-
-  private async validateActivateUser(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.body.id;
-      if (!UserAuthenicationValidator.isThisAValidMongoObjectId(userId)) {
-        // TODO: create some kind of message.
-        return res.status(401).json(await ResponseMessages.generalError());
-      }
-      const updatedProfile = await UserAuthenicationDataAccess.updateUserProfileIsActive(userId);
-      if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
-        return res.status(200).json(await ResponseMessages.userAccountActiveSuccess());
-      }
-      return res.status(401).json(await ResponseMessages.generalError());
-    } catch (error) {
-      res.status(503).json(await ResponseMessages.generalError());
-      return next(error);
-    }
   }
 
   private async validateUserForgotPassword(req: Request, res: Response, next: NextFunction) {
