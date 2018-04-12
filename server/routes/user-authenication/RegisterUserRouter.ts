@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { BaseRouter } from "../classes/BaseRouter";
+import BaseSubRouter from "../classes/BaseSubRouter";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 import { User } from "../../models/User";
 import { ResponseMessages } from "../../globals/ResponseMessages";
@@ -9,7 +9,7 @@ import { UserIpAddress } from "../classes/UserIpAddress";
 import { EmailQueueExport } from "../../config/master";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 
-export default class RegisterUserRouter extends BaseRouter {
+export default class RegisterUserRouter extends BaseSubRouter {
     public router: Router;
 
     constructor() {
@@ -18,7 +18,7 @@ export default class RegisterUserRouter extends BaseRouter {
         this.configureRouter();
     }
 
-    private configureRouter(): void {
+    public configureRouter(): void {
         this.router.use("/", this.decryptRequestBody);
         this.router.use("/", this.validateRegisterUserRequest);
         this.router.use("/", this.doesUsernameOrEmailExistAlready);

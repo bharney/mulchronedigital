@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { BaseRouter } from "../classes/BaseRouter";
 import GetUserInformationRouter from "./GetUserInformationRouter";
 import ChangePasswordRouter from "./ChangePasswordRouter";
 import ChangeUsernameRouter from "./ChangeUsernameRouter";
 import ChangeProfileImageRouter from "./ChangeProfileImageRouter";
 import UpdateUserLocationRouter from "./UpdateUserLocationRouter";
+import IBaseIndexRouter from "../classes/IBaseIndexRouter";
 
-export default class UserDashboardRouterIndex {
+export default class UserDashboardRouterIndex implements IBaseIndexRouter {
   public router: Router;
   private getUserInformationRouter: Router;
   private changePasswordRouter: Router;
@@ -20,7 +20,7 @@ export default class UserDashboardRouterIndex {
     this.configureRouter();
   }
 
-  private createSubRouters() {
+  public createSubRouters(): void {
     this.getUserInformationRouter = new GetUserInformationRouter().router;
     this.changePasswordRouter = new ChangePasswordRouter().router;
     this.changeUserNameRouter = new ChangeUsernameRouter().router;
@@ -28,7 +28,7 @@ export default class UserDashboardRouterIndex {
     this.updateUserLocationRouter = new UpdateUserLocationRouter().router;
   }
 
-  private configureRouter(): void {
+  public configureRouter(): void {
     this.router.use("/getuserinformation", this.getUserInformationRouter);
     this.router.use("/changepassword", this.changePasswordRouter);
     this.router.use("/changeusername", this.changeUserNameRouter);

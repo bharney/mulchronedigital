@@ -5,8 +5,9 @@ import RefreshTokenRouter from "./RefreshTokenRouter";
 import ActivateUserRouter from "./ActivateUserRouter";
 import ForgotPasswordRouter from "./ForgotPasswordRouter";
 import ResetPasswordRouter from "./ResetPasswordRouter";
+import IBaseIndexRouter from "../classes/IBaseIndexRouter";
 
-export default class UserAuthenicationIndexRouter  {
+export default class UserAuthenicationIndexRouter implements IBaseIndexRouter  {
   public router: Router;
   private loginUserRouter: Router;
   private registerUserRouter: Router;
@@ -21,7 +22,7 @@ export default class UserAuthenicationIndexRouter  {
     this.configureRouter();
   }
 
-  private createSubRouters(): void {
+  public createSubRouters(): void {
       this.loginUserRouter = new LoginUserRouter().router;
       this.registerUserRouter = new RegisterUserRouter().router;
       this.refreshTokenRouter = new RefreshTokenRouter().router;
@@ -30,7 +31,7 @@ export default class UserAuthenicationIndexRouter  {
       this.resetPasswordRouter = new ResetPasswordRouter().router;
   }
 
-  private configureRouter(): void {
+  public configureRouter(): void {
     this.router.use("/loginuser", this.loginUserRouter);
     this.router.use("/registeruser", this.registerUserRouter);
     this.router.use("/refreshtoken", this.refreshTokenRouter);

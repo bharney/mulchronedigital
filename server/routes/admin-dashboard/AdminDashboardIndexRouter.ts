@@ -1,7 +1,8 @@
 import { Router } from "express";
 import GetUsersRouter from "./GetUsersRouter";
+import IBaseIndexRouter from "../classes/IBaseIndexRouter";
 
-export default class AdminDashboardIndexRouter {
+export default class AdminDashboardIndexRouter implements IBaseIndexRouter {
     public router: Router;
     private getUsersRouter: Router;
 
@@ -11,11 +12,11 @@ export default class AdminDashboardIndexRouter {
         this.configureRouter();
     }
 
-    private createSubRouters(): void {
+    public createSubRouters(): void {
         this.getUsersRouter = new GetUsersRouter().router;
     }
 
-    private configureRouter(): void {
+    public configureRouter(): void {
         this.router.use("/getusers", this.getUsersRouter);
     }
 }

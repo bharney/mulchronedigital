@@ -6,7 +6,9 @@ import { User } from "../../models/User";
 import { Encryption } from "../../../shared/Encryption";
 import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenicationDataAccess";
 
-export abstract class BaseRouter {
+export default abstract class BaseSubRouter {
+
+  public abstract configureRouter(): void;
 
   public async checkForUserJsonWebToken(req: Request, res: Response, next: NextFunction) {
     try {
