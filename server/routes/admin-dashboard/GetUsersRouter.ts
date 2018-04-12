@@ -1,10 +1,10 @@
-import { Router, NextFunction, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { BaseRouter } from "../classes/BaseRouter";
-import { ResponseMessages } from "../../globals/ResponseMessages";
 import { AdminDashboardDataAccess } from "../../data-access/AdminDashboardDataAccess";
 import { User } from "../../models/User";
+import { ResponseMessages } from "../../globals/ResponseMessages";
 
-export class AdminDashboardRouter extends BaseRouter {
+export default class GetUsersRouter extends BaseRouter {
     public router: Router;
 
     constructor() {
@@ -14,9 +14,9 @@ export class AdminDashboardRouter extends BaseRouter {
     }
 
     private configureRouter(): void {
-        this.router.use("/getusers", this.checkForUserJsonWebToken);
-        this.router.use("/getusers", this.checkForAdminJsonWebToken);
-        this.router.get("/getusers", this.getUserInformationForAdminDashboard);
+        this.router.use("/", this.checkForUserJsonWebToken);
+        this.router.use("/", this.checkForAdminJsonWebToken);
+        this.router.get("/", this.getUserInformationForAdminDashboard);
     }
 
     private async getUserInformationForAdminDashboard(req: Request, res: Response, next: NextFunction) {

@@ -1,8 +1,9 @@
-import { Router, Request, Response } from "express";
-import { UserAuthenicationRouter } from "./users/UserAuthenicationRouter";
-import { UserDashboardRouter } from "./users/UserDashboardRouter";
-import { HomeRouter } from "./home/HomeRouter";
-import { AdminDashboardRouter } from "./users/AdminDashboardRouter";
+import { Router } from "express";
+import HomeIndexRouter from "./home/HomeIndexRouter";
+import UserDashboardRouterIndex from "./user-dashbord/UserDashboardIndexRouter";
+import AdminDashboardIndexRouter from "./admin-dashboard/AdminDashboardIndexRouter";
+import UserAuthenicationIndexRouter from "./user-authenication/UserAuthenicationIndexRouter";
+
 
 export class IndexRouter {
   public router: Router;
@@ -18,10 +19,10 @@ export class IndexRouter {
   }
 
   private createSubRouters() {
-    this.userAuthenicationRouter = new UserAuthenicationRouter().router;
-    this.userDashboardRouter = new UserDashboardRouter().router;
-    this.homeRouter = new HomeRouter().router;
-    this.adminDashboardRouter = new AdminDashboardRouter().router;
+    this.userAuthenicationRouter = new UserAuthenicationIndexRouter().router;
+    this.userDashboardRouter = new UserDashboardRouterIndex().router;
+    this.homeRouter = new HomeIndexRouter().router;
+    this.adminDashboardRouter = new AdminDashboardIndexRouter().router;
   }
 
   private configureRoutes() {
