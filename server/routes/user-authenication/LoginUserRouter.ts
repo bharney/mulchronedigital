@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { BaseRouter } from "../classes/BaseRouter";
+import BaseSubRouter from "../classes/BaseSubRouter";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import { ResponseMessages } from "../../globals/ResponseMessages";
 import { User } from "../../models/User";
@@ -11,7 +11,7 @@ import { UserAuthenicationDataAccess } from "../../data-access/UserAuthenication
 import { UserIpAddress } from "../classes/UserIpAddress";
 import { UserActionHelper } from "../../helpers/UserActionHelper";
 
-export default class LoginUserRouter extends BaseRouter {
+export default class LoginUserRouter extends BaseSubRouter {
     public router: Router;
 
     constructor() {
@@ -20,7 +20,7 @@ export default class LoginUserRouter extends BaseRouter {
         this.configureRouter();
     }
 
-    private configureRouter(): void {
+    public configureRouter(): void {
         this.router.use("/", this.decryptRequestBody);
         this.router.post("/", this.validateLoginUserRequest);
     }

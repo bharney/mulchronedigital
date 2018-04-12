@@ -1,4 +1,4 @@
-import { BaseRouter } from "../classes/BaseRouter";
+import BaseSubRouter from "../classes/BaseSubRouter";
 import { Router, Request, Response, NextFunction } from "express";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import { ResponseMessages } from "../../globals/ResponseMessages";
@@ -10,7 +10,7 @@ import { User } from "../../models/User";
 import { DataAccess } from "../../data-access/classes/DataAccess";
 import { UserActionHelper } from "../../helpers/UserActionHelper";
 
-export default class ResetPasswordRouter extends BaseRouter {
+export default class ResetPasswordRouter extends BaseSubRouter {
     public router: Router;
   
     constructor() {
@@ -19,7 +19,7 @@ export default class ResetPasswordRouter extends BaseRouter {
       this.configureRouter();
     }
   
-    private configureRouter(): void {
+    public configureRouter(): void {
         this.router.use("/", this.decryptRequestBody);
         this.router.use("/", this.validateResetPassword);
     }

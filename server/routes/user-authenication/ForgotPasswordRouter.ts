@@ -1,4 +1,4 @@
-import { BaseRouter } from "../classes/BaseRouter";
+import BaseSubRouter from "../classes/BaseSubRouter";
 import { Router, Request, Response, NextFunction } from "express";
 import { UserAuthenicationValidator } from "../../../shared/UserAuthenicationValidator";
 import { ResponseMessages } from "../../globals/ResponseMessages";
@@ -9,7 +9,7 @@ import { HttpHelpers } from "../../globals/HttpHelpers";
 import { EmailQueueExport } from "../../config/master";
 import { UserActionHelper } from "../../helpers/UserActionHelper";
 
-export default class ForgotPasswordRouter extends BaseRouter {
+export default class ForgotPasswordRouter extends BaseSubRouter {
   public router: Router;
 
   constructor() {
@@ -18,7 +18,7 @@ export default class ForgotPasswordRouter extends BaseRouter {
     this.configureRouter();
   }
 
-  private configureRouter(): void {
+  public configureRouter(): void {
     this.router.use("/", this.decryptRequestBody);
     this.router.patch("/", this.validateUserForgotPassword);
   }

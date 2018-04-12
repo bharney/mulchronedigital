@@ -1,7 +1,8 @@
 import { Router } from "express";
 import ContactMeRouter from "./ContactMeRouter";
+import IBaseIndexRouter from "../classes/IBaseIndexRouter";
 
-export default class HomeIndexRouter {
+export default class HomeIndexRouter implements IBaseIndexRouter {
     public router: Router;
     private contactMeRouter: Router;
 
@@ -11,11 +12,11 @@ export default class HomeIndexRouter {
         this.configureRouter();
     }
 
-    private createSubRouters(): void {
+    public createSubRouters(): void {
         this.contactMeRouter = new ContactMeRouter().router;
     }
 
-    private configureRouter(): void {
+    public configureRouter(): void {
         this.router.use("/contactme", this.contactMeRouter);
     }
 }
