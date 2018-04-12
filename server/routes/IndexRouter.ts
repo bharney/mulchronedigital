@@ -2,7 +2,7 @@ import { Router } from "express";
 import HomeIndexRouter from "./home/HomeIndexRouter";
 import UserDashboardRouterIndex from "./user-dashbord/UserDashboardIndexRouter";
 import AdminDashboardIndexRouter from "./admin-dashboard/AdminDashboardIndexRouter";
-import UserAuthenicationIndexRouter from "./users/UserAuthenicationIndexRouter";
+import UserAuthenicationIndexRouter from "./user-authenication/UserAuthenicationIndexRouter";
 
 
 export class IndexRouter {
