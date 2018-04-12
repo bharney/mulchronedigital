@@ -20,6 +20,7 @@ export default class RegisterUserRouter extends BaseRouter {
 
     private configureRouter(): void {
         this.router.use("/", this.decryptRequestBody);
+        this.router.use("/", this.validateRegisterUserRequest);
         this.router.use("/", this.doesUsernameOrEmailExistAlready);
         this.router.post("/", this.insertNewUser);
     }
