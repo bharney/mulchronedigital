@@ -8,7 +8,7 @@ import IService from "./interfaces/IService";
 
 @Injectable()
 export class ActivateUserService implements IService {
-    public codesToNotRetry: number[] = [409, 401];
+    public codesToNotRetry: number[] = [409, 401, 422];
 
     constructor(
         private http: Http,
@@ -19,9 +19,7 @@ export class ActivateUserService implements IService {
         const headers = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
         return this.http.patch("/api/userauth/activateuser", encryptedUserObject, headers)
             .map(this.apiRequests.parseResponse)
-            .retryWhen((error) => {
-                return this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error);
-            })
+            .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
             .catch(this.apiRequests.errorCatcher);
     }
 }
