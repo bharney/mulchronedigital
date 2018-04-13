@@ -2,9 +2,11 @@ import { Injectable } from "@angular/core";
 import { Http, RequestOptions, Response } from "@angular/http";
 import { ApiRequests } from "../http/ApiRequests";
 import { Observable } from "rxjs/Observable";
+import IService from "./interfaces/IService";
 
 @Injectable()
-export class RefreshTokenService {
+export class RefreshTokenService implements IService {
+  public codesToNotRetry: number[] = [401];
 
   constructor(
     private http: Http,
@@ -15,21 +17,7 @@ export class RefreshTokenService {
     const options = this.apiRequests.createAuthorizationHeader();
     return this.http.get("/api/userauth/refreshtoken", options)
       .map(this.apiRequests.parseResponse)
-      .retryWhen((error) => {
-        return error.scan((errorCount, err) => {
-          if (errorCount === 5) {
-            throw err;
-          }
-          switch (err.status) {
-            case 401:
-              throw err;
-            case 503:
-              return errorCount + 1;
-            default:
-              return errorCount + 1;
-          }
-        }, 0);
-      })
+      .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
       .catch(this.apiRequests.errorCatcher);
   }
 }
