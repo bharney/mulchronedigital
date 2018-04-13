@@ -23,7 +23,7 @@ export default abstract class BaseSubRouter {
       }
       const databaseUsers: User[] = await UserAuthenicationDataAccess.getJSONWebTokenInfoOfActiveUserByUserId(res.locals.token.id);
       if (databaseUsers.length <= 0) {
-        return res.status(401).json(await ResponseMessages.noUserFoundThatIsActive());
+        return res.status(409).json(await ResponseMessages.noUserFoundThatIsActive());
       }
       const databaseJsonToken = databaseUsers[0].jsonToken;
       const jsonTokenPublicKey = databaseUsers[0].jsonWebTokenPublicKey;
@@ -32,7 +32,7 @@ export default abstract class BaseSubRouter {
       }
       const isUserActive = databaseUsers[0].isActive;
       if (!isUserActive) {
-        return res.status(503).json(await ResponseMessages.userIsNotActive());
+        return res.status(409).json(await ResponseMessages.userIsNotActive());
       }
       if (!await JsonWebTokenWorkers.verifiyJsonWebToken(databaseJsonToken, jsonTokenPublicKey)) {
         return res.status(409).json(await ResponseMessages.jsonWebTokenExpired());
@@ -64,14 +64,14 @@ export default abstract class BaseSubRouter {
     try {
       if (!req.body.key) {
         // TODO: validate somehow that this came from a trusted application? If not block that IP.
-        return res.status(503).json(await ResponseMessages.noSymmetricKeyProvidedError());
+        return res.status(422).json(await ResponseMessages.noSymmetricKeyProvidedError());
       }
       if (!req.body.encryptedText) {
         // TODO: validate some how that this came from a trusted application? If not block that IP.
-        return res.status(503).json(await ResponseMessages.noEncrypteRequestBodyTextError());
+        return res.status(422).json(await ResponseMessages.noEncrypteRequestBodyTextError());
       }
       if (!await Encryption.verifiyUniqueSymmetricKey(req.body.key)) {
-        return res.status(503).json(await ResponseMessages.invalidSymmetricKeyProvidedError());
+        return res.status(422).json(await ResponseMessages.invalidSymmetricKeyProvidedError());
       }
       const newRequestBody = await Encryption.AESDecrypt(req.body.encryptedText, req.body.key);
       req.body = JSON.parse(newRequestBody);
