@@ -4,9 +4,11 @@ import { ApiRequests } from "../http/ApiRequests";
 import { Observable } from "rxjs/Observable";
 import { ActivateUser } from "../models/user-authenication.model";
 import { AESEncryptionResult } from "../../../../shared/AESEncryptionResult";
+import IService from "./interfaces/IService";
 
 @Injectable()
-export class ActivateUserService {
+export class ActivateUserService implements IService {
+    public codesToNotRetry: number[] = [409, 401];
 
     constructor(
         private http: Http,
@@ -18,20 +20,8 @@ export class ActivateUserService {
         return this.http.patch("/api/userauth/activateuser", encryptedUserObject, headers)
             .map(this.apiRequests.parseResponse)
             .retryWhen((error) => {
-                return error.scan((errorCount, err) => {
-                    if (errorCount === 5) {
-                        throw err;
-                    }
-                    switch (err.status) {
-                        case 409:
-                        case 401:
-                            throw err;
-                        case 503:
-                            return errorCount + 1;
-                    }
-                }, 0);
+                return this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error);
             })
             .catch(this.apiRequests.errorCatcher);
     }
-
 }
