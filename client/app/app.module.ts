@@ -9,6 +9,7 @@ import { ApiRequests } from "./shared/http/ApiRequests";
 import { NavbarTopComponent } from "./components/navbar-top/navbar-top.component";
 import { RefreshTokenService } from "./shared/services/refresh-token.service";
 import { GoogleAnalytics } from "./shared/services/google-analytics.service";
+import "./shared/rxjs-helpers/rxjs-operators";
 
 @NgModule({
   declarations: [
