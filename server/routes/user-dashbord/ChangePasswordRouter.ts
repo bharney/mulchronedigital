@@ -7,6 +7,7 @@ import { ServerEncryption } from "../../security/ServerEncryption";
 import { User } from "../../models/User";
 import { HttpHelpers } from "../../globals/HttpHelpers";
 import { UserActionHelper } from "../../helpers/UserActionHelper";
+import { UserChangedPasswordAction } from "../../models/UserAction";
 
 export default class ChangePasswordRouter extends BaseSubRouter {
     public router: Router;
@@ -35,6 +36,10 @@ export default class ChangePasswordRouter extends BaseSubRouter {
             }
             if (!await ServerEncryption.comparedStoredHashPasswordWithLoginPassword(req.body.currentPassword, databaseUsers[0].password)) {
                 return res.status(401).json(await ResponseMessages.passwordsDoNotMatch());
+            }
+            const thirtyDayOldPasswords: UserChangedPasswordAction[] = await UserDashboardDataAccess.findUserPasswordsFromThirtyDaysAgo(databaseUsers[0]._id);
+            if (await ServerEncryption.wasNewPasswordWasntUsedInLastThirtyDays(thirtyDayOldPasswords, req.body.newPassword)) {
+                return res.status(401).json(await ResponseMessages.thisPasswordWasAlreadyUsedInTheLastThirtyDays());
             }
             const user = new User(databaseUsers[0].username, databaseUsers[0].email, req.body.newPassword);
             const updatePasswordResult = await UserDashboardDataAccess.updateUserPassword(databaseUsers[0]._id, user);

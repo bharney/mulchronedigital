@@ -109,7 +109,7 @@ describe("Contact Me Router Test", () => {
             });
     });
 
-    it("it should return a status code of 503, return application/json, text status of false, message should say no symmetric key provided", (done) => {
+    it("it should return a status code of 422, return application/json, text status of false, message should say no symmetric key provided", (done) => {
         const userName = "Michael Mulchrone";
         const userEmail = "mtmulch2@gmail.com";
         const message = "This is a test message for the contact me api route.";
@@ -121,7 +121,7 @@ describe("Contact Me Router Test", () => {
                     .set("Content-Type", "application/json")
                     .send(encrypted)
                     .end((error, response) => {
-                        assert.equal(response.status, 503);
+                        assert.equal(response.status, 422);
                         assert.equal(response.type, "application/json");
                         const responseText = JSON.parse(response.text);
                         assert.equal(responseText.status, false);
@@ -131,7 +131,7 @@ describe("Contact Me Router Test", () => {
             });
     });
 
-    it("it should return a status code of 503, return application/json, text status of false, message should say no encrypted text body provided", (done) => {
+    it("it should return a status code of 422, return application/json, text status of false, message should say no encrypted text body provided", (done) => {
         const userName = "Michael Mulchrone";
         const userEmail = "mtmulch2@gmail.com";
         const message = "This is a test message for the contact me api route.";
@@ -143,7 +143,7 @@ describe("Contact Me Router Test", () => {
                     .set("Content-Type", "application/json")
                     .send(encrypted)
                     .end((error, response) => {
-                        assert.equal(response.status, 503);
+                        assert.equal(response.status, 422);
                         assert.equal(response.type, "application/json");
                         const responseText = JSON.parse(response.text);
                         assert.equal(responseText.status, false);

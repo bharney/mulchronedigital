@@ -74,7 +74,7 @@ describe("BaseRouter Abstract Class Tests", () => {
             .get(path)
             .set("mulchronedigital-token", regularUserToken)
             .catch(error => {
-                assert.equal(error.status, 503);
+                assert.equal(error.status, 401);
                 const body = JSON.parse(error.response.text);
                 assert.equal(body.status, false);
                 assert.equal(body.relogin, true);
@@ -109,7 +109,7 @@ describe("BaseRouter Abstract Class Tests", () => {
             .post(loginUserPath)
             .send(loginObject)
             .catch(error => {
-                assert.equal(error.status, 503);
+                assert.equal(error.status, 422);
                 const body = JSON.parse(error.response.text);
                 assert.equal(body.status, false);
                 assert.equal(body.message, "There was no symmetric key provided for the request body.");
@@ -125,7 +125,7 @@ describe("BaseRouter Abstract Class Tests", () => {
             .post(loginUserPath)
             .send(loginObject)
             .catch(error => {
-                assert.equal(error.status, 503);
+                assert.equal(error.status, 422);
                 const body = JSON.parse(error.response.text);
                 assert.equal(body.status, false);
                 assert.equal(body.message, "There was no encrypted text body provided");
@@ -141,7 +141,7 @@ describe("BaseRouter Abstract Class Tests", () => {
             .post(loginUserPath)
             .send(loginObject)
             .catch(error => {
-                assert.equal(error.status, 503);
+                assert.equal(error.status, 422);
                 const body = JSON.parse(error.response.text);
                 assert.equal(body.status, false);
                 assert.equal(body.message, "The symmetric key provided did not pass the validation process");

@@ -42,10 +42,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
       ],
       confirmPassword: [
         "",
-        [
-          Validators.required,
-          UserAuthenicationValidator.confirmPasswordValidation
-        ]
+        [Validators.required, UserAuthenicationValidator.confirmPasswordValidation]
       ]
     });
   }
@@ -94,7 +91,7 @@ export class UserDashboardChangePasswordComponent implements OnInit {
         }
       },
       (error: IUserChangePasswordResponse) => {
-        this.modalTitle = "There was a problem changing your password";
+        this.modalTitle = "Error changing password";
         this.modalBody = error.message;
         $("#error-modal").modal();
         this.hasSubmitButtonBeenClicked = false;
