@@ -22,12 +22,12 @@
         <tr class="text-center" *ngFor="let user of users">
           <td>{{user.username}}</td>
           <td>
-            <button *ngIf="user.isActive" class="btn btn-primary" [attr.id]="user._id" (click)="deactiveUserAccount($event.target.attributes.id.value)">Deactive</button>
-            <button *ngIf="!user.isActive" class="btn btn-danger" [attr.id]="user._id" (click)="activeUserAccount($event.target.attributes.id.value)">Active</button>
+            <button *ngIf="user.isActive" class="btn btn-primary" [attr.id]="user._id" [attr.username]="user.username" (click)="deactiveUserAccount($event.target.attributes.id.value, $event.target.attributes.username.value)">Deactive</button>
+            <button *ngIf="!user.isActive" class="btn btn-danger" [attr.id]="user._id" [attr.username]="user.username" (click)="activeUserAccount($event.target.attributes.id.value, $event.target.attributes.username.value)">Active</button>
           </td>
           <td>
-            <button *ngIf="user.isAdmin" class="btn btn-primary" [attr.id]="user._id" (click)="revokeUserAdminAccess($event.target.attributes.id.value)">Revoke Admin</button>
-            <button *ngIf="!user.isAdmin" class="btn btn-danger" [attr.id]="user._id" (click)="makeUserAdmin($event.target.attributes.id.value)">Make Admin</button>
+            <button *ngIf="user.isAdmin" class="btn btn-primary" [attr.id]="user._id" [attr.username]="user.username" (click)="revokeUserAdminAccess($event.target.attributes.id.value, $event.target.attributes.username.value)">Revoke Admin</button>
+            <button *ngIf="!user.isAdmin" class="btn btn-danger" [attr.id]="user._id" [attr.username]="user.username" (click)="makeUserAdmin($event.target.attributes.id.value, $event.target.attributes.username.value)">Make Admin</button>
           </td>
           <td>{{user.createdAt | date:'short'}}</td>
         </tr>
@@ -35,3 +35,5 @@
     </div>
   </div>
 </div>
+
+<app-error-modal [body]="modalBody" [title]="modalTitle"></app-error-modal>

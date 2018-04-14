@@ -1,6 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { GetUsersService } from "../../../../../shared/services/users-administration.service";
+import { UsersAdminstrationService } from "../../../../../shared/services/users-administration.service";
 import { IUserAdministration } from "../../../../../shared/models/admin-dashboard.model";
+import { AESEncryptionResult } from "../../../../../../../shared/AESEncryptionResult";
+import { Encryption } from "../../../../../../../shared/Encryption";
+declare const $: any;
 
 @Component({
   selector: "app-admin-dashboard-users",
@@ -9,9 +12,11 @@ import { IUserAdministration } from "../../../../../shared/models/admin-dashboar
 })
 export class AdminDashboardUsersComponent implements OnInit {
   public users: IUserAdministration[];
+  public modalBody: string;
+  public modalTitle: string = "Error";
 
   constructor(
-    private getUsersService: GetUsersService
+    private usersAdminstrationService: UsersAdminstrationService
   ) { }
 
   ngOnInit() {
@@ -19,29 +24,70 @@ export class AdminDashboardUsersComponent implements OnInit {
   }
 
   private getListOfUsers(): void {
-    this.getUsersService.getUsersInformation().subscribe(response => {
+    this.usersAdminstrationService.getUsersInformation().subscribe(response => {
       if (response.status) {
         this.users = response.users;
-        console.log(this.users);
       }
     }, (error) => {
 
     });
   }
 
-  public deactiveUserAccount(id: string): void {
-    
+  public async deactiveUserAccount(id: string, username: string): Promise<void> {
+    if (!id) {
+      this.toggleErrorModal(`There was a problem deactivating ${username}'s account`);
+    }
+    const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
+    this.usersAdminstrationService.deactiveUserAccount(encryptedDataToSend).subscribe(result => {
+
+    }, (error) => {
+
+    });
   }
 
-  public activeUserAccount(id: string): void {
-    
+  public async activeUserAccount(id: string, username: string): Promise<void> {
+    if (!id) {
+      this.toggleErrorModal(`There was a problem activating ${username}'s account`);
+    }
+    const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
+    this.usersAdminstrationService.activateUserAccount(encryptedDataToSend).subscribe(result => {
+
+    }, (error) => {
+
+    });
   }
 
-  public makeUserAdmin(id: string): void {
-    
+  public async makeUserAdmin(id: string, username: string): Promise<void> {
+    if (!id) {
+      this.toggleErrorModal(`There was a problem making ${username} an admin`);
+    }
+    const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
+    this.usersAdminstrationService.makeUserAdmin(encryptedDataToSend).subscribe(result => {
+
+    }, (error) => {
+
+    });
   }
 
-  public revokeUserAdminAccess(id: string): void {
-    
+  public async revokeUserAdminAccess(id: string, username: string): Promise<void> {
+    if (!id) {
+      this.toggleErrorModal(`There was a problem revoking ${username}'s admin access`);
+    }
+    const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
+    this.usersAdminstrationService.revokeUserAdminAccess(encryptedDataToSend).subscribe(result => {
+
+    }, (error) => {
+
+    });
+  }
+
+  private toggleErrorModal(modalBody: string) {
+    this.modalBody = modalBody;
+    $("#error-modal").modal();
+  }
+
+  private async createEncryptedIdObject(id: string): Promise<AESEncryptionResult> {
+    const idObject = { id: id };
+    return await Encryption.AESEncrypt(JSON.stringify(idObject));
   }
 }
