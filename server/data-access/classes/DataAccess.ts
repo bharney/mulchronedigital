@@ -1,6 +1,6 @@
 import { User } from "../../models/User";
 import { DataAccessObjects } from "../objects/DataAccessObjects";
-import { UsersCollection, usersCollectionIsFalsy } from "../../config/master";
+import { UsersCollection, usersCollectionIsFalsy, UserActionsCollection } from "../../config/master";
 import errorLogger from "../../logging/ErrorLogger";
 import { Database } from "../../globals/Database";
 
@@ -37,6 +37,23 @@ export class DataAccess {
                 await usersCollectionIsFalsy();
             }
             return await UsersCollection.updateOne(query, projection);
+        } catch (error) {
+            errorLogger.error(error);
+            return null;
+        }
+    }
+
+    public static async findUserPasswordsFromThirtyDaysAgo(userId: string): Promise<any> {
+        try {
+            if (!userId) {
+                return null;
+            }
+            if (!UsersCollection) {
+                await usersCollectionIsFalsy();
+            }
+            const query = await DataAccessObjects.userPasswordsFromThirtyDaysAgoQuery(userId);
+            const projection = await DataAccessObjects.userPasswordsFromThirtyDaysAgoProjection();
+            return await UserActionsCollection.find(query, projection).toArray();
         } catch (error) {
             errorLogger.error(error);
             return null;

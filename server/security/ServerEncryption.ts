@@ -2,6 +2,8 @@ import { UniqueIdentifier } from "../../shared/UniqueIdentifer";
 import bcrypt = require("bcryptjs");
 import { RSA4096PrivateKeyCreationResult } from "./RSA4096PrivateKeyCreationResult";
 import { RSA4096PublicKeyCreationResult } from "./RSA4096PublicKeyCreationResult";
+import { UserChangedPasswordAction } from "../models/UserAction";
+import errorLogger from "../logging/ErrorLogger";
 const exec = require("child_process").exec;
 
 export class ServerEncryption {
@@ -73,6 +75,32 @@ export class ServerEncryption {
                     reject(error);
                 });
         });
+    }
+
+    public static async wasNewPasswordWasntUsedInLastThirtyDays(thirtyDayOldPasswords: UserChangedPasswordAction[], newPassword: string): Promise<boolean> {
+        try {
+            if (!thirtyDayOldPasswords || !newPassword) {
+                return false;
+            }
+            if (thirtyDayOldPasswords.length === 0) {
+                return false;
+            }
+            const passwordChecks: Promise<boolean>[] = [];
+            for (let i = 0; i < thirtyDayOldPasswords.length; i++) {
+                const pwdCheck = this.comparedStoredHashPasswordWithLoginPassword(newPassword, thirtyDayOldPasswords[i].oldPassword);
+                passwordChecks.push(pwdCheck);
+            }
+            const passwordCheckResults = await Promise.all(passwordChecks);
+            for (let i = 0; i < passwordCheckResults.length; i++) {
+                if (passwordCheckResults[i] === true) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (error) {
+            errorLogger.error(error);
+            return false;
+        }
     }
 
     public static comparedStoredHashPasswordWithLoginPassword(loginPassword: string, hashedPassword: string): Promise<boolean> {

@@ -4,6 +4,7 @@ import { ServerEncryption } from "../../server/security/ServerEncryption";
 import { executeCommand } from "../helpers/FileSystemHelpers";
 import { RSA4096PrivateKeyCreationResult } from "../../server/security/RSA4096PrivateKeyCreationResult";
 import { RSA4096PublicKeyCreationResult } from "../../server/security/RSA4096PublicKeyCreationResult";
+import { UserChangedPasswordAction, UserChangedUsernameAction } from "../../server/models/UserAction";
 const assert = chai.assert;
 const exec = require("child_process").exec;
 
@@ -88,5 +89,50 @@ describe("ServerEncryption class tests", () => {
         const publicKey: RSA4096PublicKeyCreationResult = await ServerEncryption.createRSA4096PublicKey(privateKey.fileName, privateKey.guid);
         const deleteResult = await ServerEncryption.deleteKeysFromFileSystem(privateKey.fileName, publicKey.fileName);
         assert.equal(deleteResult, true);
+    });
+
+    it("it should say the new password hasn't been used in thirty days", async () => {
+        const oldPasswords = ["ThisIsTheFirstOldPassword", "ThisIsAnotherTestPassword!@#$2", "Tesing1234ASASDKLJ"];
+        const userChangedPasswordActions: UserChangedPasswordAction[] = [];
+        const newPassword = "ThisIsANewPassword123!@#";
+        for (let i = 0; i < oldPasswords.length; i++) {
+            const hashedPwd = await ServerEncryption.HashPassword(oldPasswords[i]);
+            userChangedPasswordActions.push(new UserChangedPasswordAction(null, null, null, hashedPassword));
+        }
+        const checkResult = await ServerEncryption.wasNewPasswordWasntUsedInLastThirtyDays(userChangedPasswordActions, newPassword);
+        assert.equal(checkResult, false);
+    });
+
+    it("it should say the new password has been used in the last thirty days", async () => {
+        const oldPasswords = ["ThisIsTheFirstOldPassword", "ThisIsAnotherTestPassword!@#$2", "Tesing1234ASASDKLJ"];
+        const userChangedPasswordActions: UserChangedPasswordAction[] = [];
+        const newPassword = "ThisIsTheFirstOldPassword";
+        for (let i = 0; i < oldPasswords.length; i++) {
+            const hashedPwd = await ServerEncryption.HashPassword(oldPasswords[i]);
+            userChangedPasswordActions.push(new UserChangedPasswordAction(null, null, null, hashedPwd));
+        }
+        const checkResult = await ServerEncryption.wasNewPasswordWasntUsedInLastThirtyDays(userChangedPasswordActions, newPassword);
+        assert.equal(checkResult, true);
+    });
+
+    it("it should return false because a null value was passed into the oldPasswordArray parameter checkNewPasswordWasntUsedInLastThirtyDays(thirtyDayOldPasswords: UserChangedPasswordAction[], newPassword: string)", async () => {
+        const checkResult = await ServerEncryption.wasNewPasswordWasntUsedInLastThirtyDays(null, "newPassword");
+        assert.equal(checkResult, false);
+    });
+
+    it("it should return false because an empty array was passed as a parameter into checkNewPasswordWasntUsedInLastThirtyDays(thirtyDayOldPasswords: UserChangedPasswordAction[], newPassword: string)", async () => {
+        const emptyArray = [];
+        const checkResult = await ServerEncryption.wasNewPasswordWasntUsedInLastThirtyDays(emptyArray, "newPassword");
+        assert.equal(checkResult, false);
+    });
+
+    it("it should return false because a null value was into newPassword at checkNewPasswordWasntUsedInLastThirtyDays(thirtyDayOldPasswords: UserChangedPasswordAction[], newPassword: string)", async () => {
+        const arr = ["testdata", "welcome home", "world"];
+        const oldPasswords: UserChangedUsernameAction[] = [];
+        for (let i = 0; i < arr.length; i++) {
+            oldPasswords.push(new UserChangedUsernameAction(null, null, null, arr[i]));
+        }
+        const checkResult = await ServerEncryption.wasNewPasswordWasntUsedInLastThirtyDays(oldPasswords, null);
+        assert.equal(checkResult, false);
     });
 });

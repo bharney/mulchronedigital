@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { User } from "../../models/User";
 import { UserIpAddress } from "../../routes/classes/UserIpAddress";
+import { reject } from "q";
 
 export class DataAccessObjects {
 
@@ -17,6 +18,19 @@ export class DataAccessObjects {
         reject(new Error("No user ID was provided at findUserByIdQuery(userId: string)"));
       }
       const query = { _id: new ObjectId(userId) };
+      resolve(query);
+    });
+  }
+
+  public static userPasswordsFromThirtyDaysAgoQuery(userId: string): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if (!userId) {
+        reject(new Error("No user ID was provided at userPasswordsFromThirtyDaysAgoQuery(userId: string)"));
+      }
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30)).toLocaleString();
+      const actionType = "user_changed_password";
+      const query = { userId: new ObjectId(userId), actionType: actionType, happenedAt: { $gte: thirtyDaysAgo } };
       resolve(query);
     });
   }
@@ -111,6 +125,13 @@ export class DataAccessObjects {
         reject(new Error("No modified at locale string provided at updateUserPasswordProjection(password: string, modifiedAt: string"));
       }
       const projection = { $set: { password: password, modifiedAt: modifiedAt } };
+      resolve(projection);
+    });
+  }
+
+  public static userPasswordsFromThirtyDaysAgoProjection() {
+    return new Promise(resolve => {
+      const projection = { _id: 0, oldPassword: 1 };
       resolve(projection);
     });
   }

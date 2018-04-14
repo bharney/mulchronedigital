@@ -1,14 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Http, RequestOptions, Response } from "@angular/http";
-import { ApiRequests } from "../../../shared/http/ApiRequests";
-
 import { Observable } from "rxjs/Observable";
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/catch";
-import { AESEncryptionResult } from "../../../../../shared/AESEncryptionResult";
+import { ApiRequests } from "../http/ApiRequests";
+import { AESEncryptionResult } from "../../../../shared/AESEncryptionResult";
+import IService from "./interfaces/IService";
 
 @Injectable()
-export class ForgotPasswordService {
+export class ForgotPasswordService implements IService {
+    public codesToNotRetry: number[] = [];
 
     constructor(
         private http: Http,

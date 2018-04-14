@@ -1,12 +1,12 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { UserAuthenicationValidator } from "../../../../../shared/UserAuthenicationValidator";
-import { ForgotPasswordService } from "./forgot-password.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GoogleAnalytics } from "../../../shared/services/google-analytics.service";
 import { Encryption } from "../../../../../shared/Encryption";
 import { ResetPassword } from "../../../shared/models/user-authenication.model";
 import { AESEncryptionResult } from "../../../../../shared/AESEncryptionResult";
+import { ForgotPasswordService } from "../../../shared/services/forgot-password.service";
 declare const $: any;
 
 @Component({
