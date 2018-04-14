@@ -16,7 +16,6 @@ export default class GetUsersRouter extends BaseSubRouter {
     public configureRouter(): void {
         this.router.use("/", this.checkForUserJsonWebToken);
         this.router.use("/", this.checkForAdminJsonWebToken);
-        this.router.use("/", this.decryptRequestBody);
         this.router.get("/", this.getUserInformationForAdminDashboard);
     }
 
