@@ -77,7 +77,7 @@ export class ChangeUsernameService implements IService {
 
 @Injectable()
 export class ChangeUserProfileImageService implements IService {
-  public codesToNotRetry: number[] = [];
+  public codesToNotRetry: number[] = [401, 413, 415];
 
   constructor(
     private http: Http,
