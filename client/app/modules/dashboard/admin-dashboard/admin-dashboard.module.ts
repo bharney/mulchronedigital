@@ -11,6 +11,7 @@ import { AdminDashboardNavigationComponent } from "./components/admin-dashboard-
 import { AdminDashboardEmitter } from "../../../shared/services/emitters/admin-dashboard-emitter.service";
 import { AdminDashboardUsersComponent } from "./components/admin-dashboard-users/admin-dashboard-users.component";
 import { UsersAdminstrationService } from "../../../shared/services/users-administration.service";
+import { AdminDashboardUserSearchComponent } from "./components/admin-dashboard-users/components/admin-dashboard-user-search/admin-dashboard-user-search.component";
 
 @NgModule({
     imports: [
@@ -23,7 +24,8 @@ import { UsersAdminstrationService } from "../../../shared/services/users-admini
         AdminDashboardComponent,
         AdminDashboardHomeComponent,
         AdminDashboardNavigationComponent,
-        AdminDashboardUsersComponent
+        AdminDashboardUsersComponent,
+        AdminDashboardUserSearchComponent
     ],
     providers: [
         AdminAuthGuard,

@@ -3,6 +3,11 @@
     <h4>Users Administration</h4>
   </div>
   <div class="card-block">
+    <div class="row">
+      <div class="col-sm-6 offset-sm-3">
+        <app-admin-dashboard-user-search (userSearchEvent)="handleUserSearchEvent($event)"></app-admin-dashboard-user-search>
+      </div>
+    </div>
     <div class="col-sm-12 offset-sm-1">
       <table id="users-table" class="table table-responsive" *ngIf="users?.length > 0">
         <tr>

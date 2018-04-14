@@ -134,6 +134,10 @@ export class AdminDashboardUsersComponent implements OnInit {
     });
   }
 
+  public handleUserSearchEvent(usernameSearch) {
+      
+  }
+
   private toggleErrorModal(modalBody: string) {
     this.modalBody = modalBody;
     $("#error-modal").modal();
@@ -142,5 +146,5 @@ export class AdminDashboardUsersComponent implements OnInit {
   private async createEncryptedIdObject(id: string): Promise<AESEncryptionResult> {
     const idObject = { id: id };
     return await Encryption.AESEncrypt(JSON.stringify(idObject));
-  }
+  } 
 }

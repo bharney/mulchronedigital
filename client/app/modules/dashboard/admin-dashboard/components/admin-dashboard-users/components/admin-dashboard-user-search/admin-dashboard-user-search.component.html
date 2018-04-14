@@ -1,0 +1,10 @@
+<div class="form" [formGroup]="userSearchForm" (keydown)="handleKeyDownOnForm($event.keyCode)">
+  <div class="form-group">
+    <div class="input-group">
+      <input type="text" class="form-control" id="user-search-input" placeholder="Search by username" formControlName="usernamesearch">
+      <span class="input-group-btn">
+        <button type="button" class="btn btn-primary" (click)="toggleUsernameSearch()">Search</button>
+      </span>
+    </div>
+  </div>
+</div>
