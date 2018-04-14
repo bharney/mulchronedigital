@@ -22,8 +22,26 @@ export class AdminDashboardUsersComponent implements OnInit {
     this.getUsersService.getUsersInformation().subscribe(response => {
       if (response.status) {
         this.users = response.users;
+        console.log(this.users);
       }
     }, (error) => {
+
     });
+  }
+
+  public deactiveUserAccount(id: string): void {
+    
+  }
+
+  public activeUserAccount(id: string): void {
+    
+  }
+
+  public makeUserAdmin(id: string): void {
+    
+  }
+
+  public revokeUserAdminAccess(id: string): void {
+    
   }
 }

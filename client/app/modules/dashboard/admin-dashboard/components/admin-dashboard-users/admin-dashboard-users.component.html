@@ -6,20 +6,28 @@
     <div class="col-sm-12 offset-sm-1">
       <table class="table table-responsive" *ngIf="users?.length > 0">
         <tr>
-          <th class="text-center">Username</th>
-          <th class="text-center">Activation Status</th>
-          <th class="text-center">Admin Status</th>
-          <th class="text-center">Joined At</th>
+          <th class="text-center">
+            <strong>Username</strong>
+          </th>
+          <th class="text-center">
+            <strong>Activation Status</strong>
+          </th>
+          <th class="text-center">
+            <strong>Admin Status</strong>
+          </th>
+          <th class="text-center">
+            <strong>Joined At</strong>
+          </th>
         </tr>
         <tr class="text-center" *ngFor="let user of users">
           <td>{{user.username}}</td>
           <td>
-            <button *ngIf="user.isActive" class="btn btn-primary">Deactive</button>
-            <button *ngIf="!user.isActive" class="btn btn-danger">Active</button>
+            <button *ngIf="user.isActive" class="btn btn-primary" [attr.id]="user._id" (click)="deactiveUserAccount($event.target.attributes.id.value)">Deactive</button>
+            <button *ngIf="!user.isActive" class="btn btn-danger" [attr.id]="user._id" (click)="activeUserAccount($event.target.attributes.id.value)">Active</button>
           </td>
           <td>
-            <button *ngIf="user.isAdmin" class="btn btn-primary">Revoke Admin</button>
-            <button *ngIf="!user.isAdmin" class="btn btn-danger">Make Admin</button>
+            <button *ngIf="user.isAdmin" class="btn btn-primary" [attr.id]="user._id" (click)="revokeUserAdminAccess($event.target.attributes.id.value)">Revoke Admin</button>
+            <button *ngIf="!user.isAdmin" class="btn btn-danger" [attr.id]="user._id" (click)="makeUserAdmin($event.target.attributes.id.value)">Make Admin</button>
           </td>
           <td>{{user.createdAt | date:'short'}}</td>
         </tr>
