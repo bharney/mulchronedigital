@@ -129,6 +129,20 @@ export class DataAccessObjects {
     });
   }
 
+  public static updateUserAdminAccessToFalseProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const query = { $set: { isAdmin: false } };
+      resolve(query);
+    });
+  }
+
+  public updateUserAdminAccessToTrueProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const query = { $set: { isAdmin: true } };
+      resolve(query);
+    });
+  }
+
   public static userPasswordsFromThirtyDaysAgoProjection() {
     return new Promise(resolve => {
       const projection = { _id: 0, oldPassword: 1 };
@@ -251,6 +265,12 @@ export class DataAccessObjects {
     return new Promise(resolve => {
       const projection = { $set: { isActive: true } };
       resolve(projection);
+    });
+  }
+
+  public static updateUserProfileToInactiveProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const projection = { $set: { isActive: false } };
     });
   }
 
