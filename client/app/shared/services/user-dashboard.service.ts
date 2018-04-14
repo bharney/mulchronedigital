@@ -58,7 +58,7 @@ export class ChangeUserPasswordService implements IService {
 
 @Injectable()
 export class ChangeUsernameService implements IService {
-  public codesToNotRetry: number[] = [];
+  public codesToNotRetry: number[] = [401, 422, 409];
 
   constructor(
     private http: Http,
