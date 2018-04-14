@@ -5,7 +5,7 @@ import { DebugElement } from "@angular/core";
 
 import { AdminDashboardUsersComponent } from "./admin-dashboard-users.component";
 import { RouterTestingModule } from "@angular/router/testing";
-import { GetUsersService } from "../../../../../shared/services/users-administration.service";
+import { UsersAdminstrationService } from "../../../../../shared/services/users-administration.service";
 import { HttpModule } from "@angular/http";
 import { AuthenicationControl } from "../../../../../shared/authenication/AuthenicationControl";
 import { ApiRequests } from "../../../../../shared/http/ApiRequests";
@@ -24,7 +24,7 @@ describe("AdminDashboardUsersComponent", () => {
         AdminDashboardUsersComponent
       ],
       providers: [
-        GetUsersService,
+        UsersAdminstrationService,
         AuthenicationControl,
         ApiRequests
       ]

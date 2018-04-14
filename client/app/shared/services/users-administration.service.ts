@@ -8,7 +8,7 @@ import { AESEncryptionResult } from "../../../../shared/AESEncryptionResult";
 
 @Injectable()
 export class UsersAdminstrationService implements IService {
-    public codesToNotRetry: number[] = [401];
+    public codesToNotRetry: number[] = [401, 422];
 
     constructor(
         private http: Http,

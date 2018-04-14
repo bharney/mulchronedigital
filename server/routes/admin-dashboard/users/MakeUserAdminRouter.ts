@@ -1,6 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import BaseSubRouter from "../../classes/BaseSubRouter";
 import { ResponseMessages } from "../../../globals/ResponseMessages";
+import { UserAuthenicationValidator } from "../../../../shared/UserAuthenicationValidator";
+import { AdminDashboardDataAccess } from "../../../data-access/AdminDashboardDataAccess";
 
 export default class MakeUserAdminRouter extends BaseSubRouter {
     public router: Router;
@@ -20,7 +22,14 @@ export default class MakeUserAdminRouter extends BaseSubRouter {
 
     private async makeUserAdmin(req: Request, res: Response, next: NextFunction) {
         try {
-            
+            const userId = req.body.id;
+            if (!await UserAuthenicationValidator.isThisAValidMongoObjectId(userId)) {
+                return res.status(422).json(await ResponseMessages.grantingAdminAccessFailed());
+            }
+            if (!await AdminDashboardDataAccess.updateUsersAdminAccessToTrue(userId)) {
+                return res.status(422).json(await ResponseMessages.grantingAdminAccessFailed());
+            }
+            return res.status(200).json(await ResponseMessages.requestWasSuccessfulNoMessage());
         } catch (error) {
             res.status(503).json(await ResponseMessages.generalError());
             return next(error);

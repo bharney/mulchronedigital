@@ -6,6 +6,15 @@ import errorLogger from "../logging/ErrorLogger";
 
 export class ResponseMessages {
 
+  public static requestWasSuccessfulNoMessage(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": true,
+      };
+      resolve(message);
+    });
+  }
+
   public static userNameIsNotValid(): Promise<object> {
     return new Promise(resolve => {
       const message = {
@@ -218,6 +227,26 @@ export class ResponseMessages {
         "status": false,
         "message": "Please verify your login information again please.",
         "relogin": true
+      };
+      resolve(message);
+    });
+  }
+
+  public static revokingAdminAccessFailed(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": `There was a problem revoking admin access to that user`
+      };
+      resolve(message);
+    });
+  }
+
+  public static grantingAdminAccessFailed(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": `There was a problem granting admin access to that user`
       };
       resolve(message);
     });

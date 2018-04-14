@@ -14,6 +14,7 @@ export class AdminDashboardUsersComponent implements OnInit {
   public users: IUserAdministration[];
   public modalBody: string;
   public modalTitle: string = "Error";
+  public isAnActionTakingPlace = false;
 
   constructor(
     private usersAdminstrationService: UsersAdminstrationService
@@ -29,55 +30,91 @@ export class AdminDashboardUsersComponent implements OnInit {
         this.users = response.users;
       }
     }, (error) => {
-
+      this.toggleErrorModal(error.message);
     });
   }
 
   public async deactiveUserAccount(id: string, username: string): Promise<void> {
+    if (this.isAnActionTakingPlace) {
+      return;
+    }
     if (!id) {
       this.toggleErrorModal(`There was a problem deactivating ${username}'s account`);
     }
+    this.isAnActionTakingPlace = true;
     const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
     this.usersAdminstrationService.deactiveUserAccount(encryptedDataToSend).subscribe(result => {
-
+      this.isAnActionTakingPlace = false;
     }, (error) => {
-
+      this.isAnActionTakingPlace = false;
+      this.toggleErrorModal(error.message);
     });
   }
 
   public async activeUserAccount(id: string, username: string): Promise<void> {
+    if (this.isAnActionTakingPlace) {
+      return;
+    }
     if (!id) {
       this.toggleErrorModal(`There was a problem activating ${username}'s account`);
     }
+    this.isAnActionTakingPlace = true;
     const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
     this.usersAdminstrationService.activateUserAccount(encryptedDataToSend).subscribe(result => {
-
+      this.isAnActionTakingPlace = false;
     }, (error) => {
-
+      this.isAnActionTakingPlace = false;
+      this.toggleErrorModal(error.message);
     });
   }
 
   public async makeUserAdmin(id: string, username: string): Promise<void> {
+    if (this.isAnActionTakingPlace) {
+      return;
+    }
     if (!id) {
       this.toggleErrorModal(`There was a problem making ${username} an admin`);
     }
+    this.isAnActionTakingPlace = true;
     const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
     this.usersAdminstrationService.makeUserAdmin(encryptedDataToSend).subscribe(result => {
-
+      if (result.status) {
+        for (let i = 0; i < this.users.length; i++) {
+          if (this.users[i]._id === id) {
+            this.users[i].isAdmin = true;
+            break;
+          }
+        }
+      }
+      this.isAnActionTakingPlace = false;
     }, (error) => {
-
+      this.isAnActionTakingPlace = false;
+      this.toggleErrorModal(error.message);
     });
   }
 
   public async revokeUserAdminAccess(id: string, username: string): Promise<void> {
+    if (this.isAnActionTakingPlace) {
+      return;
+    }
     if (!id) {
       this.toggleErrorModal(`There was a problem revoking ${username}'s admin access`);
     }
+    this.isAnActionTakingPlace = true;
     const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
     this.usersAdminstrationService.revokeUserAdminAccess(encryptedDataToSend).subscribe(result => {
-
+      if (result.status) {
+        for (let i = 0; i < this.users.length; i++) {
+          if (this.users[i]._id === id) {
+            this.users[i].isAdmin = false;
+            break;
+          }
+        }
+      }
+      this.isAnActionTakingPlace = false;
     }, (error) => {
-
+      this.isAnActionTakingPlace = false;
+      this.toggleErrorModal(error.message);
     });
   }
 

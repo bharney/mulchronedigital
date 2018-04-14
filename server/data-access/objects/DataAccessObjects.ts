@@ -136,6 +136,13 @@ export class DataAccessObjects {
     });
   }
 
+  public static updateUserAdminAccessToTrueProjection(): Promise<object> {
+    return new Promise(resolve => {
+      const query = { $set: { isAdmin: true } };
+      resolve(query);
+    });
+  }
+
   public updateUserAdminAccessToTrueProjection(): Promise<object> {
     return new Promise(resolve => {
       const query = { $set: { isAdmin: true } };

@@ -39,6 +39,7 @@ export class ApiRequests {
         this.authenicationControl = new AuthenicationControl();
       }
       this.authenicationControl.removeJsonWebToken();
+      window.location.href = "/users/login";
     }
     console.log(errorResponse);
     return Observable.throw(errorResponse || "Unknown server error");
@@ -50,10 +51,10 @@ export class ApiRequests {
         throw err;
       }
       for (let i = 0; i < codesToNotRetry.length; i++) {
-          if (err.status === codesToNotRetry[i]) {
-            throw err;
-          }
-          return errorCount + 1;
+        if (err.status === codesToNotRetry[i]) {
+          throw err;
+        }
+        return errorCount + 1;
       }
     }, 0);
   }

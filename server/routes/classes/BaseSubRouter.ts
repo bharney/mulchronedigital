@@ -31,6 +31,7 @@ export default abstract class BaseSubRouter {
         return res.status(401).json(await ResponseMessages.jsonWebTokenExpired());
       }
       const isUserActive = databaseUsers[0].isActive;
+      res.locals.isUserAdmin = databaseUsers[0].isAdmin;
       if (!isUserActive) {
         return res.status(401).json(await ResponseMessages.userIsNotActive());
       }
@@ -51,6 +52,9 @@ export default abstract class BaseSubRouter {
   public async checkForAdminJsonWebToken(req: Request, res: Response, next: NextFunction) {
     try {
       if (!res.locals.token.isAdmin) {
+        return res.status(401).json(await ResponseMessages.userIsNotAdmin());
+      }
+      if (!res.locals.isUserAdmin) {
         return res.status(401).json(await ResponseMessages.userIsNotAdmin());
       }
       next();
