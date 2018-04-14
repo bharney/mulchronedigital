@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import BaseSubRouter from "../classes/BaseSubRouter";
-import { AdminDashboardDataAccess } from "../../data-access/AdminDashboardDataAccess";
-import { User } from "../../models/User";
-import { ResponseMessages } from "../../globals/ResponseMessages";
+import BaseSubRouter from "../../classes/BaseSubRouter";
+import { AdminDashboardDataAccess } from "../../../data-access/AdminDashboardDataAccess";
+import { User } from "../../../models/User";
+import { ResponseMessages } from "../../../globals/ResponseMessages";
 
 export default class GetUsersRouter extends BaseSubRouter {
     public router: Router;
@@ -16,6 +16,7 @@ export default class GetUsersRouter extends BaseSubRouter {
     public configureRouter(): void {
         this.router.use("/", this.checkForUserJsonWebToken);
         this.router.use("/", this.checkForAdminJsonWebToken);
+        this.router.use("/", this.decryptRequestBody);
         this.router.get("/", this.getUserInformationForAdminDashboard);
     }
 
