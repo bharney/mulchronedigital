@@ -44,6 +44,14 @@ export class AdminDashboardUsersComponent implements OnInit {
     this.isAnActionTakingPlace = true;
     const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
     this.usersAdminstrationService.deactiveUserAccount(encryptedDataToSend).subscribe(result => {
+      if (result.status) {
+        for (let i = 0; i < this.users.length; i++) {
+          if (this.users[i]._id === id) {
+            this.users[i].isActive = false;
+            break;
+          }
+        }
+      }
       this.isAnActionTakingPlace = false;
     }, (error) => {
       this.isAnActionTakingPlace = false;
@@ -61,6 +69,14 @@ export class AdminDashboardUsersComponent implements OnInit {
     this.isAnActionTakingPlace = true;
     const encryptedDataToSend: AESEncryptionResult = await this.createEncryptedIdObject(id);
     this.usersAdminstrationService.activateUserAccount(encryptedDataToSend).subscribe(result => {
+      if (result.status) {
+        for (let i = 0; i < this.users.length; i++) {
+          if (this.users[i]._id === id) {
+            this.users[i].isActive = true;
+            break;
+          }
+        }
+      }
       this.isAnActionTakingPlace = false;
     }, (error) => {
       this.isAnActionTakingPlace = false;

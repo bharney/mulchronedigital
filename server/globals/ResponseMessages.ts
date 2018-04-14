@@ -252,6 +252,26 @@ export class ResponseMessages {
     });
   }
 
+  public static deactivatingUserAccountFailed(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "There was a problem deactivating that users account"
+      };
+      resolve(message);
+    });
+  }
+
+  public static activatingUserAccountFailed(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "There was a problem activating that users account"
+      };
+      resolve(message);
+    });
+  }
+
   public static jsonWebTokenDoesntMatchStoredToken(): Promise<object> {
     return new Promise(resolve => {
       const message = {

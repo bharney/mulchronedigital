@@ -47,4 +47,34 @@ export class AdminDashboardDataAccess extends DataAccess {
             return false;
         }
     }
+
+    public static async updateUsersAccountToActive(userId: string): Promise<boolean> {
+        try {
+            const query = await DataAccessObjects.findUserByIdQuery(userId);
+            const projection = await DataAccessObjects.updateUserProfileToActiveProjection();
+            const result =  await UsersCollection.updateOne(query, projection);
+            if (result.result.n === 1 && result.result.nModified === 1 && result.result.ok === 1) {
+                return true;
+            }
+            return false;
+        } catch (error) {
+            errorLogger.error(error);
+            return false;
+        }
+    }
+
+    public static async updateUsersAccountToInactive(userId: string): Promise<boolean> {
+        try {
+            const query = await DataAccessObjects.findUserByIdQuery(userId);
+            const projection = await DataAccessObjects.updateUserProfileToInactiveProjection();
+            const result =  await UsersCollection.updateOne(query, projection);
+            if (result.result.n === 1 && result.result.nModified === 1 && result.result.ok === 1) {
+                return true;
+            }
+            return false;
+        } catch (error) {
+            errorLogger.error(error);
+            return false;
+        }
+    }
 }

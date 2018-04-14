@@ -278,6 +278,7 @@ export class DataAccessObjects {
   public static updateUserProfileToInactiveProjection(): Promise<object> {
     return new Promise(resolve => {
       const projection = { $set: { isActive: false } };
+      resolve(projection);
     });
   }
 
