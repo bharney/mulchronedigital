@@ -15,7 +15,6 @@ export class LoginService implements IService {
   constructor(
     private http: Http,
     private apiRequests: ApiRequests,
-    private authenicationControl: AuthenicationControl
   ) { }
 
   public loginUser(encryptedLoginInfo: AESEncryptionResult): Observable<ILoginUserResponse> {
@@ -34,7 +33,6 @@ export class RegisterService implements IService {
   constructor(
     private http: Http,
     private apiRequests: ApiRequests,
-    private authenicationControl: AuthenicationControl
   ) { }
 
   public registerNewUser(encryptedNewUserObject: AESEncryptionResult): Observable<IUserRegisterResponse> {

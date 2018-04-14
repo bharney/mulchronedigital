@@ -12,7 +12,6 @@ export class ContactMeService implements IService {
 
     constructor(
         private http: Http,
-        private authControl: AuthenicationControl,
         private apiRequests: ApiRequests,
     ) { }
 
