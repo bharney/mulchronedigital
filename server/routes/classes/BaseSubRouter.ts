@@ -19,7 +19,7 @@ export default abstract class BaseSubRouter {
       }
       res.locals.token = await JsonWebTokenWorkers.getDecodedJsonWebToken(headerToken);
       if (!res.locals.token) {
-        return res.status(503).json(await ResponseMessages.generalError());
+        return res.status(401).json(await ResponseMessages.generalError());
       }
       const databaseUsers: User[] = await UserAuthenicationDataAccess.getJSONWebTokenInfoOfActiveUserByUserId(res.locals.token.id);
       if (databaseUsers.length <= 0) {
@@ -28,18 +28,18 @@ export default abstract class BaseSubRouter {
       const databaseJsonToken = databaseUsers[0].jsonToken;
       const jsonTokenPublicKey = databaseUsers[0].jsonWebTokenPublicKey;
       if (!await JsonWebTokenWorkers.verifiyJsonWebToken(headerToken.toString(), jsonTokenPublicKey)) {
-        return res.status(409).json(await ResponseMessages.jsonWebTokenExpired());
+        return res.status(401).json(await ResponseMessages.jsonWebTokenExpired());
       }
       const isUserActive = databaseUsers[0].isActive;
       if (!isUserActive) {
-        return res.status(503).json(await ResponseMessages.userIsNotActive());
+        return res.status(401).json(await ResponseMessages.userIsNotActive());
       }
       if (!await JsonWebTokenWorkers.verifiyJsonWebToken(databaseJsonToken, jsonTokenPublicKey)) {
-        return res.status(409).json(await ResponseMessages.jsonWebTokenExpired());
+        return res.status(401).json(await ResponseMessages.jsonWebTokenExpired());
       }
       const decodedDbToken: JsonWebToken = await JsonWebTokenWorkers.getDecodedJsonWebToken(databaseJsonToken);
       if (!await JsonWebTokenWorkers.comparedHeaderTokenWithDbToken(res.locals.token, decodedDbToken)) {
-        return res.status(409).json(await ResponseMessages.jsonWebTokenDoesntMatchStoredToken());
+        return res.status(401).json(await ResponseMessages.jsonWebTokenDoesntMatchStoredToken());
       }
       next();
     } catch (error) {
@@ -51,7 +51,7 @@ export default abstract class BaseSubRouter {
   public async checkForAdminJsonWebToken(req: Request, res: Response, next: NextFunction) {
     try {
       if (!res.locals.token.isAdmin) {
-        return res.status(503).json(await ResponseMessages.userIsNotAdmin());
+        return res.status(401).json(await ResponseMessages.userIsNotAdmin());
       }
       next();
     } catch (error) {
@@ -64,14 +64,14 @@ export default abstract class BaseSubRouter {
     try {
       if (!req.body.key) {
         // TODO: validate somehow that this came from a trusted application? If not block that IP.
-        return res.status(503).json(await ResponseMessages.noSymmetricKeyProvidedError());
+        return res.status(422).json(await ResponseMessages.noSymmetricKeyProvidedError());
       }
       if (!req.body.encryptedText) {
         // TODO: validate some how that this came from a trusted application? If not block that IP.
-        return res.status(503).json(await ResponseMessages.noEncrypteRequestBodyTextError());
+        return res.status(422).json(await ResponseMessages.noEncrypteRequestBodyTextError());
       }
       if (!await Encryption.verifiyUniqueSymmetricKey(req.body.key)) {
-        return res.status(503).json(await ResponseMessages.invalidSymmetricKeyProvidedError());
+        return res.status(422).json(await ResponseMessages.invalidSymmetricKeyProvidedError());
       }
       const newRequestBody = await Encryption.AESDecrypt(req.body.encryptedText, req.body.key);
       req.body = JSON.parse(newRequestBody);
