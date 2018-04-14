@@ -21,7 +21,7 @@
             <button *ngIf="user.isAdmin" class="btn btn-primary">Revoke Admin</button>
             <button *ngIf="!user.isAdmin" class="btn btn-danger">Make Admin</button>
           </td>
-          <td>{{user.createdAt}}</td>
+          <td>{{user.createdAt | date:'short'}}</td>
         </tr>
       </table>
     </div>
