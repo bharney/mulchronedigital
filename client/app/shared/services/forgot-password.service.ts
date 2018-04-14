@@ -7,7 +7,7 @@ import IService from "./interfaces/IService";
 
 @Injectable()
 export class ForgotPasswordService implements IService {
-    public codesToNotRetry: number[] = [];
+    public codesToNotRetry: number[] = [422, 401, 429];
 
     constructor(
         private http: Http,
@@ -18,6 +18,7 @@ export class ForgotPasswordService implements IService {
         const options = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
         return this.http.patch("/api/userauth/forgotpassword", encryptedForgotPassword, options)
             .map(this.apiRequests.parseResponse)
+            .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
             .catch(this.apiRequests.errorCatcher);
     }
 
@@ -25,6 +26,7 @@ export class ForgotPasswordService implements IService {
         const options = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
         return this.http.patch("/api/userauth/resetpassword", encryptedResetPassword, options)
             .map(this.apiRequests.parseResponse)
+            .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
             .catch(this.apiRequests.errorCatcher);
     }
 }
