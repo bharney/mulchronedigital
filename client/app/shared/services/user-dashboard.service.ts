@@ -4,19 +4,19 @@ import { Http, RequestOptions, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { Dashboard, UserChangePassword, UserChangeUsername } from "../models/dashboard.model";
 import { AuthenicationControl } from "../authenication/AuthenicationControl";
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/catch";
 import { UserLocation } from "../../../../shared/UserLocation";
 import { AESEncryptionResult } from "../../../../shared/AESEncryptionResult";
+import IService from "./interfaces/IService";
 
 
 // TODO: Make all of these calls into seperate injectables.
 @Injectable()
-export class MainDashboardService {
+export class MainDashboardService implements IService {
+  public codesToNotRetry: number[] = [401, 409];
+
   constructor(
     private http: Http,
     private apiRequests: ApiRequests,
-    private authenicationControl: AuthenicationControl
   ) { }
 
   // TODO: create Observable type
@@ -24,6 +24,7 @@ export class MainDashboardService {
     const options: RequestOptions = this.apiRequests.createAuthorizationHeader();
     return this.http.get("/api/userdashboard/getuserinformation", options)
       .map(this.apiRequests.parseResponse)
+      .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
       .catch(this.apiRequests.errorCatcher);
   }
 
@@ -31,16 +32,18 @@ export class MainDashboardService {
     const options: RequestOptions = this.apiRequests.createAuthorizationHeader();
     return this.http.patch("/api/userdashboard/updateuserlocation", location, options)
       .map(this.apiRequests.parseResponse)
+      .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
       .catch(this.apiRequests.errorCatcher);
   }
 }
 
 @Injectable()
-export class ChangeUserPasswordService {
+export class ChangeUserPasswordService implements IService {
+  public codesToNotRetry: number[] = [401, 422];
+
   constructor(
     private http: Http,
     private apiRequests: ApiRequests,
-    private authenicationControl: AuthenicationControl
   ) { }
 
   // TODO: create observable type
@@ -48,16 +51,18 @@ export class ChangeUserPasswordService {
     const options: RequestOptions = this.apiRequests.createAuthorizationHeader();
     return this.http.patch("/api/userdashboard/changepassword", encryptedChangePasswordObj, options)
       .map(this.apiRequests.parseResponse)
+      .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
       .catch(this.apiRequests.errorCatcher);
   }
 }
 
 @Injectable()
-export class ChangeUsernameService {
+export class ChangeUsernameService implements IService {
+  public codesToNotRetry: number[] = [401, 422, 409];
+
   constructor(
     private http: Http,
     private apiRequests: ApiRequests,
-    private authenicationControl: AuthenicationControl
   ) { }
 
   // TODO: create observable type
@@ -65,17 +70,18 @@ export class ChangeUsernameService {
     const options: RequestOptions = this.apiRequests.createAuthorizationHeader();
     return this.http.patch("/api/userdashboard/changeusername", encryptedUserObject, options)
       .map(this.apiRequests.parseResponse)
+      .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
       .catch(this.apiRequests.errorCatcher);
   }
 }
 
 @Injectable()
-export class ChangeUserProfileImageService {
+export class ChangeUserProfileImageService implements IService {
+  public codesToNotRetry: number[] = [401, 413, 415];
 
   constructor(
     private http: Http,
     private apiRequests: ApiRequests,
-    private authenicationControl: AuthenicationControl
   ) { }
 
   // TODO: create observable type
@@ -84,6 +90,7 @@ export class ChangeUserProfileImageService {
     options.headers.delete("Content-Type");
     return this.http.patch("/api/userdashboard/changeprofileimage", formData, options)
       .map(this.apiRequests.parseResponse)
+      .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
       .catch(this.apiRequests.errorCatcher);
   }
 }

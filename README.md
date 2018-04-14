@@ -4,7 +4,7 @@ This is a project template that is intended to be a plug and play system for any
 
 # Rules for contributions
 * Please take a look at existing issues and post a message to see where people are at.
-* If you starting the development of an issue no one is working on yet, please create a branch. i.e [#11/IDEA/Admin-Dashboard](https://github.com/mtmulch/mulchronedigital/tree/%2311/IDEA/Admin-Dashbord)
+* If you starting the development of an issue no one is working on yet, please create a branch. i.e [#11/IDEA/Admin-Dashboard]
 * When making a commit please use put a hash tag followed by the number of the issue. This will allow each commit to be tracked to the specific issue.
 * Please write tests for your code! (I started off not doing this and I'm addressing it).
 * Run the test suite before submitting a pull request.

@@ -43,4 +43,18 @@ export class ApiRequests {
     console.log(errorResponse);
     return Observable.throw(errorResponse || "Unknown server error");
   }
+
+  public checkStatusCodeForRetry(codesToNotRetry: number[], error: any): Observable<any> {
+    return error.scan((errorCount, err) => {
+      if (errorCount === 5) {
+        throw err;
+      }
+      for (let i = 0; i < codesToNotRetry.length; i++) {
+          if (err.status === codesToNotRetry[i]) {
+            throw err;
+          }
+          return errorCount + 1;
+      }
+    }, 0);
+  }
 }

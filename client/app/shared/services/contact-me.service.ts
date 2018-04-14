@@ -3,16 +3,15 @@ import { Headers, Http, RequestOptions, Response } from "@angular/http";
 import { Observable } from "rxjs/Rx";
 import { ApiRequests } from "../http/ApiRequests";
 import { AuthenicationControl } from "../authenication/AuthenicationControl";
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/catch";
 import { AESEncryptionResult } from "../../../../shared/AESEncryptionResult";
+import IService from "./interfaces/IService";
 
 @Injectable()
-export class ContactMeService {
+export class ContactMeService implements IService {
+    public codesToNotRetry: number[] = [422];
 
     constructor(
         private http: Http,
-        private authControl: AuthenicationControl,
         private apiRequests: ApiRequests,
     ) { }
 
@@ -20,6 +19,7 @@ export class ContactMeService {
         const options = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
         return this.http.post("/api/home/contactme", encryptedContactMeObject, options)
             .map(this.apiRequests.parseResponse)
+            .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
             .catch(this.apiRequests.errorCatcher);
     }
 }

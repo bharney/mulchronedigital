@@ -3,12 +3,12 @@ import { Http, RequestOptions, Response } from "@angular/http";
 import { ApiRequests } from "../http/ApiRequests";
 import { Observable } from "rxjs/Observable";
 import { ActivateUser } from "../models/user-authenication.model";
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/catch";
 import { AESEncryptionResult } from "../../../../shared/AESEncryptionResult";
+import IService from "./interfaces/IService";
 
 @Injectable()
-export class ActivateUserService {
+export class ActivateUserService implements IService {
+    public codesToNotRetry: number[] = [409, 401, 422];
 
     constructor(
         private http: Http,
@@ -18,8 +18,8 @@ export class ActivateUserService {
     public makeUserActive(encryptedUserObject: AESEncryptionResult) {
         const headers = this.apiRequests.createRequestOptionsWithApplicationJsonHeaders();
         return this.http.patch("/api/userauth/activateuser", encryptedUserObject, headers)
-        .map(this.apiRequests.parseResponse)
-        .catch(this.apiRequests.errorCatcher);
+            .map(this.apiRequests.parseResponse)
+            .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
+            .catch(this.apiRequests.errorCatcher);
     }
-
 }

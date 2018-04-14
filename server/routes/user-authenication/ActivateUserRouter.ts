@@ -29,7 +29,7 @@ export default class ActivateUserRouter extends BaseSubRouter {
             if (updatedProfile.lastErrorObject.updatedExisting && updatedProfile.lastErrorObject.n === 1) {
                 return res.status(200).json(await ResponseMessages.userAccountActiveSuccess());
             } else {
-                return res.status(401).json(await ResponseMessages.generalError());
+                return res.status(409).json(await ResponseMessages.generalError());
             }
         } catch (error) {
             res.status(503).json(await ResponseMessages.generalError());
