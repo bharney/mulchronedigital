@@ -191,6 +191,16 @@ export class ResponseMessages {
     });
   }
 
+  public static thisPasswordWasAlreadyUsedInTheLastThirtyDays(): Promise<object> {
+    return new Promise(resolve => {
+      const message = {
+        "status": false,
+        "message": "The password you entered has already been used in the last 30 days."
+      };
+      resolve(message);
+    });
+  }
+
   public static noJsonWebTokenInHeader(): Promise<object> {
     return new Promise(resolve => {
       const message = {
