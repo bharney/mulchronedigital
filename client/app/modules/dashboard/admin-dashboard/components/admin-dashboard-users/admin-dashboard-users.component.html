@@ -23,7 +23,7 @@
           <td>{{user.username}}</td>
           <td>
             <button *ngIf="user.isActive" class="btn btn-primary" [attr.id]="user._id" [attr.username]="user.username" (click)="deactiveUserAccount($event.target.attributes.id.value, $event.target.attributes.username.value)">Deactive</button>
-            <button *ngIf="!user.isActive" class="btn btn-danger" [attr.id]="user._id" [attr.username]="user.username" (click)="activeUserAccount($event.target.attributes.id.value, $event.target.attributes.username.value)">Active</button>
+            <button *ngIf="!user.isActive" class="btn btn-danger" [attr.id]="user._id" [attr.username]="user.username" (click)="activeUserAccount($event.target.attributes.id.value, $event.target.attributes.username.value)">Activate</button>
           </td>
           <td>
             <button *ngIf="user.isAdmin" class="btn btn-primary" [attr.id]="user._id" [attr.username]="user.username" (click)="revokeUserAdminAccess($event.target.attributes.id.value, $event.target.attributes.username.value)">Revoke Admin</button>
