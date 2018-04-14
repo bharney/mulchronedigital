@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { UsersAdministrationService } from "../../../../../shared/services/users-administration.service";
+import { GetUsersService } from "../../../../../shared/services/users-administration.service";
 import { IUserAdministration } from "../../../../../shared/models/admin-dashboard.model";
 
 @Component({
@@ -11,7 +11,7 @@ export class AdminDashboardUsersComponent implements OnInit {
   public users: IUserAdministration[];
 
   constructor(
-    private usersAdministrationService: UsersAdministrationService
+    private getUsersService: GetUsersService
   ) { }
 
   ngOnInit() {
@@ -19,7 +19,7 @@ export class AdminDashboardUsersComponent implements OnInit {
   }
 
   private getListOfUsers(): void {
-    this.usersAdministrationService.getUsersInformation().subscribe(response => {
+    this.getUsersService.getUsersInformation().subscribe(response => {
       if (response.status) {
         this.users = response.users;
       }

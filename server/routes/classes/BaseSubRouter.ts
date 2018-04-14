@@ -51,7 +51,7 @@ export default abstract class BaseSubRouter {
   public async checkForAdminJsonWebToken(req: Request, res: Response, next: NextFunction) {
     try {
       if (!res.locals.token.isAdmin) {
-        return res.status(503).json(await ResponseMessages.userIsNotAdmin());
+        return res.status(401).json(await ResponseMessages.userIsNotAdmin());
       }
       next();
     } catch (error) {
