@@ -135,7 +135,18 @@ export class AdminDashboardUsersComponent implements OnInit {
   }
 
   public handleUserSearchEvent(usernameSearch) {
-      
+    this.isAnActionTakingPlace = true;
+    this.usersAdminstrationService.getUsersByUsernameSearch(usernameSearch).subscribe(result => {
+      this.isAnActionTakingPlace = false;
+      if (result.status && result.users.length > 0) {
+        this.users = result.users;
+      } else if (result.status && result.users.length === 0) {
+        this.toggleErrorModal(`Could not find any users based on your search of "${usernameSearch}"`);
+      }
+    }, (error) => {
+      this.isAnActionTakingPlace = false;
+      this.toggleErrorModal(error.message);
+    });
   }
 
   private toggleErrorModal(modalBody: string) {
@@ -146,5 +157,5 @@ export class AdminDashboardUsersComponent implements OnInit {
   private async createEncryptedIdObject(id: string): Promise<AESEncryptionResult> {
     const idObject = { id: id };
     return await Encryption.AESEncrypt(JSON.stringify(idObject));
-  } 
+  }
 }

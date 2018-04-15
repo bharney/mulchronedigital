@@ -22,6 +22,16 @@ export class DataAccessObjects {
     });
   }
 
+  public static findUsersByUserSearchTermQuery(usernameSearch: string): Promise<object> {
+    return new Promise(resolve => {
+      if (!usernameSearch) {
+        reject(new Error("No usernameSearch was found at findUsersByUserSearchTermQuery(usernameSearch: string)"));
+      }
+      const query = { username: { $regex: new RegExp(usernameSearch) } };
+      resolve(query);
+    });
+  }
+
   public static userPasswordsFromThirtyDaysAgoQuery(userId: string): Promise<object> {
     return new Promise((resolve, reject) => {
       if (!userId) {

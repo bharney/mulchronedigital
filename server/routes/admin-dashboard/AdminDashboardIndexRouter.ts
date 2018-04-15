@@ -5,6 +5,7 @@ import ActivateUserRouter from "../user-authenication/ActivateUserRouter";
 import DeactivateUserRouter from "./users/DeactivateUserRouter";
 import MakeUserAdminRouter from "./users/MakeUserAdminRouter";
 import RevokeUserAdminRouter from "./users/RevokeUserAdminAccessRouter";
+import GetUserByUserSearchRouter from "./users/GetUserByUserSearchRouter";
 
 export default class AdminDashboardIndexRouter implements IBaseIndexRouter {
     public router: Router;
@@ -13,6 +14,7 @@ export default class AdminDashboardIndexRouter implements IBaseIndexRouter {
     private activateUserRouter: Router;
     private makeUserAdminRouter: Router;
     private revokeUserAdminRouter: Router;
+    private getUsersByUsernameSearchRouter: Router;
 
     constructor() {
         this.router = Router();
@@ -26,6 +28,7 @@ export default class AdminDashboardIndexRouter implements IBaseIndexRouter {
         this.activateUserRouter = new ActivateUserRouter().router;
         this.makeUserAdminRouter = new MakeUserAdminRouter().router;
         this.revokeUserAdminRouter = new RevokeUserAdminRouter().router;
+        this.getUsersByUsernameSearchRouter = new GetUserByUserSearchRouter().router;
     }
 
     public configureRouter(): void {
@@ -34,5 +37,6 @@ export default class AdminDashboardIndexRouter implements IBaseIndexRouter {
         this.router.use("/activateuser", this.activateUserRouter);
         this.router.use("/makeuseradmin", this.makeUserAdminRouter);
         this.router.use("/revokeuseradminaccess", this.revokeUserAdminRouter);
+        this.router.use("/getusersbyusername", this.getUsersByUsernameSearchRouter);
     }
 }

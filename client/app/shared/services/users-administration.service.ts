@@ -54,4 +54,12 @@ export class UsersAdminstrationService implements IService {
             .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
             .catch(this.apiRequests.errorCatcher);
     }
+
+    public getUsersByUsernameSearch(usernameSearch: string): Observable<any> {
+        const options = this.apiRequests.createAuthorizationHeader();
+        return this.http.get(`/api/admindashboard/getusersbyusername/${usernameSearch}/`, options)
+            .map(this.apiRequests.parseResponse)
+            .retryWhen((error) => this.apiRequests.checkStatusCodeForRetry(this.codesToNotRetry, error))
+            .catch(this.apiRequests.errorCatcher);
+    }
 }

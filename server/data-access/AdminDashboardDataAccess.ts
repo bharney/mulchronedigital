@@ -22,7 +22,7 @@ export class AdminDashboardDataAccess extends DataAccess {
         try {
             const query = await DataAccessObjects.findUserByIdQuery(userId);
             const projection = await DataAccessObjects.updateUserAdminAccessToFalseProjection();
-            const result =  await UsersCollection.updateOne(query, projection);
+            const result = await UsersCollection.updateOne(query, projection);
             if (result.result.n === 1 && result.result.nModified === 1 && result.result.ok === 1) {
                 return true;
             }
@@ -37,7 +37,7 @@ export class AdminDashboardDataAccess extends DataAccess {
         try {
             const query = await DataAccessObjects.findUserByIdQuery(userId);
             const projection = await DataAccessObjects.updateUserAdminAccessToTrueProjection();
-            const result =  await UsersCollection.updateOne(query, projection);
+            const result = await UsersCollection.updateOne(query, projection);
             if (result.result.n === 1 && result.result.nModified === 1 && result.result.ok === 1) {
                 return true;
             }
@@ -52,7 +52,7 @@ export class AdminDashboardDataAccess extends DataAccess {
         try {
             const query = await DataAccessObjects.findUserByIdQuery(userId);
             const projection = await DataAccessObjects.updateUserProfileToActiveProjection();
-            const result =  await UsersCollection.updateOne(query, projection);
+            const result = await UsersCollection.updateOne(query, projection);
             if (result.result.n === 1 && result.result.nModified === 1 && result.result.ok === 1) {
                 return true;
             }
@@ -67,7 +67,7 @@ export class AdminDashboardDataAccess extends DataAccess {
         try {
             const query = await DataAccessObjects.findUserByIdQuery(userId);
             const projection = await DataAccessObjects.updateUserProfileToInactiveProjection();
-            const result =  await UsersCollection.updateOne(query, projection);
+            const result = await UsersCollection.updateOne(query, projection);
             if (result.result.n === 1 && result.result.nModified === 1 && result.result.ok === 1) {
                 return true;
             }
@@ -75,6 +75,17 @@ export class AdminDashboardDataAccess extends DataAccess {
         } catch (error) {
             errorLogger.error(error);
             return false;
+        }
+    }
+
+    public static async getUsersByUsernameSearch(usernameSearch: string): Promise<User[]> {
+        try {
+            const query = await DataAccessObjects.findUsersByUserSearchTermQuery(usernameSearch);
+            const projection = await DataAccessObjects.getUsersForAdminDashboardProjection();
+            return await UsersCollection.find(query, projection).toArray();
+        } catch (error) {
+            errorLogger.error(error);
+            return [];
         }
     }
 }
