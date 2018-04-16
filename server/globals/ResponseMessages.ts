@@ -172,8 +172,7 @@ export class ResponseMessages {
     return new Promise(resolve => {
       const message = {
         "status": false,
-        "message": "Sorry, we did not find any users with that email address.",
-        "relogin": true
+        "message": "Sorry, we did not find any users with that email address."
       };
       resolve(message);
     });
@@ -183,8 +182,7 @@ export class ResponseMessages {
     return new Promise(resolve => {
       const message = {
         "status": false,
-        "message": "Sorry, we did not find any users with that email address that are currently active.",
-        "relogin": true
+        "message": "Sorry, we did not find any users with that email address that are currently active."
       };
       resolve(message);
     });
